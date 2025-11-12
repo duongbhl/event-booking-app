@@ -2,8 +2,8 @@ export type NotifyType = 'reminder' | 'chat' | 'payment' | 'system' | 'invitatio
 
 
 export const sendNotification = async (
-userId: string,
-{ title, message, type }: { title: string; message: string; type: NotifyType }
+    userId: string,
+    { title, message, type }: { title: string; message: string; type: NotifyType }
 ) => {
-console.log('Notify', userId, title, message, type);
+    console.log('Notify', userId, title, message, type);
 };

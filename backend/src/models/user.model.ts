@@ -16,7 +16,6 @@ export interface IUser {
     updatedAt?: Date;
 }
 
-
 const schema = new mongoose.Schema<IUser>(
     {
         name: { type: String, required: true },
@@ -32,14 +31,12 @@ const schema = new mongoose.Schema<IUser>(
     { timestamps: true }
 );
 
-
 schema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
-
 
 schema.methods.matchPassword = async function (entered: string) {
     return bcrypt.compare(entered, this.password);
