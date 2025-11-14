@@ -144,7 +144,7 @@ export default function SignInScreen() {
                     <View className="flex-row justify-center mt-10">
                         <Text className="text-gray-500">Don't have an account? </Text>
                         <TouchableOpacity>
-                            <Text className="text-orange-500 font-semibold">Sign In</Text>
+                            <Text className="text-orange-500 font-semibold">Sign Up</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

@@ -1,29 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { View, ScrollView } from 'react-native';
-import "./global.css" 
-import { PaperProvider, Text } from 'react-native-paper';
-import { LightTheme } from './constants/theme';
-import SignInScreen from './pages/SignInScreen';
-import SignUpScreen from './pages/SIgnUpScreen';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import AdminHomeScreen from './pages/Admin';
+
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
-    <SignInScreen></SignInScreen>
+    <AdminHomeScreen></AdminHomeScreen>
   );
 }
-
-
-// <PaperProvider theme={LightTheme}>
-//           <View className="flex-1 bg-gray-50">
-//             <ScrollView
-//               contentContainerStyle={{ padding: 16 }}
-//               showsVerticalScrollIndicator={false}
-//             >
-//               <SignInScreen/> 
-              
-//             </ScrollView>
-//             <StatusBar style="auto" />
-//           </View>
-//         </PaperProvider>
-
-
