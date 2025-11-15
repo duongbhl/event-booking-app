@@ -23,7 +23,7 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="bg-white rounded-2xl shadow-md overflow-hidden mb-4"
+      className="bg-white rounded-2xl shadow-md overflow-hidden mb-4 w-72"
       style={{ shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 10 }}
     >
       <Image source={{ uri: image }} className="w-full h-44" />
@@ -41,9 +41,9 @@ const EventCard: React.FC<EventCardProps> = ({
         </View>
 
         <View className="flex-row justify-between items-center mt-3">
-          <Text className="text-gray-400 p-3">{members}+ Members joined</Text>
-          <TouchableOpacity className="bg-primary rounded-full px-4 py-2">
-            <Text className="text-white font-semibold text-sm">JOIN NOW</Text>
+          <Text className="text-gray-400 p-1">{members}+ Members joined</Text>
+          <TouchableOpacity className="bg-primary rounded-full px-3 py-2">
+            <Text className="text-white font-semibold text-sm">EDIT</Text>
           </TouchableOpacity>
         </View>
       </View>
