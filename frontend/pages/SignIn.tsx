@@ -30,7 +30,7 @@ export default function SignInScreen() {
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    
+
                     {/* Header */}
                     <View className="flex-row items-center justify-between mt-2">
                         <TouchableOpacity className="p-1">

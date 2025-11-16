@@ -38,7 +38,7 @@ export default function VerificationScreen() {
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
       >
         {/* Header */}
-        <View className="flex-row items-center justify-between mt-2">
+        <View className="flex-row items-center justify-between mt-10">
           <TouchableOpacity className="p-1">
             <Ionicons name="chevron-back" size={26} color="#111827" />
           </TouchableOpacity>
