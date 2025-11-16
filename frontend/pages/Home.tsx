@@ -142,24 +142,37 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* My Events SCROLL */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="mb-6"
-        >
-          {MY_EVENTS.map((ev) => (
-            <View key={ev.id} className="mr-10 w-64">
-              <EventCard
-                title={ev.title}
-                date={ev.date}
-                location={ev.location}
-                members={ev.members}
-                image={ev.image}
-              />
-            </View>
-          ))}
-        </ScrollView>
+        {MY_EVENTS.length === 0 && (
+          <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+            <Image
+              source={require("../assets/no-task.png")} // sửa đường dẫn image
+              style={{ width: 180, height: 180 }}
+              resizeMode="contain"
+            />
+
+            <Text className="text-xl font-semibold mt-4">Ups! There is no events available</Text>
+          </SafeAreaView>
+        )}
+        {MY_EVENTS.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="mb-6"
+          >
+            {MY_EVENTS.map((ev) => (
+              <View key={ev.id} className="mr-10 w-64">
+                <EventCard
+                  title={ev.title}
+                  date={ev.date}
+                  location={ev.location}
+                  members={ev.members}
+                  image={ev.image}
+                />
+              </View>
+            ))}
+          </ScrollView>
+
+        )}
 
         {/* CATEGORY FILTER */}
         <Text className="font-semibold text-lg mb-3">Choose By Category</Text>
@@ -171,14 +184,12 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={cat.key}
                 onPress={() => setSelectedCategory(cat.key)}
-                className={`px-4 py-2 rounded-full mr-3 ${
-                  isActive ? "bg-orange-500" : "bg-gray-200"
-                }`}
+                className={`px-4 py-2 rounded-full mr-3 ${isActive ? "bg-orange-500" : "bg-gray-200"
+                  }`}
               >
                 <Text
-                  className={`text-sm ${
-                    isActive ? "text-white" : "text-gray-700"
-                  }`}
+                  className={`text-sm ${isActive ? "text-white" : "text-gray-700"
+                    }`}
                 >
                   {cat.label}
                 </Text>
@@ -187,21 +198,34 @@ export default function HomeScreen() {
           })}
         </ScrollView>
 
-        {/* EVENT LIST */}
-        <View className="mt-6 mb-10">
-          {filteredEvents.map((ev) => (
-            <View key={ev.id} className="mb-4">
-              <EventCardPrice
-                title={ev.title}
-                date={ev.date}
-                location={ev.location}
-                price={ev.price}
-                image={ev.image}
-              />
-            </View>
-          ))}
-        </View>
+        {filteredEvents.length === 0 && (
+          <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+            <Image
+              source={require("../assets/no-task.png")} // sửa đường dẫn image
+              style={{ width: 180, height: 180 }}
+              resizeMode="contain"
+            />
+
+            <Text className="text-xl font-semibold mt-4">Ups! There is no events available</Text>
+          </SafeAreaView>
+        )}
+        {filteredEvents.length > 0 && (
+          <View className="mt-6 mb-10">
+            {filteredEvents.map((ev) => (
+              <View key={ev.id} className="mb-4">
+                <EventCardPrice
+                  title={ev.title}
+                  date={ev.date}
+                  location={ev.location}
+                  price={ev.price}
+                  image={ev.image}
+                />
+              </View>
+            ))}
+          </View>
+        )}
+
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }

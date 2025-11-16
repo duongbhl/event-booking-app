@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Modal } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Modal, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
@@ -65,19 +65,18 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-4">
       {/* HEADER */}
-      <View className="flex-row items-center justify-between py-2">
-        <TouchableOpacity>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
+      <View className="flex-row justify-between items-center mt-4">
+
 
         <TouchableOpacity
           onPress={() => setOpenCalendar(!openCalendar)}
-          className="flex-row items-center justify-center"
+          className="flex-row ml-[12rem]"
         >
-          <Text className="text-xl font-semibold mr-1 ml-8">Calendar</Text>
+          <Text className="text-xl font-semibold">Calendar</Text>
           <Ionicons
             name={openCalendar ? "chevron-up" : "chevron-down"}
             size={22}
+            className="items-end justify-end"
           />
         </TouchableOpacity>
 
@@ -126,9 +125,15 @@ export default function CalendarScreen() {
             </View>
           ))
         ) : (
-          <Text className="text-center mt-4 text-gray-400">
-            No events available.
-          </Text>
+          <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+            <Image
+              source={require("../assets/no-task.png")} // sửa đường dẫn image
+              style={{ width: 180, height: 180 }}
+              resizeMode="contain"
+            />
+
+            <Text className="text-xl font-semibold mt-4">Ups! There is no events available</Text>
+          </SafeAreaView>
         )}
       </ScrollView>
 

@@ -20,6 +20,8 @@ type TabIconProps = {
 
 const Tab = createBottomTabNavigator();
 
+//Bottom Tab
+
 export default function MainTabs() {
   return (
     <Tab.Navigator

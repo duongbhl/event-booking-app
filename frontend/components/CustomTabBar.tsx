@@ -1,7 +1,7 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Button } from "react-native-paper";
+import { TouchableOpacity } from "react-native";
 
 export default function CustomTabBar({
   state,
@@ -27,20 +27,22 @@ export default function CustomTabBar({
           });
 
         return (
-          <Button
+          <TouchableOpacity
             key={route.name}
             onPress={onPress}
-            className="flex-1 items-center justify-center pb-3"
+            activeOpacity={0.7}
+            className="flex-col items-center justify-center pb-3 relative w-[80px] mb-5"
           >
-            {/* Bar highlight ở phía trên */}
+            {/* Thanh highlight dọc */}
             {focused ? (
-              <View className="absolute top-0 w-10 h-1 bg-orange-500 rounded-full" />
+              <View className="absolute top-1 w-[3px] h-[22px] bg-orange-500 rounded-full" />
             ) : (
-              <View className="absolute top-0 w-10 h-1 opacity-0" />
+              <View className="absolute top-1 w-[3px] h-[22px] opacity-0" />
             )}
 
+            {/* Icon */}
             {icon}
-          </Button>
+          </TouchableOpacity>
         );
       })}
     </View>
