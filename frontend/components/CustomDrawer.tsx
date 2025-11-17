@@ -2,8 +2,10 @@ import React from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CustomDrawer(props: any) {
+  const navigation = useNavigation();
   return (
     <DrawerContentScrollView
       {...props}
@@ -41,7 +43,7 @@ export default function CustomDrawer(props: any) {
             color="#FF7A00"
           />
         )}
-        onPress={() => props.navigation.navigate("Notification")}
+        onPress={() => navigation.navigate('Notifications' as never)}
       />
 
       {/* SECTION: Add Event */}

@@ -1,0 +1,70 @@
+import React from "react";
+import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import EventCard from "../../components/EventCard";
+
+const UPCOMING_EVENTS = [
+  {
+    id: 1,
+    title: "International Band Music Concert",
+    date: "15 November, 2025",
+    location: "Gulshan, Dhaka",
+    members: 150,
+    image:
+      "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
+  },
+  {
+    id: 2,
+    title: "Shere Bangla Music Concert",
+    date: "20 November, 2025",
+    location: "Banani, Dhaka",
+    members: 90,
+    image:
+      "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=2070",
+  },
+];
+
+export default function UpcomingEvents() {
+  const navigation = useNavigation();
+
+  if (UPCOMING_EVENTS.length === 0)
+    return (
+      <View className="flex-1 justify-center items-center px-6">
+        <Image
+          source={require("/home/oizoiui/Documents/Mobile/event-booking-app/frontend/assets/no-task.png")} // sửa đường dẫn image
+          style={{ width: 180, height: 180 }}
+          resizeMode="contain"
+        />
+        <Text className="text-xl font-semibold mt-4">No Upcoming Event</Text>
+        <Text className="text-gray-500 text-center mt-2">
+          You have no upcoming events at the moment.
+        </Text>
+
+        <TouchableOpacity className="bg-orange-500 px-8 py-3 rounded-2xl mt-6">
+          <Text className="text-white font-semibold">EXPLORE EVENTS</Text>
+        </TouchableOpacity>
+      </View>
+    );
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View className="mt-2">
+        {UPCOMING_EVENTS.map((ev) => (
+          <EventCard
+            key={ev.id}
+            title={ev.title}
+            date={ev.date}
+            location={ev.location}
+            members={ev.members}
+            image={ev.image}
+            onPress={() =>
+              navigation.navigate(
+                "CreateEditEvent" as never,
+              )
+            }
+          />
+        ))}
+      </View>
+    </ScrollView>
+  );
+}

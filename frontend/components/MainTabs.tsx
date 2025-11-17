@@ -10,6 +10,7 @@ import CalendarScreen from "../pages/Calendar";
 import SelectLocationScreen from "../pages/SelectLocation";
 import ProfileScreen from "../pages/Profile";
 import CustomTabBar from "./CustomTabBar";
+import HomeStack from "../navigates/HomeStackNavigator";
 
 
 type TabIconProps = {
@@ -33,7 +34,7 @@ export default function MainTabs() {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ focused }: TabIconProps) => (
             <Ionicons

@@ -3,6 +3,7 @@ import { View, ScrollView, TouchableOpacity, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { InvitationCard } from "../components/InvitationCard";
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -56,14 +57,12 @@ const NOTIFICATIONS = {
 export default function NotificationScreen() {
   const hasNotifications =
     NOTIFICATIONS.unread.length > 0 || NOTIFICATIONS.yesterday.length > 0;
-
-
-
+  const navigation = useNavigation();
   return (
     <SafeAreaView className="flex-1 bg-white px-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#444" />
         </TouchableOpacity>
 
