@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { TextInput, Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 
 const EVENT_TYPES = ["Music", "Design", "Art", "Sports", "Food", "Others"];
 
@@ -25,6 +25,8 @@ interface EventData {
   gallery: string[];
 }
 export default function CreateEventScreen({ route }: { route: RouteProp<any, any> }) {
+
+  const navigation = useNavigation();
   const editData: EventData | undefined = route?.params?.eventData;
 
   const isEditMode = !!editData;
@@ -85,7 +87,7 @@ export default function CreateEventScreen({ route }: { route: RouteProp<any, any
     <SafeAreaView className="flex-1 bg-white px-4">
       {/* Header */}
       <View className="flex-row items-center mt-2 mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.goBack()}>
           <Ionicons name="arrow-back" size={26} color="#444" />
         </TouchableOpacity>
         <Text className="text-xl font-semibold ml-3">
