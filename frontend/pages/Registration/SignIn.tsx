@@ -15,7 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "react-native-paper";
 
 
-export default function SignInScreen() {
+export default function SignIn() {
     const [remember, setRemember] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 

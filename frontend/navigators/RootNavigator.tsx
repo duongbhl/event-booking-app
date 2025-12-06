@@ -1,8 +1,7 @@
 import React from "react";
 
-import DrawerNavigation from "../components/DrawerNavigation";
+
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeStack from "./HomeStackNavigator";
 import CreateEditEvent from "../pages/MyEvent/AddEvent";
 import EditProfile from "../pages/Profile/EditProfile";
 import Notification from "../pages/Notification_Review/Notification";
@@ -12,6 +11,8 @@ import Events from "../pages/MyEvent/Events";
 import EventDetails from "../pages/MyEvent/EventDetails";
 import OrganizerProfile from "../pages/Profile/OrganizerProfile";
 import InviteFriend from "../pages/Communication/InviteFriend";
+import DrawerNavigation from "../components/Navigators_UI/Navigators";
+import Home from "../pages/Home";
 
 const Stack = createStackNavigator();
 
@@ -25,10 +26,10 @@ export default function RootNavigator() {
       {/* GLOBAL SCREENS */}
       <Stack.Screen name="Notifications" component={Notification} />
       <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />
-      <Stack.Screen name="BookMark" component={HomeStack} />
-      <Stack.Screen name="Message" component={HomeStack} />
-      <Stack.Screen name="Setting" component={HomeStack} />
-      <Stack.Screen name="SignOut" component={HomeStack} />
+      <Stack.Screen name="BookMark" component={Home} />
+      <Stack.Screen name="Message" component={Home} />
+      <Stack.Screen name="Setting" component={Home} />
+      <Stack.Screen name="SignOut" component={Home} />
 
       
       

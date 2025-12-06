@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function SelectInterestScreen() {
+export default function SelectInterest() {
     const [selected, setSelected] = useState<number[]>([]);
 
     const toggleSelect = (id: number) => {

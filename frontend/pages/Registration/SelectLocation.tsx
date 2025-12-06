@@ -16,7 +16,7 @@ interface Suggestion {
   description: string;
 }
 
-export default function SelectLocationScreen() {
+export default function SelectLocation() {
   const mapRef = useRef<MapView | null>(null);
   const sessionToken = useRef(Crypto.randomUUID()).current;
   const [query, setQuery] = useState("");

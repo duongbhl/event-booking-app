@@ -3,7 +3,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function ProfileScreen() {
+export default function Profile() {
   const navigation = useNavigation();
 
   return (

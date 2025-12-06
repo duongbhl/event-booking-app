@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Modal, Image } from "react-na
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
+
 import dayjs from "dayjs";
 
 const FILTER_TYPES = [
@@ -42,7 +43,7 @@ const EVENTS = [
   },
 ];
 
-export default function CalendarScreen() {
+export default function CalendarTable() {
   const [openCalendar, setOpenCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [filterModal, setFilterModal] = useState(false);
