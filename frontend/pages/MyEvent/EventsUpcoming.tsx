@@ -2,29 +2,9 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import EventCard from "../../components/Cards/EventCard";
+import { UPCOMING_EVENTS } from "../../data/event";
 
-const UPCOMING_EVENTS = [
-  {
-    id: 1,
-    title: "International Band Music Concert",
-    date: "15 November, 2025",
-    location: "Gulshan, Dhaka",
-    members: 150,
-    price:"10 $",
-    image:
-      "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
-  },
-  {
-    id: 2,
-    title: "Shere Bangla Music Concert",
-    date: "20 November, 2025",
-    location: "Banani, Dhaka",
-    members: 90,
-    price:"10 $",
-    image:
-      "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=2070",
-  },
-];
+
 
 export default function UpcomingEvents() {
   const navigation = useNavigation();

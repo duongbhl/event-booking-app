@@ -11,8 +11,10 @@ import { Ionicons } from "@expo/vector-icons";
 import EventCard from "../components/Cards/EventCard";
 import EventCardPrice from "../components/Cards/EventPriceCard";
 import { useNavigation } from "@react-navigation/native";
+import EventCategoryBar from "../components/Bars/EventCategoryBar";
+import { ALL_EVENTS, MY_EVENTS } from "../data/event";
 
-const CATEGORIES = [
+export const CATEGORIES = [
   { key: "music", label: "Music" },
   { key: "design", label: "Design" },
   { key: "art", label: "Art" },
@@ -22,61 +24,7 @@ const CATEGORIES = [
 ];
 
 // Fake Data
-const MY_EVENTS = [
-  {
-    id: 1,
-    title: "International Band Music Concert",
-    date: "12–15 Oct, 22",
-    location: "Dhaka, BD",
-    members: 150,
-    price:"$10",
-    image:
-      "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
-  },
-  {
-    id: 2,
-    title: "International Band Music Concert",
-    date: "12–15 Oct, 22",
-    location: "Dhaka, BD",
-    members: 150,
-    price:"$10",
-    image:
-      "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
-  }
-];
 
-const ALL_EVENTS = [
-  {
-    id: 1,
-    title: "Designers Meetup 2022",
-    date: "03 October, 22",
-    location: "Gulshan, Dhaka",
-    price: "$20",
-    category: "design",
-    image:
-      "https://images.unsplash.com/photo-1534126511673-b6899657816a?q=80&w=2070",
-  },
-  {
-    id: 2,
-    title: "Food Competition Event",
-    date: "10 October, 22",
-    location: "Mirpur, Dhaka",
-    price: "$10",
-    category: "food",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2050",
-  },
-  {
-    id: 3,
-    title: "Basketball Final Match",
-    date: "10 October, 22",
-    location: "Uttara, Dhaka",
-    price: "$15",
-    category: "sports",
-    image:
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=2070",
-  },
-];
 
 export default function Home() {
   const navigation = useNavigation();
@@ -114,7 +62,7 @@ export default function Home() {
           </View>
         </View>
 
-        
+
       </View>
 
       {/* SEARCH BAR (Facebook style) */}
@@ -131,7 +79,7 @@ export default function Home() {
         {/* MY EVENTS */}
         <View className="flex-row justify-between items-center mb-3">
           <Text className="text-xl font-semibold">My Events</Text>
-          <TouchableOpacity onPress={()=>navigation.navigate('MyEvent' as never)}>
+          <TouchableOpacity onPress={() => navigation.navigate('MyEvent' as never)}>
             <Text className="text-orange-500 font-semibold">VIEW ALL</Text>
           </TouchableOpacity>
         </View>
@@ -149,35 +97,25 @@ export default function Home() {
           Choose By Category
         </Text>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="mb-4"
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {CATEGORIES.map((cat) => {
             const isActive = selectedCategory === cat.key;
+
             return (
-              <TouchableOpacity
+              <EventCategoryBar
                 key={cat.key}
+                title={cat.label}
+                iconKey={cat.key}   // truyền iconKey để lấy đúng ảnh
+                active={isActive}
                 onPress={() => setSelectedCategory(cat.key)}
-                className={`px-4 py-2 rounded-full mr-3 ${
-                  isActive ? "bg-orange-500" : "bg-gray-200"
-                }`}
-              >
-                <Text
-                  className={`text-sm ${
-                    isActive ? "text-white" : "text-gray-700"
-                  }`}
-                >
-                  {cat.label}
-                </Text>
-              </TouchableOpacity>
+              />
             );
           })}
         </ScrollView>
 
+
         {/* FILTERED EVENTS */}
-        <View className="mb-10">
+        <View className="mb-10 mt-5">
           {filteredEvents.map((ev) => (
             <View key={ev.id} className="mb-4">
               <EventCardPrice {...ev} />

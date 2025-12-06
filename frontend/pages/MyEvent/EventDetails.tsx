@@ -10,7 +10,13 @@ export default function EventDetails() {
   const navigation = useNavigation();
 
   // 👇 STATE QUYẾT ĐỊNH UI
-  const [isBooked, setIsBooked] = useState(true); // đổi true để test UI booked
+  const [isBooked, setIsBooked] = useState(false); // đổi true để test UI booked
+
+  const handleBooked = () => {
+    setIsBooked(true)
+    navigation.navigate('BuyTicket' as never);
+    
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
@@ -129,10 +135,10 @@ export default function EventDetails() {
         {!isBooked && (
           <TouchableOpacity
             className="bg-black rounded-2xl py-4 flex-row items-center justify-center"
-            onPress={() => setIsBooked(true)}  // tạm thời simulate mua vé
+            onPress={() => handleBooked()}  // tạm thời simulate mua vé
           >
             <Ionicons name="ticket-outline" size={22} color="white" />
-            <Text className="text-white text-lg font-semibold ml-2">BUY A TICKET</Text>
+            <Text className="text-white text-lg font-semibold ml-2">BUY TICKET</Text>
           </TouchableOpacity>
         )}
 

@@ -1,21 +1,49 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+
+
 
 interface Props {
   title: string;
+  iconKey: string;
   active?: boolean;
   onPress?: () => void;
 }
 
-export default function EventCategoryBar({ title, active, onPress }: Props) {
+export const CATEGORY_IMAGES: Record<string, any> = {
+  music: require("../../assets/interests/music.png"),
+  design: require("../../assets/interests/vector.png"),       // icon bút vẽ
+  art: require("../../assets/interests/paint-palette.png"),
+  sports: require("../../assets/interests/sports.png"),
+  food: require("../../assets/interests/salad.png"),
+  others: require("../../assets/interests/ellipsis.png"),
+};
+
+
+export default function EventCategoryBar({ title, iconKey, active, onPress }: Props) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`px-4 py-4 rounded-full mx-1 w-[100] ${
-        active ? "bg-primary" : "bg-gray-100"
-      }`}
+      className={`flex-row items-center px-5 py-2 rounded-full mr-3 ${active ? "bg-orange-500" : "bg-gray-200"
+        }`}
     >
-      <Text className={`${active ? "text-white" : "text-gray-700"} font-medium`}>
+      {/* Icon wrapper */}
+      <View
+        className={`w-7 h-7 rounded-full items-center justify-center mr-2 ${active ? "bg-white" : "bg-gray-300"
+          }`}
+      >
+        <Image
+          source={CATEGORY_IMAGES[iconKey]}
+          className="w-4 h-4"
+          resizeMode="contain"
+        />
+      </View>
+
+      {/* Label */}
+      <Text
+        className={`text-sm font-medium ${active ? "text-white" : "text-gray-700"
+          }`}
+      >
         {title}
       </Text>
     </TouchableOpacity>

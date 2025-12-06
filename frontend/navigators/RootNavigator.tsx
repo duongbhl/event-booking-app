@@ -13,6 +13,16 @@ import OrganizerProfile from "../pages/Profile/OrganizerProfile";
 import InviteFriend from "../pages/Communication/InviteFriend";
 import DrawerNavigation from "../components/Navigators_UI/Navigators";
 import Home from "../pages/Home";
+import Message from "../pages/Communication/Message";
+import Chat from "../pages/Communication/Chat";
+import BuyTicket from "../pages/Checkout/BuyTicket";
+import TicketScreen from "../pages/Checkout/Ticket";
+import Ticket from "../pages/Checkout/Ticket";
+import ScanCardScreen from "../pages/Checkout/ScanCard";
+import AddCard from "../pages/Checkout/AddCard";
+import PaymentScreen from "../pages/Checkout/Payment";
+import Payment from "../pages/Checkout/Payment";
+import ScanCard from "../pages/Checkout/ScanCard";
 
 const Stack = createStackNavigator();
 
@@ -27,7 +37,7 @@ export default function RootNavigator() {
       <Stack.Screen name="Notifications" component={Notification} />
       <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />
       <Stack.Screen name="BookMark" component={Home} />
-      <Stack.Screen name="Message" component={Home} />
+      <Stack.Screen name="Message" component={Message} />
       <Stack.Screen name="Setting" component={Home} />
       <Stack.Screen name="SignOut" component={Home} />
 
@@ -37,9 +47,16 @@ export default function RootNavigator() {
       <Stack.Screen name="Filter" component={Filter} />
       <Stack.Screen name="EventDetails" component={EventDetails}/>
       <Stack.Screen name="InviteFriend" component={InviteFriend}/>
+      <Stack.Screen name="Chat" component={Chat}/>
       <Stack.Screen name="MyEvent" component={Events} />
       <Stack.Screen name="EditProfile" component={EditProfile}/>
       <Stack.Screen name="OrganizerProfile" component={OrganizerProfile}/>
+
+      <Stack.Screen name="BuyTicket" component={BuyTicket}/>
+      <Stack.Screen name="Payment" component={Payment}/>
+      <Stack.Screen name="AddCard" component={AddCard}/>
+      <Stack.Screen name="ScanCard" component={ScanCard}/>
+      <Stack.Screen name="Ticket" component={Ticket}/>
     </Stack.Navigator>
   );
 }

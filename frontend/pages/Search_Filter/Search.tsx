@@ -9,44 +9,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import EventPriceCard from "../../components/Cards/EventPriceCard";
-
-const CATEGORIES = [
-  { key: "music", label: "Music" },
-  { key: "design", label: "Design" },
-  { key: "art", label: "Art" },
-  { key: "sports", label: "Sports" },
-  { key: "food", label: "Food" },
-  { key: "others", label: "Others" },
-];
-
-
-//du lieu mau
-const EVENTS = [
-  {
-    id: 1,
-    title: "Designers Meetup 2022",
-    date: "03 October, 22",
-    location: "Gulshan, Dhaka",
-    price: "$10 USD",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df",
-  },
-  {
-    id: 2,
-    title: "Dribbblers Meetup 2022",
-    date: "03 October, 22",
-    location: "Banani, Dhaka",
-    price: "$12 USD",
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30",
-  },
-  {
-    id: 3,
-    title: "Food Competition Event",
-    date: "10 October, 22",
-    location: "Uttara, Dhaka",
-    price: "$5 USD",
-    image: "https://images.unsplash.com/photo-1498654200943-1088dd4438ae",
-  },
-];
+import { CATEGORIES } from "../Home";
+import EventCategoryBar from "../../components/Bars/EventCategoryBar";
+import { ALL_EVENTS } from "../../data/event";
 
 
 export default function Search() {
@@ -80,30 +45,19 @@ export default function Search() {
       </View>
 
       {/* Categories */}
-      {/* Categories Chips */}
       <View className="mt-2">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 10 }}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {CATEGORIES.map((cat) => {
             const isActive = selectedCategory === cat.key;
 
             return (
-              <TouchableOpacity
+              <EventCategoryBar
                 key={cat.key}
+                title={cat.label}
+                iconKey={cat.key}   // truyền iconKey để lấy đúng ảnh
+                active={isActive}
                 onPress={() => setSelectedCategory(cat.key)}
-                className={`px-4 py-2 rounded-full mr-3 ${isActive ? "bg-orange-500" : "bg-gray-200"
-                  }`}
-              >
-                <Text
-                  className={`text-sm ${isActive ? "text-white" : "text-gray-700"
-                    }`}
-                >
-                  {cat.label}
-                </Text>
-              </TouchableOpacity>
+              />
             );
           })}
         </ScrollView>
@@ -117,7 +71,7 @@ export default function Search() {
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <View className="gap-3">
-          {EVENTS.map((item) => (
+          {ALL_EVENTS.map((item) => (
             <EventPriceCard
               key={item.id}
               title={item.title}

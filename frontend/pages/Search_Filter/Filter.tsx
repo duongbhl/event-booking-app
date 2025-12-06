@@ -10,19 +10,25 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
+import { CATEGORIES } from "../Home";
+import EventCategoryBar from "../../components/Bars/EventCategoryBar";
 
-const categories = ["Design", "Art", "Sports", "Music", "Food", "Others"];
+
 const timeOptions = ["Today", "Tomorrow", "This week"];
 
 export default function Filter() {
   const navigation = useNavigation();
 
-  const [selectedCat, setSelectedCat] = useState("Design");
+  const [selectedCategory, setSelectedCategory] = useState("music");
   const [selectedTime, setSelectedTime] = useState("Tomorrow");
   const [location, setLocation] = useState("Mirpur 10, Dhaka, Bangladesh");
 
   const [showPicker, setShowPicker] = useState(false);
   const [date, setDate] = useState(new Date());
+
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(120);
+
 
   return (
     <View className="flex-1 bg-white px-5 pt-12">
@@ -39,27 +45,18 @@ export default function Filter() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Category */}
         <Text className="text-base font-semibold mb-2">Category</Text>
-        <View className="flex-row flex-wrap mb-4">
-          {categories.map((c) => (
-            <TouchableOpacity
-              key={c}
-              onPress={() => setSelectedCat(c)}
-              className={`px-4 py-2 mr-2 mb-2 rounded-full border ${
-                selectedCat === c
-                  ? "bg-orange-500 border-orange-500"
-                  : "border-gray-300"
-              }`}
-            >
-              <Text
-                className={`${
-                  selectedCat === c ? "text-white" : "text-gray-700"
-                }`}
-              >
-                {c}
-              </Text>
-            </TouchableOpacity>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {CATEGORIES.map((cat) => (
+
+            <EventCategoryBar
+              key={cat.key}
+              title={cat.label}
+              iconKey={cat.key}   // truyền iconKey để lấy đúng ảnh
+              active={selectedCategory === cat.key}
+              onPress={() => setSelectedCategory(cat.key)}
+            />
           ))}
-        </View>
+        </ScrollView>
 
         {/* Time and Date */}
         <Text className="text-base font-semibold mb-2">Time and Date</Text>
@@ -69,16 +66,14 @@ export default function Filter() {
             <TouchableOpacity
               key={t}
               onPress={() => setSelectedTime(t)}
-              className={`px-4 py-2 mr-3 rounded-full border ${
-                selectedTime === t
-                  ? "bg-orange-500 border-orange-500"
-                  : "border-gray-300"
-              }`}
+              className={`px-4 py-2 mr-3 rounded-full border ${selectedTime === t
+                ? "bg-orange-500 border-orange-500"
+                : "border-gray-300"
+                }`}
             >
               <Text
-                className={`${
-                  selectedTime === t ? "text-white" : "text-gray-700"
-                }`}
+                className={`${selectedTime === t ? "text-white" : "text-gray-700"
+                  }`}
               >
                 {t}
               </Text>
@@ -114,10 +109,39 @@ export default function Filter() {
         </TouchableOpacity>
 
         {/* Price Range (Fake UI) */}
+        {/* PRICE RANGE */}
         <Text className="text-base font-semibold mb-2">Select price range</Text>
-        <Text className="text-orange-500 font-semibold mb-2">$20 - $120</Text>
 
-        <View className="h-16 bg-gray-200 rounded-xl mb-6" />
+        <View className="flex-row justify-between mb-6">
+          {/* MIN INPUT */}
+          <View className="w-[48%]">
+            <Text className="text-gray-500 mb-1">Min Price</Text>
+            <View className="border border-gray-300 rounded-xl px-4 py-3">
+              <TextInput
+                keyboardType="numeric"
+                value={String(minPrice)}
+                onChangeText={(v) => setMinPrice(Number(v) || 0)}
+                placeholder="0"
+                className="text-gray-900"
+              />
+            </View>
+          </View>
+
+          {/* MAX INPUT */}
+          <View className="w-[48%]">
+            <Text className="text-gray-500 mb-1">Max Price</Text>
+            <View className="border border-gray-300 rounded-xl px-4 py-3">
+              <TextInput
+                keyboardType="numeric"
+                value={String(maxPrice)}
+                onChangeText={(v) => setMaxPrice(Number(v) || 0)}
+                placeholder="0"
+                className="text-gray-900"
+              />
+            </View>
+          </View>
+        </View>
+
 
         {/* Buttons */}
         <View className="flex-row justify-between mb-8">
