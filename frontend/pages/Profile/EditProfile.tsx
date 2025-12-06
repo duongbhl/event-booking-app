@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, ScrollView, TouchableOpacity } from "reac
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function EditProfileScreen() {
+export default function EditProfile() {
   const navigation = useNavigation();
 
   return (

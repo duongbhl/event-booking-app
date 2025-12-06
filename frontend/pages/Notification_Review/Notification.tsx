@@ -2,7 +2,7 @@ import React from "react";
 import { View, ScrollView, TouchableOpacity, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { InvitationCard } from "../components/InvitationCard";
+import { InvitationCard } from "../../components/Cards/InvitationCard";
 import { useNavigation } from "@react-navigation/native";
 
 
@@ -54,7 +54,7 @@ const NOTIFICATIONS = {
   ],
 };
 
-export default function NotificationScreen() {
+export default function Notification() {
   const hasNotifications =
     NOTIFICATIONS.unread.length > 0 || NOTIFICATIONS.yesterday.length > 0;
   const navigation = useNavigation();
@@ -76,7 +76,7 @@ export default function NotificationScreen() {
       {!hasNotifications && (
         <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
           <Image
-            source={require("../assets/animal.png")} // sửa đường dẫn image
+            source={{uri:"frontend\assets\animal.png"}} // sửa đường dẫn image
             style={{ width: 180, height: 180 }}
             resizeMode="contain"
           />

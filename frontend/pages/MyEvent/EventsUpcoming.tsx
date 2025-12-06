@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import EventCard from "../../components/EventCard";
+import EventCard from "../../components/Cards/EventCard";
 
 const UPCOMING_EVENTS = [
   {
@@ -10,6 +10,7 @@ const UPCOMING_EVENTS = [
     date: "15 November, 2025",
     location: "Gulshan, Dhaka",
     members: 150,
+    price:"10 $",
     image:
       "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
   },
@@ -19,6 +20,7 @@ const UPCOMING_EVENTS = [
     date: "20 November, 2025",
     location: "Banani, Dhaka",
     members: 90,
+    price:"10 $",
     image:
       "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=2070",
   },
@@ -31,7 +33,7 @@ export default function UpcomingEvents() {
     return (
       <View className="flex-1 justify-center items-center px-6">
         <Image
-          source={require("/home/oizoiui/Documents/Mobile/event-booking-app/frontend/assets/no-task.png")} // sửa đường dẫn image
+          source={{uri:'booking_event_app\frontend\assets\no-task.png'}} // sửa đường dẫn image
           style={{ width: 180, height: 180 }}
           resizeMode="contain"
         />
@@ -57,6 +59,7 @@ export default function UpcomingEvents() {
             location={ev.location}
             members={ev.members}
             image={ev.image}
+            price={ev.price}
             onPress={() =>
               navigation.navigate(
                 "CreateEditEvent" as never,

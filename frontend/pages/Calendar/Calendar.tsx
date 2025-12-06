@@ -127,7 +127,7 @@ export default function CalendarScreen() {
         ) : (
           <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
             <Image
-              source={require("../assets/no-task.png")} // sửa đường dẫn image
+              source={{uri:"frontend\assets\no-task.png"}} // sửa đường dẫn image
               style={{ width: 180, height: 180 }}
               resizeMode="contain"
             />

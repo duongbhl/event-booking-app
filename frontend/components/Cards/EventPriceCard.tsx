@@ -1,21 +1,18 @@
 import { View, Text, Image } from "react-native";
 import { Button } from "react-native-paper";
+import { EventCardProps } from "../Interface/EventCardProps";
+import { useNavigation } from "@react-navigation/native";
 
-type EventCardProps = {
-  title: string;
-  date: string;
-  location: string;
-  price: string;
-  image: string;
-};
 
-export default function EventCardPrice({
+
+export default function EventPriceCard({
   title,
   date,
   location,
   price,
   image,
 }: EventCardProps) {
+  const navigation = useNavigation();
   return (
     <View className="flex-row items-center bg-white rounded-2xl shadow-md p-3 w-[370px] ml-5">
       <Image
@@ -35,7 +32,7 @@ export default function EventCardPrice({
           mode="text"
           compact
           labelStyle={{ fontWeight: "700" }}
-          onPress={() => {}}
+          onPress={() => navigation.navigate("EventDetails" as never)}
         >
           JOIN NOW
         </Button>

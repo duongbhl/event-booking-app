@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import UpcomingEvents from "./EventsUpcoming";
 import PastEvents from "./EventsPass";
 
-export default function EventsScreen() {
+export default function Events() {
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const navigation = useNavigation();
 

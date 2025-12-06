@@ -2,6 +2,7 @@ import React from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from "@react-navigation/native";
 
 export default function CustomDrawer(props: any) {
@@ -70,6 +71,15 @@ export default function CustomDrawer(props: any) {
           />
         )}
         onPress={() => {}}
+      />
+
+      {/* Message */}
+      <DrawerItem
+        label="Messages"
+        icon={() => (
+          <MaterialCommunityIcons name="message-outline" size={30} color="#FF7A00" />
+        )}
+        onPress={() => navigation.navigate('Message' as never)}
       />
 
       {/* Settings */}

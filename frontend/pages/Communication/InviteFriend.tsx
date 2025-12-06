@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, ScrollView } from "react-native";
+import { View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import UserInviteCard from "../components/UserInviteCard";
+import UserInviteCard from "../../components/Cards/UserInviteCard";
+import { useNavigation } from "@react-navigation/native";
 
-export default function InviteFriendScreen() {
+export default function InviteFriend() {
   const [search, setSearch] = useState("");
+  const navigation = useNavigation()
 
   const friends = [
     {
@@ -52,9 +54,23 @@ export default function InviteFriendScreen() {
   return (
     <View className="flex-1 bg-white pt-14 px-4">
       {/* Header */}
-      <Text className="text-center text-xl font-semibold text-gray-900 mb-6">
-        Invite Friend
-      </Text>
+      <View className="flex-row items-center justify-between mb-6">
+
+        {/* Back button */}
+        <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={26} color="#111827" />
+        </TouchableOpacity>
+
+        {/* Title */}
+        <Text className="text-xl font-semibold text-gray-900">
+          Invite Friend
+        </Text>
+
+        {/* Placeholder same width as back button */}
+        <View style={{ width: 26 }} />
+      </View>
+
+
 
       {/* Search bar */}
       <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 h-12 mb-6">
@@ -69,20 +85,26 @@ export default function InviteFriendScreen() {
       </View>
 
       {/* Friends list */}
+      {/* Friends list */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 30 }}
+        contentContainerStyle={{
+          paddingBottom: 30,
+        }}
       >
-        {filteredFriends.map((f, index) => (
-          <UserInviteCard
-            key={index}
-            name={f.name}
-            followers={f.followers}
-            avatar={f.avatar}
-            status={f.status as any}
-          />
-        ))}
+        <View className="space-y-4 px-1">
+          {filteredFriends.map((f, index) => (
+            <UserInviteCard
+              key={index}
+              name={f.name}
+              followers={f.followers}
+              avatar={f.avatar}
+              status={f.status as any}
+            />
+          ))}
+        </View>
       </ScrollView>
+
     </View>
   );
 }

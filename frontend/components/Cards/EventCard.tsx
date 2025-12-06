@@ -1,18 +1,19 @@
 import React from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Colors from "../constants/colors";
+import Colors from "../../constants/colors";
+import { EventCardProps } from "../Interface/EventCardProps";
+import { useNavigation } from "@react-navigation/native";
 
-interface EventCardProps {
-  title: string;
-  date: string;
-  location: string;
-  members: number;
-  image: string;
+
+
+
+interface EventCardProp extends EventCardProps {
   onPress?: () => void;
+  members: number
 }
 
-const EventCard: React.FC<EventCardProps> = ({
+const EventCard: React.FC<EventCardProp> = ({
   title,
   date,
   location,
@@ -20,10 +21,11 @@ const EventCard: React.FC<EventCardProps> = ({
   image,
   onPress,
 }) => {
+  const navigation = useNavigation();
   return (
     <TouchableOpacity
-      onPress={onPress}
-      className="bg-white rounded-2xl shadow-md overflow-hidden mb-4 w-72"
+      onPress={()=>navigation.navigate("CreateEditEvent" as never)} 
+      className="bg-white rounded-2xl shadow-md overflow-hidden mb-4 w-full"
       style={{ shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 10 }}
     >
       <Image source={{ uri: image }} className="w-full h-44" />

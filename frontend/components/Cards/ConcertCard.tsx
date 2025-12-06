@@ -1,13 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
+import { ConcertCardProps } from "../Interface/ConcertCardProps";
 
-type ConcertCardProps = {
-  title: string;
-  location: string;
-  date: string;
-  members: string[];
-  booked?: boolean;
-};
 
 export default function ConcertCard({
   title,

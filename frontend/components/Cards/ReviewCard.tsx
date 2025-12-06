@@ -1,13 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 import { Card, Avatar, Text, IconButton } from "react-native-paper";
+import { ReviewCardProps } from "../Interface/ReviewCardProps";
 
-interface ReviewCardProps {
-  name: string;
-  date: string;
-  rating: number;
-  comment: string;
-}
 
 export const ReviewCard: React.FC<ReviewCardProps> = ({
   name,

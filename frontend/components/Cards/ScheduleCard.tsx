@@ -1,19 +1,6 @@
 import { View, Text } from "react-native";
-import EventCardPrice from "./EventCardPrice";
-import Colors from "../constants/colors";
-
-type ScheduleCardProps = {
-  day: string;
-  month: string;
-  year: string;
-  event: {
-    title: string;
-    date: string;
-    location: string;
-    price: string;
-    image: string;
-  };
-};
+import EventCardPrice from "./EventPriceCard";
+import { ScheduleCardProps } from "../Interface/ScheduleCardProps";
 
 export default function ScheduleCard({
   day,

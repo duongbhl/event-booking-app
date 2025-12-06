@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 const categories = ["Design", "Art", "Sports", "Music", "Food", "Others"];
 const timeOptions = ["Today", "Tomorrow", "This week"];
 
-export default function FilterScreen() {
+export default function Filter() {
   const navigation = useNavigation();
 
   const [selectedCat, setSelectedCat] = useState("Design");

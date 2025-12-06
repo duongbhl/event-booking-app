@@ -7,7 +7,7 @@ interface Props {
   onPress?: () => void;
 }
 
-export default function EventCategoryButton({ title, active, onPress }: Props) {
+export default function EventCategoryBar({ title, active, onPress }: Props) {
   return (
     <TouchableOpacity
       onPress={onPress}

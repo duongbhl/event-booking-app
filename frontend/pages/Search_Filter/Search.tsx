@@ -7,8 +7,8 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import EventCardPrice from "../components/EventCardPrice";
 import { useNavigation } from "@react-navigation/native";
+import EventPriceCard from "../../components/Cards/EventPriceCard";
 
 const CATEGORIES = [
   { key: "music", label: "Music" },
@@ -19,7 +19,37 @@ const CATEGORIES = [
   { key: "others", label: "Others" },
 ];
 
-export default function SearchScreen() {
+
+//du lieu mau
+const EVENTS = [
+  {
+    id: 1,
+    title: "Designers Meetup 2022",
+    date: "03 October, 22",
+    location: "Gulshan, Dhaka",
+    price: "$10 USD",
+    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df",
+  },
+  {
+    id: 2,
+    title: "Dribbblers Meetup 2022",
+    date: "03 October, 22",
+    location: "Banani, Dhaka",
+    price: "$12 USD",
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30",
+  },
+  {
+    id: 3,
+    title: "Food Competition Event",
+    date: "10 October, 22",
+    location: "Uttara, Dhaka",
+    price: "$5 USD",
+    image: "https://images.unsplash.com/photo-1498654200943-1088dd4438ae",
+  },
+];
+
+
+export default function Search() {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("music");
 
@@ -81,31 +111,25 @@ export default function SearchScreen() {
 
 
       {/* Event List */}
-      <ScrollView showsVerticalScrollIndicator={false} className="mt-4">
-        <EventCardPrice
-          title="Designers Meetup 2022"
-          date="03 October, 22"
-          location="Gulshan, Dhaka"
-          price="$10 USD"
-          image="https://images.unsplash.com/photo-1551836022-d5d88e9218df"
-        />
-
-        <EventCardPrice
-          title="Dribbblers Meetup 2022"
-          date="03 October, 22"
-          location="Banani, Dhaka"
-          price="$12 USD"
-          image="https://images.unsplash.com/photo-1492684223066-81342ee5ff30"
-        />
-
-        <EventCardPrice
-          title="Food Competition Event"
-          date="10 October, 22"
-          location="Uttara, Dhaka"
-          price="$5 USD"
-          image="https://images.unsplash.com/photo-1498654200943-1088dd4438ae"
-        />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="mt-4"
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <View className="gap-3">
+          {EVENTS.map((item) => (
+            <EventPriceCard
+              key={item.id}
+              title={item.title}
+              date={item.date}
+              location={item.location}
+              price={item.price}
+              image={item.image}
+            />
+          ))}
+        </View>
       </ScrollView>
+
     </View>
   );
 }

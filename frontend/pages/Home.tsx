@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import EventCard from "../components/EventCard";
-import EventCardPrice from "../components/EventCardPrice";
+import EventCard from "../components/Cards/EventCard";
+import EventCardPrice from "../components/Cards/EventPriceCard";
 import { useNavigation } from "@react-navigation/native";
 
 const CATEGORIES = [
@@ -29,9 +29,20 @@ const MY_EVENTS = [
     date: "12–15 Oct, 22",
     location: "Dhaka, BD",
     members: 150,
+    price:"$10",
     image:
       "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
   },
+  {
+    id: 2,
+    title: "International Band Music Concert",
+    date: "12–15 Oct, 22",
+    location: "Dhaka, BD",
+    members: 150,
+    price:"$10",
+    image:
+      "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=2070",
+  }
 ];
 
 const ALL_EVENTS = [
@@ -67,7 +78,7 @@ const ALL_EVENTS = [
   },
 ];
 
-export default function HomeScreen() {
+export default function Home() {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("music");
 
@@ -127,7 +138,7 @@ export default function HomeScreen() {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {MY_EVENTS.map((ev) => (
-            <View key={ev.id} className="mr-10 w-64">
+            <View key={ev.id} className="mr-10 w-80">
               <EventCard {...ev} />
             </View>
           ))}

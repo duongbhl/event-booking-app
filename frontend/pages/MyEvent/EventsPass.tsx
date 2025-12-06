@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import EventCardPrice from "../../components/EventCardPrice";
+import EventPriceCard from "../../components/Cards/EventPriceCard";
 
 const PAST_EVENTS = [
   {
@@ -33,6 +33,8 @@ const PAST_EVENTS = [
   },
 ];
 
+
+
 export default function PastEvents() {
   const navigation = useNavigation();
 
@@ -49,7 +51,7 @@ export default function PastEvents() {
             }
           >
             <View className="mb-4">
-              <EventCardPrice
+              <EventPriceCard
                 title={ev.title}
                 date={ev.date}
                 location={ev.location}

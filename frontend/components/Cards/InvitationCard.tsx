@@ -1,18 +1,11 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Avatar, Text } from "react-native-paper";
+import { InvitationCardProps } from "../Interface/InvitationCardProps";
 
-interface NotificationCardProps {
-  avatar: string;
-  name: string;
-  message: string;
-  time: string;
-  type?: "invite" | "follow" | "comment" | "like";
-  onAccept?: () => void;
-  onReject?: () => void;
-}
 
-export const InvitationCard: React.FC<NotificationCardProps> = ({
+
+export const InvitationCard: React.FC<InvitationCardProps> = ({
   avatar,
   name,
   message,

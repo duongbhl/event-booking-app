@@ -5,12 +5,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 
 // Screens
-import HomeScreen from "../pages/Home";
-import CalendarScreen from "../pages/Calendar";
-import SelectLocationScreen from "../pages/SelectLocation";
-import ProfileScreen from "../pages/Profile";
+import CalendarScreen from "../pages/Calendar/Calendar";
+import SelectLocationScreen from "../pages/Registration/SelectLocation";
+import ProfileScreen from "../pages/Profile/Profile";
 import CustomTabBar from "./CustomTabBar";
-import HomeStack from "../navigates/HomeStackNavigator";
+import HomeStack from "../navigators/HomeStackNavigator";
 
 
 type TabIconProps = {

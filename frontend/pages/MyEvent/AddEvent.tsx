@@ -16,18 +16,18 @@ interface EventFormProps {
   isEdit?: boolean;
 }
 
-export default function CreateEditEventScreen() {
+export default function CreateEditEvent() {
   const navigation = useNavigation();
   const route = useRoute() as any;
   const isEdit = route.params?.isEdit || false;
 
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [gallery, setGallery] = useState<string[]>([]);
   const [eventName, setEventName] = useState(
     isEdit ? "International Band Music Concert" : ""
   );
   const [eventType, setEventType] = useState(isEdit ? "Music" : "");
   const [date, setDate] = useState<Date>(new Date());
+  const [price,setPrice] = useState(isEdit ? 'Enter your price here':'0');
   const [showPicker, setShowPicker] = useState(false);
   const [description, setDescription] = useState(
     isEdit
@@ -46,16 +46,6 @@ export default function CreateEditEventScreen() {
     }
   };
 
-  // Pick gallery photos
-  const pickGalleryImages = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
-    if (!res.canceled) {
-      setGallery([...gallery, res.assets[0].uri]);
-    }
-  };
 
   return (
     <ScrollView className="flex-1 bg-white px-5 pt-10">
@@ -90,25 +80,7 @@ export default function CreateEditEventScreen() {
         )}
       </TouchableOpacity>
 
-      {/* Gallery small images */}
-      <View className="flex-row mb-6">
-        {gallery.map((img, i) => (
-          <Image
-            key={i}
-            source={{ uri: img }}
-            className="w-16 h-16 rounded-xl mr-3"
-          />
-        ))}
-
-        {gallery.length < 4 && (
-          <TouchableOpacity
-            className="w-16 h-16 border-2 border-dashed border-orange-400 rounded-xl items-center justify-center"
-            onPress={pickGalleryImages}
-          >
-            <Ionicons name="add" size={24} color="#FF7A00" />
-          </TouchableOpacity>
-        )}
-      </View>
+      
 
       {/* Inputs */}
       <Text className="font-medium mb-1">Event Name *</Text>
@@ -148,6 +120,15 @@ export default function CreateEditEventScreen() {
           }}
         />
       )}
+
+      {/* Inputs */}
+      <Text className="font-medium mb-1">Price</Text>
+      <TextInput
+        className="border border-gray-300 rounded-xl p-3 mb-4"
+        value={price}
+        onChangeText={setPrice}
+        placeholder="Type your price here"
+      />
 
       <Text className="font-medium mb-1">Event Description *</Text>
       <TextInput
