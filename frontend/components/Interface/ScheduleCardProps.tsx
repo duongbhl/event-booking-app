@@ -12,7 +12,7 @@ export interface ScheduleCardProps {
     member?: number;
     location: string;
     price: number;
-    image?: string;
+    images?: string;
     rating?: number;
     status: 'upcoming' | 'ongoing' | 'finished' | 'cancelled';
     organizer: {

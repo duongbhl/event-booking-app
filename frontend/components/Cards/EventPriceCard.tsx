@@ -13,7 +13,7 @@ export default function EventPriceCard({
   return (
     <View className="flex-row items-center bg-white rounded-2xl shadow-md p-3 w-[370px] ml-5">
       <Image
-        source={{ uri: event.image }}
+        source={{ uri: event.images }}
         className="w-16 h-16 rounded-lg mr-3"
         resizeMode="cover"
       />

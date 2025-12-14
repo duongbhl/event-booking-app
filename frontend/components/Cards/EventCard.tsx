@@ -23,7 +23,7 @@ const EventCard: React.FC<EventCardProp> = ({
       className="bg-white rounded-2xl shadow-md overflow-hidden mb-4 w-full"
       style={{ shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 10 }}
     >
-      <Image source={{ uri: event.image}} className="w-full h-44" />
+      <Image source={{ uri: event.images}} className="w-full h-44" resizeMode="cover" />
       <View className="p-4">
         <Text className="text-base font-semibold text-primary" numberOfLines={1}>
           {event.title}

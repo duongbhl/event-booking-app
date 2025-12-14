@@ -67,6 +67,7 @@ export default function UpcomingEvents() {
       <View className="mt-2">
         {upcomingEvents.map((ev) => (
           <EventCard
+            key={ev._id}
             {...ev}
             onPress={() =>
               navigation.navigate(
