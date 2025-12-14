@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Modal, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 
 import dayjs from "dayjs";
+import { getEvents } from "../../services/event.service";
+import { EventCardProps } from "../../components/Interface/EventCardProps";
+import { useIsFocused } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
 
 const FILTER_TYPES = [
   { key: "design", label: "Design" },
@@ -15,47 +19,53 @@ const FILTER_TYPES = [
   { key: "others", label: "Others" },
 ];
 
-// Fake Data
-const EVENTS = [
-  {
-    id: 1,
-    date: "2022-10-07",
-    title: "Designers Meetup 2022",
-    type: "design",
-  },
-  {
-    id: 2,
-    date: "2022-10-07",
-    title: "Dribbblers Meetup 2022",
-    type: "art",
-  },
-  {
-    id: 3,
-    date: "2022-10-10",
-    title: "Food Competition Event",
-    type: "food",
-  },
-  {
-    id: 4,
-    date: "2022-10-10",
-    title: "Basketball Final Match",
-    type: "sports",
-  },
-];
-
 export default function CalendarTable() {
   const [openCalendar, setOpenCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [filterModal, setFilterModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [events, setEvents] = useState<EventCardProps[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("music");
+    const { user } = useAuth();
+  const isFocused = useIsFocused();
+  // Fetch events when the screen is focused
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const data = await getEvents();
+        setEvents(data);
+      } catch (error) {
+        console.log("Fetch events error:", error);
+      }
+    };
 
+    if (isFocused) {
+      fetchEvents();
+    }
+  }, [isFocused]);
+
+
+  // Lấy tất cả sự kiện theo category đã chọn và không phải của user hiện tại
+  const allEvents = useMemo(() => {
+        return events.filter(
+          (ev) =>
+            ev.organizer._id !== user?._id &&
+            ev.category === selectedCategory
+        );
+      }, [events, selectedCategory, user]);
+
+      
   // Lọc sự kiện theo ngày và filter
-  const filteredEvents = EVENTS.filter((ev) => {
-    const matchDate = ev.date === selectedDate;
+  const filteredEvents = allEvents.filter((ev) => {
+    const eventDate = dayjs(ev.date).format("YYYY-MM-DD");
+
+    const matchDate = eventDate === selectedDate;
     const matchFilter =
-      selectedFilters.length === 0 || selectedFilters.includes(ev.type);
+      selectedFilters.length === 0 || selectedFilters.includes(ev.category);
+
     return matchDate && matchFilter;
   });
+
 
   const toggleFilter = (key: string) => {
     setSelectedFilters((prev) =>
@@ -115,12 +125,12 @@ export default function CalendarTable() {
         {filteredEvents.length > 0 ? (
           filteredEvents.map((ev) => (
             <View
-              key={ev.id}
+              key={ev._id}
               className="bg-white rounded-xl p-4 shadow mb-3 flex-row items-center"
             >
               <View className="flex-1">
                 <Text className="text-lg font-semibold">{ev.title}</Text>
-                <Text className="text-gray-500">{ev.type.toUpperCase()}</Text>
+                <Text className="text-gray-500">{ev.category.toUpperCase()}</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color="#777" />
             </View>
@@ -128,7 +138,7 @@ export default function CalendarTable() {
         ) : (
           <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
             <Image
-              source={{uri:"frontend\assets\no-task.png"}} // sửa đường dẫn image
+              source={require("../../assets/no-task.png")}
               style={{ width: 180, height: 180 }}
               resizeMode="contain"
             />

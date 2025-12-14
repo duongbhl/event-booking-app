@@ -3,16 +3,16 @@ import express from 'express';
 import { protect, authorize } from '../middleware/auth.middleware';
 import { createEvent, deleteEvent, getEvent, listEvents, updateEvent } from '../controllers/event.controller';
 
-export const eventRoutes = Router()
+export const eventRoutes = express.Router()
 
-const router = express.Router();
-router.get('/', listEvents);
 
-router.get('/:id', getEvent);
+eventRoutes.get('/', listEvents);
 
-router.post('/', protect, authorize('user'), createEvent);
+eventRoutes.get('/:id', getEvent);
 
-router.put('/:id', protect, authorize('user'), updateEvent);
+eventRoutes.post('/', protect, authorize('user'), createEvent);
 
-router.delete('/:id', protect, authorize('user'), deleteEvent);
-export default router;
+eventRoutes.put('/:id', protect, authorize('user'), updateEvent);
+
+eventRoutes.delete('/:id', protect, authorize('user'), deleteEvent);
+export default eventRoutes;

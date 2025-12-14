@@ -5,34 +5,64 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
+
 import { CATEGORIES } from "../Home";
 import EventCategoryBar from "../../components/Bars/EventCategoryBar";
 
+/* ================= TYPES ================= */
+type TimeOption = "Tomorrow" | "This week" | "This month";
 
-const timeOptions = ["Today", "Tomorrow", "This week"];
+type SearchFilter = {
+  category?: string;
+  time?: TimeOption;
+  date?: Date;
+  minPrice?: number;
+  maxPrice?: number;
+};
+
+const timeOptions: TimeOption[] = ["Tomorrow", "This week", "This month"];
 
 export default function Filter() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
-  const [selectedCategory, setSelectedCategory] = useState("music");
-  const [selectedTime, setSelectedTime] = useState("Tomorrow");
-  const [location, setLocation] = useState("Mirpur 10, Dhaka, Bangladesh");
+  /* ================= STATE ================= */
+  const [selectedCategory, setSelectedCategory] = useState<string>("music");
+  const [selectedTime, setSelectedTime] = useState<TimeOption>("Tomorrow");
 
   const [showPicker, setShowPicker] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date>(new Date());
 
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(120);
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(120);
 
+  /* ================= HANDLERS ================= */
+  const handleApply = () => {
+    const filters: SearchFilter = {
+      category: selectedCategory,
+      time: selectedTime,
+      date:date,
+      minPrice, 
+      maxPrice,
+    };
+
+    navigation.navigate("Search", { filters });
+  };
+
+  const handleReset = () => {
+    setSelectedCategory("music");
+    setSelectedTime("Tomorrow");
+    setMinPrice(0);
+    setMaxPrice(120);
+    setDate(new Date());
+  };
 
   return (
     <View className="flex-1 bg-white px-5 pt-12">
-      {/* Title */}
+      {/* ================= HEADER ================= */}
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="close" size={28} color="black" />
@@ -43,37 +73,40 @@ export default function Filter() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Category */}
+        {/* ================= CATEGORY ================= */}
         <Text className="text-base font-semibold mb-2">Category</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {CATEGORIES.map((cat) => (
-
+          {CATEGORIES.map(cat => (
             <EventCategoryBar
               key={cat.key}
               title={cat.label}
-              iconKey={cat.key}   // truyền iconKey để lấy đúng ảnh
+              iconKey={cat.key}
               active={selectedCategory === cat.key}
               onPress={() => setSelectedCategory(cat.key)}
             />
           ))}
         </ScrollView>
 
-        {/* Time and Date */}
-        <Text className="text-base font-semibold mb-2">Time and Date</Text>
+        {/* ================= TIME ================= */}
+        <Text className="text-base font-semibold mb-2 mt-4">
+          Time and Date
+        </Text>
 
         <View className="flex-row mb-3">
-          {timeOptions.map((t) => (
+          {timeOptions.map(t => (
             <TouchableOpacity
               key={t}
               onPress={() => setSelectedTime(t)}
-              className={`px-4 py-2 mr-3 rounded-full border ${selectedTime === t
-                ? "bg-orange-500 border-orange-500"
-                : "border-gray-300"
-                }`}
+              className={`px-4 py-2 mr-3 rounded-full border ${
+                selectedTime === t
+                  ? "bg-orange-500 border-orange-500"
+                  : "border-gray-300"
+              }`}
             >
               <Text
-                className={`${selectedTime === t ? "text-white" : "text-gray-700"
-                  }`}
+                className={`${
+                  selectedTime === t ? "text-white" : "text-gray-700"
+                }`}
               >
                 {t}
               </Text>
@@ -81,12 +114,14 @@ export default function Filter() {
           ))}
         </View>
 
-        {/* Date Picker */}
+        {/* ================= DATE PICKER ================= */}
         <TouchableOpacity
           onPress={() => setShowPicker(true)}
           className="border border-gray-300 rounded-xl p-3 flex-row justify-between items-center mb-4"
         >
-          <Text className="text-gray-700">Choose from calendar</Text>
+          <Text className="text-gray-700">
+            {date.toLocaleDateString("en-GB")}
+          </Text>
           <Ionicons name="calendar-outline" size={20} color="gray" />
         </TouchableOpacity>
 
@@ -94,62 +129,60 @@ export default function Filter() {
           <DateTimePicker
             value={date}
             mode="date"
-            onChange={(e, d) => {
+            minimumDate={new Date()}
+            onChange={(_, selected) => {
               setShowPicker(false);
-              if (d) setDate(d);
+              if (selected) setDate(selected);
             }}
           />
         )}
 
-        {/* Location */}
-        <Text className="text-base font-semibold mb-2">Location</Text>
-        <TouchableOpacity className="border border-gray-300 rounded-xl p-3 flex-row justify-between items-center mb-4">
-          <Text>{location}</Text>
-          <Ionicons name="location-outline" size={20} color="gray" />
-        </TouchableOpacity>
-
-        {/* Price Range (Fake UI) */}
-        {/* PRICE RANGE */}
-        <Text className="text-base font-semibold mb-2">Select price range</Text>
+        {/* ================= PRICE RANGE ================= */}
+        <Text className="text-base font-semibold mb-2">
+          Select price range
+        </Text>
 
         <View className="flex-row justify-between mb-6">
-          {/* MIN INPUT */}
+          {/* MIN */}
           <View className="w-[48%]">
             <Text className="text-gray-500 mb-1">Min Price</Text>
             <View className="border border-gray-300 rounded-xl px-4 py-3">
               <TextInput
                 keyboardType="numeric"
                 value={String(minPrice)}
-                onChangeText={(v) => setMinPrice(Number(v) || 0)}
+                onChangeText={v => setMinPrice(Number(v) || 0)}
                 placeholder="0"
-                className="text-gray-900"
               />
             </View>
           </View>
 
-          {/* MAX INPUT */}
+          {/* MAX */}
           <View className="w-[48%]">
             <Text className="text-gray-500 mb-1">Max Price</Text>
             <View className="border border-gray-300 rounded-xl px-4 py-3">
               <TextInput
                 keyboardType="numeric"
                 value={String(maxPrice)}
-                onChangeText={(v) => setMaxPrice(Number(v) || 0)}
+                onChangeText={v => setMaxPrice(Number(v) || 0)}
                 placeholder="0"
-                className="text-gray-900"
               />
             </View>
           </View>
         </View>
 
-
-        {/* Buttons */}
-        <View className="flex-row justify-between mb-8">
-          <TouchableOpacity className="border border-gray-400 rounded-xl px-6 py-3">
+        {/* ================= ACTION BUTTONS ================= */}
+        <View className="flex-row justify-between mb-10">
+          <TouchableOpacity
+            className="border border-gray-400 rounded-xl px-6 py-3"
+            onPress={handleReset}
+          >
             <Text className="text-gray-700 font-medium">RESET</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="bg-black rounded-xl px-10 py-3">
+          <TouchableOpacity
+            className="bg-black rounded-xl px-10 py-3"
+            onPress={handleApply}
+          >
             <Text className="text-white font-semibold">APPLY</Text>
           </TouchableOpacity>
         </View>

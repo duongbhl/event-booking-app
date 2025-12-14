@@ -11,7 +11,7 @@ export const bookTicket = async (req: any, res: Response) => {
 
 
     const sold = await Ticket.countDocuments({ event: eventId, paymentStatus: 'paid' });
-    if (sold >= event.capacity) return res.status(400).json({ message: 'Sold out' });
+    if (sold >= event.member) return res.status(400).json({ message: 'Sold out' });
 
 
     const ticket = await Ticket.create({

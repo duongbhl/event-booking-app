@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Review from '../models/review.model';
-import Event from '../models/event.model.js';
+import Event from '../models/event.model';
 
 
 

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
-import EventCardPrice from "./EventPriceCard";
 import { ScheduleCardProps } from "../Interface/ScheduleCardProps";
+import EventPriceCard from "./EventPriceCard";
 
 export default function ScheduleCard({
   day,
@@ -21,7 +21,7 @@ export default function ScheduleCard({
         <Text className="text-xs text-gray-500 mb-1">
           WED, {day}TH {month.toUpperCase()}, {year}
         </Text>
-        <EventCardPrice {...event} />
+        <EventPriceCard {...event} />
       </View>
     </View>
   );

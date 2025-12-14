@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import User from '../models/user.model';
-import { generateToken } from '../utils/generateToken.js';
 import bcrypt from "bcryptjs";
+import { generateToken } from '../utils/generateToken';
 
 
 

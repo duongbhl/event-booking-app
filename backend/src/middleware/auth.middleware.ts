@@ -11,20 +11,33 @@ export interface JWTPayload {
     exp:number
 }
 
-export const protect = async(req:any,res:Response,nextFunction:NextFunction) => {
-    let token = req.headers.authorization.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1]:undefined;
-    if(!token) return res.status(401).json({message:"No authorized, no token"})
+export const protect = async (req: any, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
 
-    try {
-        const decoded = jwt.verify(token,process.env.SECRET as string) as JWTPayload;
-        const user = await User.findById(decoded.id).select('-password');
-        if(!user) return res.status(401).json({message:"Not authorized"})
-        req.user={id: decoded.id, role:user.role};
-        nextFunction();
-    } catch (error) {
-        return res.status(401).json({message:"Token invalid"});
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Not authorized, no token" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.SECRET as string
+    ) as JWTPayload;
+
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
     }
-}
+
+    req.user = user; // ✅ QUAN TRỌNG
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Token invalid" });
+  }
+};
 
 
 export const authorize = (role: "admin" | "user") => {

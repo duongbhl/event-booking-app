@@ -8,16 +8,64 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Button } from "react-native-paper";
-
+import { useNavigation } from "@react-navigation/native";
+import { login } from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SignIn() {
+    const navigation = useNavigation<any>();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
     const [remember, setRemember] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const { login: saveAuth } = useAuth();
+
+    const handleSignIn = async () => {
+        if (!email || !password) {
+            Alert.alert("Error", "Please enter email and password");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const data = await login({ email, password });
+
+            await saveAuth(
+                {
+                    _id: data._id,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role,
+                },
+                data.token
+            );
+
+
+            Alert.alert("Success", "Login successfully");
+
+
+
+        } catch (error: any) {
+            console.log("LOGIN ERROR:", error?.response?.data);
+
+            Alert.alert(
+                "Login failed",
+                error?.response?.data?.message || "Invalid credentials"
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -30,10 +78,9 @@ export default function SignIn() {
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-
                     {/* Header */}
                     <View className="flex-row items-center justify-between mt-2">
-                        <TouchableOpacity className="p-1">
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Ionicons name="chevron-back" size={26} color="#111827" />
                         </TouchableOpacity>
                         <View style={{ width: 24 }} />
@@ -47,8 +94,6 @@ export default function SignIn() {
                         Give credential to sign in your account
                     </Text>
 
-
-
                     {/* Email */}
                     <View className="mt-8">
                         <Text className="text-gray-600 mb-2">Email</Text>
@@ -59,6 +104,8 @@ export default function SignIn() {
                                 className="ml-3 flex-1"
                                 autoCapitalize="none"
                                 keyboardType="email-address"
+                                value={email}
+                                onChangeText={setEmail}
                             />
                         </View>
                     </View>
@@ -72,8 +119,12 @@ export default function SignIn() {
                                 placeholder="Type your password"
                                 className="ml-3 flex-1"
                                 secureTextEntry={!showPassword}
+                                value={password}
+                                onChangeText={setPassword}
                             />
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
                                 <Ionicons
                                     name={showPassword ? "eye-off-outline" : "eye-outline"}
                                     size={22}
@@ -96,24 +147,27 @@ export default function SignIn() {
                         </View>
 
                         <TouchableOpacity>
-                            <Text className="text-orange-500 font-medium">Forgot Password?</Text>
+                            <Text className="text-orange-500 font-medium">
+                                Forgot Password?
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Sign In Button */}
-                    <TouchableOpacity className="mt-8">
+                    <TouchableOpacity
+                        className="mt-8"
+                        onPress={handleSignIn}
+                        disabled={loading}
+                    >
                         <LinearGradient
                             colors={["#383838", "#121212"]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             className="justify-center items-center"
-                            style={{
-                                height: 56,
-                                borderRadius: 28,
-                            }}
+                            style={{ height: 56, borderRadius: 28 }}
                         >
                             <Text className="text-white text-center mt-4 text-lg font-semibold tracking-wider">
-                                SIGN IN
+                                {loading ? "LOADING..." : "SIGN IN"}
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
@@ -125,16 +179,14 @@ export default function SignIn() {
                         <View className="flex-1 h-[1px] bg-gray-300" />
                     </View>
 
-                    {/* Social Buttons */}
+                    {/* Social */}
                     <View className="flex-row justify-center gap-x-4">
                         <TouchableOpacity className="w-16 h-16 bg-gray-100 rounded-2xl items-center justify-center">
                             <FontAwesome name="facebook" size={32} color="#1877F2" />
                         </TouchableOpacity>
-
                         <TouchableOpacity className="w-16 h-16 bg-gray-100 rounded-2xl items-center justify-center">
                             <FontAwesome name="google" size={32} color="#DB4437" />
                         </TouchableOpacity>
-
                         <TouchableOpacity className="w-16 h-16 bg-gray-100 rounded-2xl items-center justify-center">
                             <FontAwesome name="apple" size={32} color="black" />
                         </TouchableOpacity>
@@ -143,8 +195,12 @@ export default function SignIn() {
                     {/* Footer */}
                     <View className="flex-row justify-center mt-10">
                         <Text className="text-gray-500">Don't have an account? </Text>
-                        <TouchableOpacity>
-                            <Text className="text-orange-500 font-semibold">Sign Up</Text>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate("SignUp")}
+                        >
+                            <Text className="text-orange-500 font-semibold">
+                                Sign Up
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

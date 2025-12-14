@@ -34,7 +34,7 @@ interface Country {
 // COMPONENT
 // =============================
 
-export const CountrySelection = () => {
+export const SelectionCountry = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selected, setSelected] = useState<string>("");

@@ -19,32 +19,32 @@ export default function SelectInterest() {
         {
             id: 1,
             name: "Design",
-            image: require("../assets/interests/vector.png"),
+            image: require("../../assets/interests/vector.png"),
         },
         {
             id: 2,
             name: "Music",
-            image: require("../assets/interests/music.png"),
+            image: require("../../assets/interests/music.png"),
         },
         {
             id: 3,
             name: "Art",
-            image: require("../assets/interests/paint-palette.png"),
+            image: require("../../assets/interests/paint-palette.png"),
         },
         {
             id: 4,
             name: "Sports",
-            image: require("../assets/interests/sports.png"),
+            image: require("../../assets/interests/sports.png"),
         },
         {
             id: 5,
             name: "Food",
-            image: require("../assets/interests/salad.png"),
+            image: require("../../assets/interests/salad.png"),
         },
         {
             id: 6,
             name: "Others",
-            image: require("../assets/interests/ellipsis.png"),
+            image: require("../../assets/interests/ellipsis.png"),
         },
     ];
 

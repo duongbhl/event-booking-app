@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/drawer";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useAuth } from "../../context/AuthContext";
 
 // =======================================================
 // CUSTOM TAB BAR
@@ -38,9 +39,8 @@ export function CustomTabBar({
           >
             {/* Highlight */}
             <View
-              className={`absolute top-1 w-[3px] h-[22px] rounded-full ${
-                focused ? "bg-orange-500" : "opacity-0"
-              }`}
+              className={`absolute top-1 w-[3px] h-[22px] rounded-full ${focused ? "bg-orange-500" : "opacity-0"
+                }`}
             />
 
             {/* Icon */}
@@ -57,6 +57,9 @@ export function CustomTabBar({
 // =======================================================
 export function CustomDrawer(props: DrawerContentComponentProps) {
   const navigation = props.navigation;
+
+
+  const { logout } = useAuth();
 
   return (
     <DrawerContentScrollView
@@ -101,7 +104,7 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       <DrawerItem
         label="Bookmark"
         icon={<Ionicons name="bookmark-outline" size={30} color="#FF7A00" />}
-        onPress={() => {}}
+        onPress={() => { }}
       />
 
       <DrawerItem
@@ -119,13 +122,13 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       <DrawerItem
         label="Settings"
         icon={<Ionicons name="settings-outline" size={30} color="#FF7A00" />}
-        onPress={() => {}}
+        onPress={() => { }}
       />
 
       <DrawerItem
         label="Sign Out"
         icon={<Ionicons name="log-out-outline" size={30} color="#FF7A00" />}
-        onPress={() => console.log("Logout")}
+        onPress={logout}
       />
     </DrawerContentScrollView>
   );

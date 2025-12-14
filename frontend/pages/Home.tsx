@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,10 @@ import EventCard from "../components/Cards/EventCard";
 import EventCardPrice from "../components/Cards/EventPriceCard";
 import { useNavigation } from "@react-navigation/native";
 import EventCategoryBar from "../components/Bars/EventCategoryBar";
-import { ALL_EVENTS, MY_EVENTS } from "../data/event";
+import { useAuth } from "../context/AuthContext";
+import { getEvents } from "../services/event.service";
+import { EventCardProps } from "../components/Interface/EventCardProps";
+import { useIsFocused } from "@react-navigation/native";
 
 export const CATEGORIES = [
   { key: "music", label: "Music" },
@@ -23,16 +26,59 @@ export const CATEGORIES = [
   { key: "others", label: "Others" },
 ];
 
-// Fake Data
+
 
 
 export default function Home() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const { user } = useAuth();
+
+  const [events, setEvents] = useState<EventCardProps[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("music");
 
-  const filteredEvents = ALL_EVENTS.filter(
-    (ev) => ev.category === selectedCategory
-  );
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const data = await getEvents();
+        setEvents(data);
+      } catch (error) {
+        console.log("Fetch events error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if(isFocused){
+      fetchEvents();
+    }
+  }, [isFocused]);
+
+  
+
+  /**
+   * My Events – do chính user tạo
+   */
+  const myEvents = useMemo(() => {
+    if (!user) return [];
+    return events.filter(
+      (ev) => ev.organizer._id === user._id
+    );
+  }, [events, user]);
+
+  /**
+   * Other Events – không phải của mình + filter category
+   */
+  const filteredEvents = useMemo(() => {
+    return events.filter(
+      (ev) =>
+        ev.organizer._id !== user?._id &&
+        ev.category === selectedCategory
+    );
+  }, [events, selectedCategory, user]);
 
   return (
     <SafeAreaView className="flex-1 bg-white px-4">
@@ -85,8 +131,8 @@ export default function Home() {
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {MY_EVENTS.map((ev) => (
-            <View key={ev.id} className="mr-10 w-80">
+          {myEvents.map((ev) => (
+            <View key={ev._id} className="mr-10 w-80">
               <EventCard {...ev} />
             </View>
           ))}
@@ -117,7 +163,7 @@ export default function Home() {
         {/* FILTERED EVENTS */}
         <View className="mb-10 mt-5">
           {filteredEvents.map((ev) => (
-            <View key={ev.id} className="mb-4">
+            <View key={ev._id} className="mb-4">
               <EventCardPrice {...ev} />
             </View>
           ))}
