@@ -13,6 +13,7 @@ import {notificationRoutes} from './routes/notification.routes';
 import {bookmarkRoutes} from './routes/bookmark.routes';
 import {reminderRoutes} from './routes/reminder.routes';
 import {chatRoutes} from './routes/chat.routes';
+import { cardRoutes } from "./routes/card.routes";
 
 
 export const app = express()
@@ -30,6 +31,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use("/api/cards", cardRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);

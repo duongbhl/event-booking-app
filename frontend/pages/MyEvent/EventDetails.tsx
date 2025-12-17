@@ -1,22 +1,110 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import ActionBar from "../../components/Bars/ActionBar";
+import { formatDateTime } from "../../utils/utils";
+import { getMyBookmarks, toggleBookmark } from "../../services/bookmark.service";
+import { useAuth } from "../../context/AuthContext";
+import { getMyTickets } from "../../services/ticket.service";
 
 
 export default function EventDetails() {
-  const navigation = useNavigation();
+  const { token, user } = useAuth();
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
 
-  // 👇 STATE QUYẾT ĐỊNH UI
-  const [isBooked, setIsBooked] = useState(false); // đổi true để test UI booked
+  const event = route.params?.event;
+
+
+  const [myTickets, setMyTickets] = useState<any[]>([]);
+  const isBooked = myTickets.length > 0;
+  const [loadingTicket, setLoadingTicket] = useState(true);
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+
+  if (!event) return null;
+
+
+
 
   const handleBooked = () => {
-    setIsBooked(true)
-    navigation.navigate('BuyTicket' as never);
-    
-  }
+    navigation.navigate("BuyTicket", {
+      eventId: event._id,
+      price: event.price,
+    } as never);
+  };
+
+  const handleViewTicket = () => {
+    navigation.navigate("Ticket", {
+      tickets: myTickets,
+    } as never);
+  };
+
+
+
+  const handleToggleBookmark = async () => {
+    if (!token) return alert("Vui lòng đăng nhập");
+
+    const prev = isBookmarked;
+    setIsBookmarked(!prev);
+
+    try {
+      await toggleBookmark(event._id, token);
+    } catch (e) {
+      setIsBookmarked(prev); // rollback
+    }
+  };
+
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchBookmarkStatus = async () => {
+      try {
+        const bookmarks = await getMyBookmarks(token);
+
+        const found = bookmarks.find(
+          (b: any) => b.event?._id === event._id
+        );
+
+        setIsBookmarked(!!found);
+      } catch (err) {
+        console.log("Fetch bookmark status error", err);
+      }
+    };
+
+    fetchBookmarkStatus();
+  }, [token]);
+
+
+  useEffect(() => {
+    if (!token || !event?._id) return;
+
+    const fetchMyTickets = async () => {
+      try {
+        const tickets = await getMyTickets(token);
+
+        const matched = tickets.filter(
+          (t: any) =>
+            t.event?._id === event._id &&
+            t.paymentStatus === "paid"
+        );
+
+        setMyTickets(matched);
+      } catch (err) {
+        console.log("Fetch tickets error", err);
+      } finally {
+        setLoadingTicket(false);
+      }
+    };
+
+    fetchMyTickets();
+  }, [token, event?._id]);
+
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
@@ -25,90 +113,97 @@ export default function EventDetails() {
         {/* 🔥 BANNER */}
         <View className="relative">
           <Image
-            source={{
-              uri: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg",
-            }}
+            source={{ uri: event.images }}
             className="w-full h-72"
           />
 
-          {/* Back */}
           <TouchableOpacity
-            className="absolute top-12 left-4 bg-white/30 backdrop-blur-md w-10 h-10 rounded-full items-center justify-center"
+            className="absolute top-12 left-4 bg-white/30 w-10 h-10 rounded-full items-center justify-center"
             onPress={() => navigation.goBack()}
           >
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>
 
-          {/* Heart */}
-          <TouchableOpacity className="absolute top-12 right-4 bg-white/30 backdrop-blur-md w-10 h-10 rounded-full items-center justify-center">
-            <Ionicons name="heart" size={24} color="white" />
+          <TouchableOpacity
+            className="absolute top-12 right-4 bg-white/30 w-10 h-10 rounded-full items-center justify-center"
+            onPress={handleToggleBookmark}
+            disabled={loading}
+          >
+            <Ionicons
+              name={isBookmarked ? "heart" : "heart-outline"}
+              size={24}
+              color={isBookmarked ? "red" : "white"}
+            />
           </TouchableOpacity>
+
+
         </View>
 
-        {/* 🔥 ActionBar chỉ hiện khi đã booked */}
-        {isBooked && <ActionBar />}
+        {/* 🔥 ActionBar */}
+        {isBooked && <ActionBar/>}
 
         {/* 🔥 EVENT CARD */}
         <View className={`bg-white mx-4 ${isBooked ? "mt-4" : "-mt-10"} rounded-3xl p-5 shadow`}>
-          {/* Header drag indicator */}
-          <View className="items-center mb-4">
-            <View className="w-12 h-1 bg-gray-300 rounded-full mb-3" />
-          </View>
 
-          {/* Title + Price/Booked */}
+          {/* Title + Price */}
           <View className="flex-row justify-between items-start">
             <Text className="text-2xl font-semibold text-gray-900">
-              Shere Bangla Concert
+              {event.title}
             </Text>
 
-            {/* Chuyển badge theo trạng thái */}
             {isBooked ? (
               <View className="bg-orange-500 px-4 py-1 rounded-full">
                 <Text className="text-white font-semibold">BOOKED</Text>
               </View>
             ) : (
               <View className="bg-orange-100 px-4 py-1 rounded-full">
-                <Text className="text-orange-500 font-semibold">$299 USD</Text>
+                <Text className="text-orange-500 font-semibold">
+                  ${event.price} USD
+                </Text>
               </View>
             )}
           </View>
 
           {/* Location + Date */}
-          <View className="mt-3 space-y-1">
-            <View className="flex-row items-center space-x-2">
+          <View className="mt-3 gap-3">
+            <View className="flex-row items-center gap-2">
               <Ionicons name="location" size={18} color="#F97316" />
-              <Text className="text-gray-600">ABC Avenue, Dhaka</Text>
+              <Text className="text-gray-600">{event.location}</Text>
             </View>
 
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center gap-2">
               <Ionicons name="calendar" size={18} color="#F97316" />
-              <Text className="text-gray-600">25–27 October, 22</Text>
+              <Text className="text-gray-600">
+                {formatDateTime(event.date)}
+              </Text>
             </View>
           </View>
 
           {/* Members */}
           <View className="flex-row justify-between items-center mt-4">
-            <Text className="text-gray-700 font-medium">15.7k+ Members are joined</Text>
+            <Text className="text-gray-700 font-medium">
+              {event.attendees || 0}+ Members are joined
+            </Text>
 
             <TouchableOpacity onPress={() => navigation.navigate("InviteFriend" as never)}>
-              <Text className="text-orange-500 font-semibold">
-                {isBooked ? "INVITE" : "INVITE"}
-              </Text>
+              <Text className="text-orange-500 font-semibold">INVITE</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Organizer */}
+          {/* Organizer (FIX CỨNG) */}
           <View className="mt-6 flex-row items-center justify-between bg-orange-50 rounded-xl p-3">
             <View className="flex-row items-center">
-              <TouchableOpacity onPress={() => navigation.navigate("OrganizerProfile" as never)}>
-                <Image
-                  source={{ uri: "https://i.pravatar.cc/100?img=12" }}
-                  className="w-12 h-12 rounded-full"
-                />
-              </TouchableOpacity>
+              <Image
+                source={{ uri: "https://i.pravatar.cc/100?img=12" }}
+                className="w-12 h-12 rounded-full"
+              />
               <View className="ml-3">
-                <Text className="font-semibold text-gray-800">Tamim Ikram</Text>
-                <Text className="text-gray-500 text-sm">Event Organiser</Text>
+                <Text className="font-semibold text-gray-800">
+                  Tamim Ikram
+                </Text>
+                <Text className="text-gray-500 text-sm">
+                  Event Organiser
+                </Text>
               </View>
             </View>
 
@@ -121,8 +216,7 @@ export default function EventDetails() {
           <View className="mt-6">
             <Text className="font-semibold text-lg">Description</Text>
             <Text className="text-gray-600 mt-2 leading-6">
-              Ultricies arcu venenatis in lorem faucibus lobortis at...
-              <Text className="text-orange-500 font-semibold"> Read More</Text>
+              {event.description || "No description"}
             </Text>
           </View>
         </View>
@@ -130,25 +224,16 @@ export default function EventDetails() {
 
       {/* 🔥 Bottom Button */}
       <View className="px-6 pb-10">
-
-        {/* Nếu chưa mua → BUY A TICKET */}
-        {!isBooked && (
-          <TouchableOpacity
-            className="bg-black rounded-2xl py-4 flex-row items-center justify-center"
-            onPress={() => handleBooked()}  // tạm thời simulate mua vé
-          >
+        {!isBooked ? (
+          <TouchableOpacity className="bg-black rounded-2xl py-4 flex-row items-center justify-center" onPress={handleBooked} >
             <Ionicons name="ticket-outline" size={22} color="white" />
-            <Text className="text-white text-lg font-semibold ml-2">BUY TICKET</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Nếu đã mua → Messages */}
-        {isBooked && (
-          <TouchableOpacity className="bg-black rounded-2xl py-4 flex-row items-center justify-center">
-            <Text className="text-white text-lg font-semibold">Messages</Text>
-          </TouchableOpacity>
-        )}
+            <Text className="text-white text-lg font-semibold ml-2"> BUY TICKET </Text>
+          </TouchableOpacity>) : (
+          <TouchableOpacity className="bg-black rounded-2xl py-4 items-center" onPress={handleBooked}>
+            <Text className="text-white text-lg font-semibold">Buy Ticket</Text>
+          </TouchableOpacity>)}
       </View>
+
     </SafeAreaView>
   );
 }

@@ -104,7 +104,7 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       <DrawerItem
         label="Bookmark"
         icon={<Ionicons name="bookmark-outline" size={30} color="#FF7A00" />}
-        onPress={() => { }}
+        onPress={() =>navigation.navigate("EventBookmark")}
       />
 
       <DrawerItem

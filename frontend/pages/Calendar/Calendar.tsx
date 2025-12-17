@@ -9,6 +9,8 @@ import { getEvents } from "../../services/event.service";
 import { EventCardProps } from "../../components/Interface/EventCardProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
+import { formatDate } from "../../utils/utils";
+import EventPriceCard from "../../components/Cards/EventPriceCard";
 
 const FILTER_TYPES = [
   { key: "design", label: "Design" },
@@ -26,7 +28,7 @@ export default function CalendarTable() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("music");
-    const { user } = useAuth();
+  const { user } = useAuth();
   const isFocused = useIsFocused();
   // Fetch events when the screen is focused
   useEffect(() => {
@@ -47,17 +49,16 @@ export default function CalendarTable() {
 
   // Lấy tất cả sự kiện theo category đã chọn và không phải của user hiện tại
   const allEvents = useMemo(() => {
-        return events.filter(
-          (ev) =>
-            ev.organizer._id !== user?._id &&
-            ev.category === selectedCategory
-        );
-      }, [events, selectedCategory, user]);
+    return events.filter(
+      (ev) =>
+        ev.organizer._id !== user?._id
+    );
+  }, [events, selectedCategory, user]);
 
-      
+
   // Lọc sự kiện theo ngày và filter
   const filteredEvents = allEvents.filter((ev) => {
-    const eventDate = dayjs(ev.date).format("YYYY-MM-DD");
+    const eventDate = formatDate(ev.date);
 
     const matchDate = eventDate === selectedDate;
     const matchFilter =
@@ -126,13 +127,9 @@ export default function CalendarTable() {
           filteredEvents.map((ev) => (
             <View
               key={ev._id}
-              className="bg-white rounded-xl p-4 shadow mb-3 flex-row items-center"
+              className="mb-4"
             >
-              <View className="flex-1">
-                <Text className="text-lg font-semibold">{ev.title}</Text>
-                <Text className="text-gray-500">{ev.category.toUpperCase()}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#777" />
+              <EventPriceCard {...ev}/>
             </View>
           ))
         ) : (

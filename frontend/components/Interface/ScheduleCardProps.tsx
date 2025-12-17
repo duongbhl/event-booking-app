@@ -9,7 +9,8 @@ export interface ScheduleCardProps {
     category: string;
     date: Date;
     time: string;
-    member?: number;
+    member: number;
+    attendees?: number;
     location: string;
     price: number;
     images?: string;

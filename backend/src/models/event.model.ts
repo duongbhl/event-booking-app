@@ -4,12 +4,13 @@ export interface IEvent extends Document {
   title: string;
   description?: string;
   category: string;
-  price: Number
+  price: number;
   date: Date;
   time: string;
   location: string;
   images?: string;
-  member?: number;
+  member: number;
+  attendees?: number;
   rating?: number;
   status: "upcoming" | "ongoing" | "finished" | "cancelled";
   organizer: mongoose.Types.ObjectId;
@@ -32,6 +33,7 @@ const EventSchema = new mongoose.Schema<IEvent>(
     images: String,
 
     member: { type: Number, default: 0 },
+    attendees: { type: Number, default: 0 },
     rating: { type: Number, default: 0 },
 
     status: {

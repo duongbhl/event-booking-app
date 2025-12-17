@@ -69,11 +69,6 @@ export default function UpcomingEvents() {
           <EventCard
             key={ev._id}
             {...ev}
-            onPress={() =>
-              navigation.navigate(
-                "CreateEditEvent" as never,
-              )
-            }
           />
         ))}
       </View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,9 +12,11 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { createEvent } from "../../services/event.service";
+
+import { createEvent, updateEvent } from "../../services/event.service";
 import { uploadImageToCloudinary } from "../../services/upload.service";
 import { CATEGORIES } from "../Home";
+
 
 
 type Errors = {
@@ -27,22 +29,22 @@ type Errors = {
 
 export default function CreateEditEvent() {
   const navigation = useNavigation<any>();
-  const route = useRoute() as any;
-  const isEdit = route.params?.isEdit || false;
+  const route = useRoute<any>();
+
+  const isEdit = route.params?.isEdit ?? false;
+  const editEvent = route.params?.event;
 
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [eventName, setEventName] = useState("");
-  const [eventType, setEventType] = useState<string>("");
-
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
-
-  const [date, setDate] = useState<Date>(new Date());
-  const [showPicker, setShowPicker] = useState(false);
-
-  const [price, setPrice] = useState<number>(0);
+  const [eventType, setEventType] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [price, setPrice] = useState<number>(0);
+  const [date, setDate] = useState<Date>(new Date());
+  const [member, setMember] = useState<number>(0);
 
+  const [showPicker, setShowPicker] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
 
   /* ---------------- FORMAT DATE (UI ONLY) ---------------- */
@@ -64,10 +66,7 @@ export default function CreateEditEvent() {
 
   const pickCoverImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      alert("Permission required!");
-      return;
-    }
+    if (!permission.granted) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -79,6 +78,7 @@ export default function CreateEditEvent() {
       setCoverImage(result.assets[0].uri);
     }
   };
+
 
 
   /* ---------------- VALIDATE ---------------- */
@@ -100,36 +100,41 @@ export default function CreateEditEvent() {
 
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async () => {
-    if (!validateForm()) return;
-
     try {
-      let imageUrl: string | undefined;
+      let imageUrl = coverImage||undefined;
 
-      if (coverImage) {
+      if (coverImage && coverImage.startsWith("file")) {
         imageUrl = await uploadImageToCloudinary(coverImage);
       }
 
       const payload = {
         title: eventName.trim(),
         description: description.trim(),
-        category: eventType, // key: music | design | ...
+        category: eventType,
         price,
-        date, // ✅ backend needs ISO
+        date,
+        member,
         time: date.toTimeString().split(" ")[0],
         location: location.trim(),
         images: imageUrl,
       };
 
-      await createEvent(payload);
-    
-      Alert.alert("Success", "Event created successfully");
+      if (isEdit) {
+        await updateEvent(editEvent._id, payload);
+        Alert.alert("Success", "Event updated successfully");
+      } else {
+        await createEvent(payload);
+        Alert.alert("Success", "Event created successfully");
+      }
+
       navigation.goBack();
-    } catch (error) {
-      Alert.alert("Error", "Create event failed");
-      console.error("CREATE EVENT ERROR:", error);
-      
+    } catch (err) {
+      Alert.alert("Error", "Submit failed");
+      console.log(err);
     }
   };
+
+
 
   const isFormValid =
     !!eventName.trim() &&
@@ -137,6 +142,19 @@ export default function CreateEditEvent() {
     !!location.trim() &&
     !!description.trim() &&
     date > new Date();
+
+  useEffect(() => {
+    if (isEdit && editEvent) {
+      setEventName(editEvent.title);
+      setEventType(editEvent.category);
+      setLocation(editEvent.location);
+      setDescription(editEvent.description || "");
+      setPrice(editEvent.price || 0);
+      setDate(new Date(editEvent.date));
+      setCoverImage(editEvent.images);
+    }
+  }, [isEdit, editEvent]);
+
 
   return (
     <>
@@ -181,7 +199,9 @@ export default function CreateEditEvent() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={26} />
           </TouchableOpacity>
-          <Text className="text-xl font-semibold">Create New Event</Text>
+          <Text className="text-xl font-semibold">
+            {isEdit ? "Edit Event" : "Create New Event"}
+          </Text>
           <View className="w-6" />
         </View>
 
@@ -268,6 +288,19 @@ export default function CreateEditEvent() {
           />
         )}
 
+        {/* Member */}
+        {/* Price */}
+        <Text className="font-medium mb-1">Member</Text>
+        <TextInput
+          className="border border-gray-300 rounded-xl p-3 mb-4"
+          keyboardType="numeric"
+          value={member === 0 ? "" : String(member)}
+          onChangeText={text =>
+            setMember(Number(text.replace(/[^0-9]/g, "")))
+          }
+          placeholder="0"
+        />
+
         {/* Location */}
         <Text className="font-medium mb-1">Location *</Text>
         <TextInput
@@ -320,7 +353,7 @@ export default function CreateEditEvent() {
           onPress={handleSubmit}
         >
           <Text className="text-white text-center font-semibold text-lg">
-            PUBLISH NOW
+            {isEdit ? "UPDATE EVENT" : "PUBLISH NOW"}
           </Text>
         </TouchableOpacity>
       </ScrollView>

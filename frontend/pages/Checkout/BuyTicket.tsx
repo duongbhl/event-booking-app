@@ -1,20 +1,30 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity} from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BuyTicket() {
-  const navigation = useNavigation();
-  const [ticketType, setTicketType] = useState<"VIP" | "Economy">("VIP");
-  const [quantity, setQuantity] = useState(1);
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
 
-  const prices = {
-    VIP: 50,
-    Economy: 20,
+  /** Nhận từ EventDetails */
+  const { eventId, price } = route.params as {
+    eventId: string;
+    price: number;
   };
 
-  const total = prices[ticketType] * quantity;
+  const [ticketType, setTicketType] =
+    useState<"VIP" | "Economy">("Economy");
+
+  const [quantity, setQuantity] = useState(1);
+
+  /** 🔥 TÍNH GIÁ */
+  const unitPrice = useMemo(() => {
+    return ticketType === "VIP" ? price * 50 : price;
+  }, [ticketType, price]);
+
+  const total = unitPrice * quantity;
 
   return (
     <SafeAreaView className="flex-1 bg-white p-5">
@@ -31,7 +41,7 @@ export default function BuyTicket() {
       {/* Ticket Type */}
       <Text className="text-lg font-semibold mb-2">Ticket Type</Text>
       <View className="flex-row mb-5">
-        {["VIP", "Economy"].map((type) => {
+        {["Economy", "VIP"].map((type) => {
           const active = ticketType === type;
           return (
             <TouchableOpacity
@@ -53,14 +63,18 @@ export default function BuyTicket() {
         })}
       </View>
 
-      {/* Seat Count */}
-      <Text className="text-lg font-semibold mb-2">Seat</Text>
+      {/* Quantity */}
+      <Text className="text-lg font-semibold mb-2">Quantity</Text>
       <View className="flex-row items-center justify-between bg-gray-100 p-4 rounded-xl mb-6">
-        <TouchableOpacity onPress={() => quantity > 1 && setQuantity(quantity - 1)}>
+        <TouchableOpacity
+          onPress={() => quantity > 1 && setQuantity(quantity - 1)}
+        >
           <Ionicons name="remove" size={22} />
         </TouchableOpacity>
 
-        <Text className="text-xl font-semibold">{String(quantity).padStart(2, "0")}</Text>
+        <Text className="text-xl font-semibold">
+          {String(quantity).padStart(2, "0")}
+        </Text>
 
         <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
           <Ionicons name="add" size={22} />
@@ -68,35 +82,43 @@ export default function BuyTicket() {
       </View>
 
       {/* Price Summary */}
-      <Text className="text-lg font-semibold mb-2">Ticket Price</Text>
-      <View className="mb-3">
-        <Text className="text-gray-700">{ticketType} Ticket</Text>
-        <Text className="absolute right-0">${prices[ticketType]} USD</Text>
+      <Text className="text-lg font-semibold mb-2">Price Summary</Text>
+
+      <View className="mb-3 flex-row justify-between">
+        <Text className="text-gray-700">
+          {ticketType} Ticket
+        </Text>
+        <Text>${unitPrice} USD</Text>
       </View>
 
-      <View className="mb-3">
+      <View className="mb-3 flex-row justify-between">
         <Text className="text-gray-700">
-          {quantity} x ${prices[ticketType]} USD
+          {quantity} × ${unitPrice}
         </Text>
-        <Text className="absolute right-0">${total} USD</Text>
+        <Text>${total} USD</Text>
       </View>
 
       <View className="mt-5">
-        <Text className="text-xl font-bold">Total: ${total} USD</Text>
+        <Text className="text-xl font-bold">
+          Total: ${total} USD
+        </Text>
       </View>
 
-      {/* Continue Button */}
+      {/* Continue */}
       <TouchableOpacity
         className="bg-black py-4 rounded-xl mt-10"
         onPress={() =>
-          (navigation as any).navigate("Payment", {
-            total,
+          navigation.navigate("Payment", {
+            eventId,
             ticketType,
             quantity,
+            total,
           })
         }
       >
-        <Text className="text-center text-white font-semibold">CONTINUE</Text>
+        <Text className="text-center text-white font-semibold">
+          CONTINUE
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

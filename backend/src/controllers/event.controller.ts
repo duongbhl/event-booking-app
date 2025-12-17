@@ -85,6 +85,7 @@ export const createEvent = async (req: any, res: Response) => {
     price,
     date,
     time,
+    member,
     location,
     images,
   } = req.body;
@@ -104,6 +105,7 @@ export const createEvent = async (req: any, res: Response) => {
     price: price || "$0",
     date: eventDate,
     time,
+    member: member || 0,
     location,
     images,
     organizer: req.user._id, // ✅ chính là bản thân user

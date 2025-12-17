@@ -129,7 +129,7 @@ export default function Search() {
       </View>
 
       {/* ================= SEARCH BAR ================= */}
-      <View className="flex-row items-center bg-gray-100 px-4 py-3 rounded-2xl mb-4">
+      <View className="flex-row items-center bg-gray-100 px-4 py-3 rounded-2xl mb-6">
         <Ionicons name="search" size={20} color="#999" />
 
         <TextInput
@@ -156,8 +156,6 @@ export default function Search() {
       </View>
 
 
-
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -171,7 +169,7 @@ export default function Search() {
             </Text>
           </View>
         ) : (
-          <View className="gap-3">
+          <View className="gap-3 mt-3">
             {filteredEvents.map(item => (
               <EventPriceCard key={item._id} {...item} />
             ))}

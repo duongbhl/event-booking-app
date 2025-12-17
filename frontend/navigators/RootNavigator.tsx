@@ -30,6 +30,7 @@ import AddCard from "../pages/Checkout/AddCard";
 import Payment from "../pages/Checkout/Payment";
 import ScanCard from "../pages/Checkout/ScanCard";
 import EditProfile from "../pages/Profile/EditProfile";
+import EventBookmark from "../pages/MyEvent/EventBookmark";
 
 const Stack = createStackNavigator();
 
@@ -67,8 +68,8 @@ export default function RootNavigator() {
           <Stack.Screen name="Notifications" component={Notification} />
           <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />
           <Stack.Screen name="Message" component={Message} />
-          {/* <Stack.Screen name="BookMark" component={Home} />
-          <Stack.Screen name="Setting" component={Home} /> */}
+          <Stack.Screen name="EventBookmark" component={EventBookmark} />
+          {/* <Stack.Screen name="Setting" component={} /> */}
           <Stack.Screen name="Search" component={Search} />
           <Stack.Screen name="Filter" component={Filter} />
           <Stack.Screen name="EventDetails" component={EventDetails} />

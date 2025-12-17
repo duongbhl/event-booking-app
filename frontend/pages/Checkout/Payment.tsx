@@ -1,23 +1,114 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput} from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Payment() {
-  const navigation = useNavigation();
-  const { total } = useRoute().params as { total: number };
+import { useAuth } from "../../context/AuthContext";
+import { bookTicket, confirmPayment } from "../../services/ticket.service";
+import { mapPaymentMethod } from "../../services/paymentMapper";
+import { getMyCards } from "../../services/card.service";
 
-  const [method, setMethod] = useState("apple");
+export default function Payment() {
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const { token } = useAuth();
+
+  const { eventId, ticketType, quantity, total } = route.params as {
+    eventId: string;
+    ticketType: "VIP" | "Economy";
+    quantity: number;
+    total: number;
+  };
+
+  const [method, setMethod] = useState<"wallet" | "paypal" | "card">("wallet");
+  const [cards, setCards] = useState<any[]>([]);
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingCards, setLoadingCards] = useState(false);
+
   const methods = [
-    { key: "apple", label: "Apple Pay" },
+    { key: "wallet", label: "Wallet" },
     { key: "paypal", label: "PayPal" },
-    { key: "google", label: "Google Pay" },
-    { key: "card", label: "Debit / Credit Card" },
+    { key: "card", label: "Credit / Debit Card" },
   ];
+
+  /** 🔥 Load cards khi chọn CARD */
+  useEffect(() => {
+    if (method !== "card" || !token) return;
+
+    const fetchCards = async () => {
+      try {
+        setLoadingCards(true);
+        const data = await getMyCards(token);
+        setCards(data);
+      } catch (err) {
+        Alert.alert("Failed to load cards");
+      } finally {
+        setLoadingCards(false);
+      }
+    };
+
+    fetchCards();
+  }, [method]);
+
+  const handleCheckout = async () => {
+    if (!token) {
+      Alert.alert("Login required", "Please login to continue");
+      return;
+    }
+
+    if (method === "card" && !selectedCard) {
+      Alert.alert("Select card", "Please select a card to continue");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      /** 1️⃣ Book tickets */
+      const { payment } = await bookTicket(
+        {
+          eventId,
+          ticketType,
+          quantity,
+          price: total,
+          method: mapPaymentMethod(method),
+        },
+        token
+      );
+
+      /** 2️⃣ Confirm payment */
+      const result = await confirmPayment(
+        {
+          paymentId: payment._id,
+          success: true,
+        },
+        token
+      );
+
+      navigation.replace("Ticket", {
+        tickets: result.tickets,
+      });
+    } catch (err: any) {
+      Alert.alert(
+        "Payment failed",
+        err?.response?.data?.message || "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white p-5">
+      {/* Header */}
       <View className="flex-row items-center mb-6">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={26} />
@@ -27,58 +118,92 @@ export default function Payment() {
         </Text>
       </View>
 
+      {/* Payment Method */}
       <Text className="text-lg font-semibold mb-3">Payment Method</Text>
 
       {methods.map((m) => (
         <TouchableOpacity
           key={m.key}
           className="flex-row items-center justify-between border border-gray-300 p-4 rounded-xl mb-3"
-          onPress={() => setMethod(m.key)}
+          onPress={() => setMethod(m.key as any)}
         >
-          <Text className="text-gray-800">{m.label}</Text>
+          <Text>{m.label}</Text>
           <Ionicons
-            name={method === m.key ? "radio-button-on" : "radio-button-off"}
+            name={
+              method === m.key
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={22}
             color="#FF7A00"
           />
         </TouchableOpacity>
       ))}
 
-      {/* Add new card */}
+      {/* 💳 CARD SECTION */}
       {method === "card" && (
-        <TouchableOpacity
-          className="border border-orange-400 rounded-xl px-4 py-3 mb-5"
-          onPress={() => navigation.navigate("AddCard" as never)}
-        >
-          <Text className="text-orange-500 font-semibold text-center">
-            Add New Card
-          </Text>
-        </TouchableOpacity>
+        <View className="mt-4">
+          <Text className="font-semibold mb-2">Your Cards</Text>
+
+          {loadingCards ? (
+            <ActivityIndicator />
+          ) : cards.length === 0 ? (
+            <Text className="text-gray-500">No cards added</Text>
+          ) : (
+            cards.map((card) => (
+              <TouchableOpacity
+                key={card._id}
+                className={`border p-4 rounded-xl mb-2 flex-row justify-between ${
+                  selectedCard === card._id
+                    ? "border-orange-500"
+                    : "border-gray-300"
+                }`}
+                onPress={() => setSelectedCard(card._id)}
+              >
+                <Text>
+                  {card.brand} •••• {card.last4}
+                </Text>
+                {selectedCard === card._id && (
+                  <Ionicons name="checkmark-circle" size={20} color="#FF7A00" />
+                )}
+              </TouchableOpacity>
+            ))
+          )}
+
+          {/* ➕ ADD CARD */}
+          <TouchableOpacity
+            className="border border-orange-400 rounded-xl px-4 py-3 mt-3"
+            onPress={() => navigation.navigate("AddCard")}
+          >
+            <Text className="text-orange-500 font-semibold text-center">
+              Add New Card
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
 
-      {/* Voucher */}
-      <Text className="text-lg font-semibold mb-2">Add Voucher</Text>
-      <View className="flex-row">
-        <TextInput
-          placeholder="VOUCHER CODE"
-          className="flex-1 border border-gray-300 rounded-xl p-3"
-        />
-        <TouchableOpacity className="bg-black px-5 rounded-xl justify-center ml-2">
-          <Text className="text-white">APPLY</Text>
-        </TouchableOpacity>
+      {/* Total */}
+      <View className="mt-6">
+        <Text className="text-xl font-bold">
+          Total: ${total} USD
+        </Text>
       </View>
 
       {/* Checkout */}
       <TouchableOpacity
-        className="bg-black py-4 rounded-xl mt-10"
-        onPress={() =>
-          (navigation as any).navigate("Ticket", {
-            total,
-            method,
-          })
-        }
+        className={`py-4 rounded-xl mt-10 items-center ${
+          loading ? "bg-gray-400" : "bg-black"
+        }`}
+        onPress={handleCheckout}
+        disabled={loading}
       >
-        <Text className="text-center text-white font-semibold">CHECKOUT</Text>
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-white font-semibold">
+            CHECKOUT
+          </Text>
+        )}
       </TouchableOpacity>
     </SafeAreaView>
   );

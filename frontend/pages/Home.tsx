@@ -9,13 +9,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import EventCard from "../components/Cards/EventCard";
-import EventCardPrice from "../components/Cards/EventPriceCard";
 import { useNavigation } from "@react-navigation/native";
 import EventCategoryBar from "../components/Bars/EventCategoryBar";
 import { useAuth } from "../context/AuthContext";
 import { getEvents } from "../services/event.service";
 import { EventCardProps } from "../components/Interface/EventCardProps";
 import { useIsFocused } from "@react-navigation/native";
+import EventPriceCard from "../components/Cards/EventPriceCard";
 
 export const CATEGORIES = [
   { key: "music", label: "Music" },
@@ -164,7 +164,7 @@ export default function Home() {
         <View className="mb-10 mt-5">
           {filteredEvents.map((ev) => (
             <View key={ev._id} className="mb-4">
-              <EventCardPrice {...ev} />
+              <EventPriceCard {...ev} />
             </View>
           ))}
         </View>
