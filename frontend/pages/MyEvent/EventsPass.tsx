@@ -32,12 +32,11 @@ export default function PastEvents() {
 
 
   const passEvents = useMemo(() => {
-    if (!user) return [];
-
+    if (!user || !user._id) return [];
     const now = new Date();
 
     return events.filter(ev =>
-      ev.organizer._id === user._id &&
+      ev.organizer && ev.organizer._id === user._id &&
       new Date(ev.date) < now
     );
   }, [events, user]);

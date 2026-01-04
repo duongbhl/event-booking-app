@@ -13,6 +13,11 @@ export interface RegisterResponse {
   email: string;
   role: string;
   token: string;
+  avatar?: string;
+  country?: string;
+  interests?: string[];
+  location?: string;
+  description?: string;
 }
 
 export const register = async (
@@ -35,6 +40,11 @@ export interface AuthResponse {
   email: string;
   role: string;
   token: string;
+  avatar?: string;
+  country?: string;
+  interests?: string[];
+  location?: string;
+  description?: string;
 }
 
 export const login = async (

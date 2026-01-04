@@ -13,8 +13,11 @@ export interface JWTPayload {
 
 export const protect = async (req: any, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+  
+  // console.log("🔒 PROTECT MIDDLEWARE - Auth Header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("❌ No Bearer token");
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 
@@ -25,16 +28,20 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
       token,
       process.env.SECRET as string
     ) as JWTPayload;
+    
+    
 
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
+      console.log("❌ User not found");
       return res.status(401).json({ message: "User not found" });
     }
 
     req.user = user; // ✅ QUAN TRỌNG
     next();
   } catch (error) {
+    console.log("❌ Token error:", error);
     return res.status(401).json({ message: "Token invalid" });
   }
 };

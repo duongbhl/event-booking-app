@@ -20,7 +20,7 @@
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
-    "expo": "^54.0.29",
+    "expo": "^54.0.30",
     "expo-crypto": "~15.0.8",
     "expo-image-picker": "^17.0.10",
     "expo-linear-gradient": "^15.0.8",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
-    "babel-preset-expo": "^54.0.4",
+    "babel-preset-expo": "^54.0.9",
     "typescript": "~5.9.2"
   },
   "private": true

@@ -3,9 +3,13 @@ import { Button } from "react-native-paper";
 import { EventCardProps } from "../Interface/EventCardProps";
 import { useNavigation } from "@react-navigation/native";
 import { formatDate, formatDateTime } from "../../utils/utils";
+import { useAuth } from "../../context/AuthContext";
 
 export default function EventPriceCard({ ...event }: EventCardProps) {
   const navigation = useNavigation<any>();
+  const { user } = useAuth();
+
+  const isOwnEvent = user && event.organizer && event.organizer._id === user._id;
 
   const goToDetail = () => {
     navigation.navigate("EventDetails", {
@@ -43,7 +47,7 @@ export default function EventPriceCard({ ...event }: EventCardProps) {
           labelStyle={{ fontWeight: "700" }}
           onPress={goToDetail}
         >
-          JOIN NOW
+          {isOwnEvent ? "CHECK" : "JOIN NOW"}
         </Button>
       </View>
     </View>

@@ -34,7 +34,7 @@ interface Country {
 // COMPONENT
 // =============================
 
-export const SelectionCountry = () => {
+export const SelectionCountry = ({ navigation }: any) => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selected, setSelected] = useState<string>("");
@@ -136,8 +136,12 @@ export const SelectionCountry = () => {
 
       {/* SAVE BUTTON */}
       <View className="absolute bottom-6 left-0 right-0 px-6">
-        <TouchableOpacity className="bg-black py-4 rounded-2xl items-center">
-          <Text className="text-white font-semibold text-lg">SAVE</Text>
+        <TouchableOpacity 
+          className="bg-black py-4 rounded-2xl items-center"
+          onPress={() => selected && navigation.navigate("SelectLocation")}
+          disabled={!selected}
+        >
+          <Text className="text-white font-semibold text-lg">NEXT</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

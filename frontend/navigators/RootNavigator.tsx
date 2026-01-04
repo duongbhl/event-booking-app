@@ -77,6 +77,7 @@ export default function RootNavigator() {
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="MyEvent" component={Events} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="SelectLocation" component={SelectLocation} />
           <Stack.Screen name="OrganizerProfile" component={OrganizerProfile} />
           <Stack.Screen name="BuyTicket" component={BuyTicket} />
           <Stack.Screen name="Payment" component={Payment} />

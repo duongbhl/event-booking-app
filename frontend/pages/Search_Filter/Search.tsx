@@ -85,6 +85,7 @@ export default function Search() {
 
   /* ---------------- FILTER LOGIC ---------------- */
   const filteredEvents = useMemo(() => {
+    const now = new Date();
     return events.filter(ev => {
       // ❌ không lấy event của mình
       if (ev.organizer?._id === user?._id) return false;
@@ -109,6 +110,9 @@ export default function Search() {
           return false;
         }
       }
+
+      //Out of date
+      if(new Date(ev.date) < now) return false;
 
       return true;
     });

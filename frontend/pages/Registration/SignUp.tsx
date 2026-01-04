@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { register } from "../../services/auth.service";
 
 
@@ -42,10 +43,14 @@ export default function SignUp({ navigation }: any) {
         email,
         password,
       });
+
+      // Save token to AsyncStorage
+      await AsyncStorage.setItem("token", data.token);
+      
       Alert.alert("Success", "Account created successfully");
 
-      // TODO: Save token + navigate
-      // navigation.navigate("SignIn");
+      // Navigate to SelectCountry
+      navigation.navigate("SelectCountry");
 
     } catch (error: any) {
       console.log(error?.response?.data.message || error.message);

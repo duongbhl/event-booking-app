@@ -17,6 +17,8 @@ export default function EventDetails() {
 
   const event = route.params?.event;
 
+  const isOwnEvent = user && event?.organizer && event.organizer._id === user._id;
+  const isOutOfDate = event && new Date(event.date) < new Date();
 
   const [myTickets, setMyTickets] = useState<any[]>([]);
   const isBooked = myTickets.length > 0;
@@ -185,8 +187,14 @@ export default function EventDetails() {
               {event.attendees || 0}+ Members are joined
             </Text>
 
-            <TouchableOpacity onPress={() => navigation.navigate("InviteFriend" as never)}>
-              <Text className="text-orange-500 font-semibold">INVITE</Text>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate("InviteFriend" as never)}
+              disabled={isOwnEvent || isOutOfDate}
+              style={{ opacity: isOwnEvent || isOutOfDate ? 0.5 : 1 }}
+            >
+              <Text className={`font-semibold ${isOwnEvent || isOutOfDate ? "text-gray-400" : "text-orange-500"}`}>
+                {isOutOfDate ? "EVENT ENDED" : "INVITE"}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -224,7 +232,11 @@ export default function EventDetails() {
 
       {/* 🔥 Bottom Button */}
       <View className="px-6 pb-10">
-        {!isBooked ? (
+        {isOwnEvent ? (
+          <TouchableOpacity className="bg-black rounded-2xl py-4 items-center">
+            <Text className="text-white text-lg font-semibold">Check</Text>
+          </TouchableOpacity>
+        ) : !isBooked ? (
           <TouchableOpacity className="bg-black rounded-2xl py-4 flex-row items-center justify-center" onPress={handleBooked} >
             <Ionicons name="ticket-outline" size={22} color="white" />
             <Text className="text-white text-lg font-semibold ml-2"> BUY TICKET </Text>

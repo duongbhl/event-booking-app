@@ -3,9 +3,6 @@ import { EventCardProps } from "../components/Interface/EventCardProps";
 import api from "./api";
 
 
-
-
-
 export interface CreateEventPayload {
   title: string;
   description?: string;
@@ -20,8 +17,13 @@ export interface CreateEventPayload {
 
 
 export const getEvents = async () => {
-  const { data } = await api.get("/events");
-  return data.items as EventCardProps[];
+  try {
+    const { data } = await api.get("/events");
+    return data.items as EventCardProps[];
+  } catch (error: any) {
+    console.error("Error fetching events:", error.message);
+    throw error;
+  }
 };
 
 

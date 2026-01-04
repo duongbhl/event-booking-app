@@ -53,7 +53,7 @@ const EventCard: React.FC<EventCardProp> = (event) => {
 
         <View className="flex-row justify-between items-center mt-3">
           <Text className="text-gray-400">
-            {event.member || 0} Members joined
+            {event.attendees || 0} Members joined
           </Text>
 
           <TouchableOpacity

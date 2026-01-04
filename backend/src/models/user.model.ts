@@ -10,6 +10,7 @@ export interface IUser {
     country?: string;
     interests?: string[];
     location?: string;
+    description?: string;
     role: 'user' | 'admin';
     verified: boolean;
     createdAt?: Date;
@@ -25,6 +26,7 @@ const schema = new mongoose.Schema<IUser>(
         country: String,
         interests: [{ type: String }],
         location: String,
+        description: String,
         role: { type: String, enum: ['user', 'admin'], default: 'user' },
         verified: { type: Boolean, default: false },
     },

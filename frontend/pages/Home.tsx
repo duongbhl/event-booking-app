@@ -63,9 +63,10 @@ export default function Home() {
    * My Events – do chính user tạo
    */
   const myEvents = useMemo(() => {
-    if (!user) return [];
+    if (!user || !user._id) return [];
+    const now = new Date();
     return events.filter(
-      (ev) => ev.organizer._id === user._id
+      (ev) => ev.organizer && ev.organizer._id === user._id&&new Date(ev.date) >= now
     );
   }, [events, user]);
 
@@ -73,10 +74,12 @@ export default function Home() {
    * Other Events – không phải của mình + filter category
    */
   const filteredEvents = useMemo(() => {
+    if (!user || !user._id) return [];
+    const now = new Date();
     return events.filter(
       (ev) =>
-        ev.organizer._id !== user?._id &&
-        ev.category === selectedCategory
+        ev.organizer && ev.organizer._id !== user._id &&
+        ev.category === selectedCategory && new Date(ev.date) >= now
     );
   }, [events, selectedCategory, user]);
 
@@ -87,13 +90,14 @@ export default function Home() {
       <View className="flex-row justify-between items-center mt-2 mb-4">
         <View className="flex-row items-center">
           <Image
-            source={{ uri: "https://i.pravatar.cc/150?img=5" }}
+            source={{ uri: user?.avatar || "https://i.pravatar.cc/150?img=5" }}
             className="w-10 h-10 rounded-full"
+            defaultSource={{ uri: "https://i.pravatar.cc/150?img=5" }}
           />
           <View className="ml-2">
             <Text className="text-xs text-gray-600">Hello,</Text>
             <Text className="font-semibold text-gray-900">
-              MD Rafii Islam
+              {user?.name || "User"}
             </Text>
           </View>
         </View>
@@ -103,7 +107,7 @@ export default function Home() {
           <View className="flex-row items-center">
             <Ionicons name="location" size={14} color="#FF7A00" />
             <Text className="text-gray-900 ml-1 text-sm">
-              Dhaka, 1200
+              {user?.location && user.location.length > 0 ? user.location : "Add location"}
             </Text>
           </View>
         </View>

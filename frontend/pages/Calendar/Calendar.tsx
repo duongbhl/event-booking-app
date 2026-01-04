@@ -51,7 +51,7 @@ export default function CalendarTable() {
   const allEvents = useMemo(() => {
     return events.filter(
       (ev) =>
-        ev.organizer._id !== user?._id
+         ev.organizer?._id !== user?._id
     );
   }, [events, selectedCategory, user]);
 

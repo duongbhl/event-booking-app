@@ -1,10 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
+import { getMyProfile, UserProfile } from "../../services/user.service";
 
 export default function Profile() {
   const navigation = useNavigation();
+  const { token, user } = useAuth();
+  const isFocused = useIsFocused();
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const data = await getMyProfile(token);
+        setProfile(data);
+      } catch (error) {
+        console.log("Fetch profile error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isFocused) {
+      fetchProfile();
+    }
+  }, [token, isFocused]);
 
   return (
     <ScrollView className="flex-1 bg-white px-5 pt-10">
@@ -28,7 +55,7 @@ export default function Profile() {
       <View className="items-center mb-4">
         <View className="relative">
           <Image
-            source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+            source={{ uri: profile?.avatar || "https://i.pravatar.cc/150?img=5" }}
             className="w-28 h-28 rounded-full"
           />
           {/* Badge */}
@@ -37,7 +64,7 @@ export default function Profile() {
           </View>
         </View>
 
-        <Text className="text-lg font-semibold mt-3">MD Rafi Islam</Text>
+        <Text className="text-lg font-semibold mt-3">{profile?.name}</Text>
       </View>
 
       {/* Stats */}
@@ -63,22 +90,37 @@ export default function Profile() {
         <Text className="text-gray-900 font-semibold text-base mb-2">About Me</Text>
 
         <Text className="text-gray-600">
-          Pellentesque mattis scelerisque aliquam tincidunt lacus.
-          Convallis aliquam tortor et tincidunt cras fringilla aliquet amet.
-          Mauris tempus ultrices fermentum aliquet...
-          <Text className="text-orange-500"> Read More</Text>
+          {profile?.description || "No description yet"}
         </Text>
       </View>
 
-      {/* Interests */}
-      <View>
-        <Text className="text-gray-900 font-semibold text-base mb-3">
-          Interest
-        </Text>
+      {/* Country & Location */}
+      {(profile?.country ) && (
+        <View className="mb-6">
+          <Text className="text-gray-900 font-semibold text-base mb-2">Country</Text>
+          <Text className="text-gray-600">
+            {profile?.country && `🌍 ${profile.country}`}
+          </Text>
+        </View>
+      )}
+      {(profile?.location) && (
+        <View className="mb-6">
+          <Text className="text-gray-900 font-semibold text-base mb-2">Location</Text>
+          <Text className="text-gray-600">
+            {profile?.location && `📍 ${profile.location}`}
+          </Text>
+        </View>
+      )}
 
-        <View className="flex-row flex-wrap gap-2">
-          {["Design", "Food", "Programing", "Music", "Sports", "Art"].map(
-            (item, i) => (
+      {/* Interests */}
+      {profile?.interests && profile.interests.length > 0 && (
+        <View>
+          <Text className="text-gray-900 font-semibold text-base mb-3">
+            Interests
+          </Text>
+
+          <View className="flex-row flex-wrap gap-2">
+            {profile.interests.map((item, i) => (
               <View
                 key={i}
                 className="flex-row items-center bg-gray-100 px-3 py-1 rounded-full"
@@ -86,10 +128,10 @@ export default function Profile() {
                 <Ionicons name="pricetag-outline" size={14} color="#FF7A00" />
                 <Text className="ml-2 text-gray-800">{item}</Text>
               </View>
-            )
-          )}
+            ))}
+          </View>
         </View>
-      </View>
+      )}
 
       <View className="h-10" />
     </ScrollView>

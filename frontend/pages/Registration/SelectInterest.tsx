@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function SelectInterest() {
+export default function SelectInterest({ navigation }: any) {
     const [selected, setSelected] = useState<number[]>([]);
 
     const toggleSelect = (id: number) => {
@@ -98,7 +98,12 @@ export default function SelectInterest() {
                 </View>
 
                 {/* NEXT Button */}
-                <TouchableOpacity className="mt-12">
+                <TouchableOpacity 
+                    className="mt-12"
+                    onPress={() => navigation.navigate("Home")}
+                    disabled={selected.length === 0}
+                    style={{ opacity: selected.length === 0 ? 0.5 : 1 }}
+                >
                     <LinearGradient
                         colors={["#383838", "#121212"]}
                         start={{ x: 0, y: 0 }}
@@ -110,7 +115,7 @@ export default function SelectInterest() {
                         }}
                     >
                         <Text className="text-white text-center mt-5 text-lg font-semibold tracking-wider">
-                            NEXT
+                            FINISH
                         </Text>
                     </LinearGradient>
                 </TouchableOpacity>
