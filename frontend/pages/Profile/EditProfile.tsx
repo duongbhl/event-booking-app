@@ -136,7 +136,7 @@ export default function EditProfile() {
       <View className="items-center mt-2 mb-6">
         <View className="relative">
           <Image
-            source={{ uri: avatar || "https://i.pravatar.cc/150?img=5" }}
+            source={{ uri: avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
             className="w-24 h-24 rounded-full"
           />
           <TouchableOpacity 

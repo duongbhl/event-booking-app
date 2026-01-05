@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
 import { getMyProfile, UserProfile } from "../../services/user.service";
+import { getMyEvents } from "../../services/event.service";
+import { getMyBookmarks, getMyFollowers } from "../../services/bookmark.service";
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -12,15 +14,32 @@ export default function Profile() {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [followers, setFollowers] = useState(0); // số người bookmark events của mình
+  const [following, setFollowing] = useState(0); // số events mình đã bookmark
+  const [events, setEvents] = useState(0); // số events mình tạo
 
   useEffect(() => {
     if (!token) return;
 
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getMyProfile(token);
-        setProfile(data);
+        
+        // Fetch profile
+        const profileData = await getMyProfile(token);
+        setProfile(profileData);
+        
+        // Fetch my events
+        const myEvents = await getMyEvents(token);
+        setEvents(myEvents.length);
+        
+        // Fetch my bookmarks (following)
+        const myBookmarks = await getMyBookmarks(token);
+        setFollowing(myBookmarks.length);
+        
+        // Fetch followers
+        const followersCount = await getMyFollowers(token);
+        setFollowers(followersCount);
       } catch (error) {
         console.log("Fetch profile error:", error);
       } finally {
@@ -29,7 +48,7 @@ export default function Profile() {
     };
 
     if (isFocused) {
-      fetchProfile();
+      fetchData();
     }
   }, [token, isFocused]);
 
@@ -55,7 +74,7 @@ export default function Profile() {
       <View className="items-center mb-4">
         <View className="relative">
           <Image
-            source={{ uri: profile?.avatar || "https://i.pravatar.cc/150?img=5" }}
+            source={{ uri: profile?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
             className="w-28 h-28 rounded-full"
           />
           {/* Badge */}
@@ -70,17 +89,17 @@ export default function Profile() {
       {/* Stats */}
       <View className="flex-row justify-between px-3 mt-4 mb-6">
         <View className="items-center">
-          <Text className="text-lg font-bold">1,089</Text>
+          <Text className="text-lg font-bold">{followers}</Text>
           <Text className="text-gray-500 text-xs">Followers</Text>
         </View>
 
         <View className="items-center">
-          <Text className="text-lg font-bold">275</Text>
+          <Text className="text-lg font-bold">{following}</Text>
           <Text className="text-gray-500 text-xs">Following</Text>
         </View>
 
         <View className="items-center">
-          <Text className="text-lg font-bold">10</Text>
+          <Text className="text-lg font-bold">{events}</Text>
           <Text className="text-gray-500 text-xs">Events</Text>
         </View>
       </View>

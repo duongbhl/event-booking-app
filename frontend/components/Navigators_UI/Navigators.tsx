@@ -19,6 +19,7 @@ import Profile from "../../pages/Profile/Profile";
 
 import Home from "../../pages/Home";
 import { CustomDrawer, CustomTabBar } from "./CustomUI";
+import Location from "../../pages/Location/Location";
 
 export type RootTabParamList = {
   Home: undefined;
@@ -58,7 +59,7 @@ export function MainTabs() {
 
       <Tab.Screen
         name="Location"
-        component={SelectLocation}
+        component={Location}
         options={tabIcon("location", "location-outline")}
       />
 

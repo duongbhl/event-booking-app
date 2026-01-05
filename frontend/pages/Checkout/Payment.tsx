@@ -11,7 +11,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../../context/AuthContext";
-import { bookTicket, confirmPayment } from "../../services/ticket.service";
+import { bookTicket, confirmPayment, getMyTickets } from "../../services/ticket.service";
 import { mapPaymentMethod } from "../../services/paymentMapper";
 import { getMyCards } from "../../services/card.service";
 
@@ -73,33 +73,66 @@ export default function Payment() {
       setLoading(true);
 
       /** 1️⃣ Book tickets */
-      const { payment } = await bookTicket(
+      const mappedMethod = mapPaymentMethod(method);
+      console.log("📌 Booking tickets...", { eventId, ticketType, quantity, total, method, mappedMethod });
+      
+      const bookResponse = await bookTicket(
         {
           eventId,
           ticketType,
           quantity,
           price: total,
-          method: mapPaymentMethod(method),
+          method: mappedMethod,
         },
         token
       );
+      
+      console.log("✅ Book response:", bookResponse);
+      
+      if (!bookResponse?.payment?._id) {
+        throw new Error("No payment ID received from booking");
+      }
 
       /** 2️⃣ Confirm payment */
-      const result = await confirmPayment(
-        {
-          paymentId: payment._id,
-          success: true,
-        },
-        token
-      );
+      let confirmResponse;
+      try {
+        confirmResponse = await confirmPayment(
+          {
+            paymentId: bookResponse.payment._id,
+            success: true,
+          },
+          token
+        );
+      } catch (confirmError: any) {
+        // Handle timeout gracefully - backend may have processed it
+        if (confirmError?.code === 'ECONNABORTED' || confirmError?.message?.includes('timeout')) {
+          // Wait a moment for backend to complete
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Fetch tickets from /tickets/me endpoint
+          const tickets = await getMyTickets(token);
+          if (tickets && tickets.length > 0) {
+            navigation.replace("Ticket", {
+              tickets: tickets,
+            });
+            return;
+          }
+        }
+        throw confirmError;
+      }
+
+      if (!confirmResponse?.tickets || confirmResponse.tickets.length === 0) {
+        throw new Error("No tickets received from server after confirmation");
+      }
 
       navigation.replace("Ticket", {
-        tickets: result.tickets,
+        tickets: confirmResponse.tickets,
       });
     } catch (err: any) {
+      console.error("❌ Checkout error:", err);
+      const errorMessage = err?.response?.data?.message || err?.message || "Something went wrong";
       Alert.alert(
         "Payment failed",
-        err?.response?.data?.message || "Something went wrong"
+        errorMessage
       );
     } finally {
       setLoading(false);

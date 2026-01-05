@@ -32,7 +32,7 @@ export const confirmPayment = async (
   token: string
 ) => {
   const res = await api.post("/tickets/confirm", data, authHeader(token));
-  return res.data; // { payment, ticket }
+  return res.data; // { payment, tickets[] }
 };
 
 /**

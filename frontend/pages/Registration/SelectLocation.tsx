@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Camera } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import * as Crypto from "expo-crypto";
+import { useAuth } from "../../context/AuthContext";
+import { updateProfile } from "../../services/user.service";
 
 
 
@@ -20,9 +22,11 @@ export default function SelectLocation({ navigation, route }: any) {
   const mapRef = useRef<MapView | null>(null);
   const sessionToken = useRef(Crypto.randomUUID()).current;
   const isFromEditProfile = route?.params?.fromEditProfile || false;
+  const { user, token, login } = useAuth();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState({
     latitude: 10.762622,
     longitude: 106.660172,
@@ -232,7 +236,7 @@ export default function SelectLocation({ navigation, route }: any) {
       {/* ADD BUTTON */}
       <View className="absolute bottom-10 w-full px-6">
         <TouchableOpacity 
-          onPress={() => {
+          onPress={async () => {
             const locationName = selectedPlaceName || `${region.latitude.toFixed(4)}, ${region.longitude.toFixed(4)}`;
             
             if (isFromEditProfile) {
@@ -242,10 +246,29 @@ export default function SelectLocation({ navigation, route }: any) {
                 selectedLocation: locationName,
               });
             } else {
-              // Continue to SelectInterest (registration flow)
-              navigation.navigate("SelectInterest");
+              // Save location to backend
+              if (!user || !token) return;
+              
+              try {
+                setLoading(true);
+                await updateProfile({ location: locationName }, token);
+                
+                // Update local auth context
+                if (user) {
+                  await login({ ...user, location: locationName }, token);
+                }
+                
+                // Continue to SelectInterest (registration flow)
+                navigation.navigate("SelectInterest");
+              } catch (error) {
+                console.error("Error updating location:", error);
+                Alert.alert("Error", "Failed to save location. Please try again.");
+              } finally {
+                setLoading(false);
+              }
             }
           }}
+          disabled={loading}
         >
           <LinearGradient
             colors={["#383838", "#121212"]}
@@ -253,7 +276,7 @@ export default function SelectLocation({ navigation, route }: any) {
             style={{ height: 56, borderRadius: 28 }}
           >
             <Text className="text-white text-center mt-5 text-lg font-semibold">
-              {isFromEditProfile ? "ADD" : "NEXT"}
+              {loading ? "SAVING..." : (isFromEditProfile ? "ADD" : "NEXT")}
             </Text>
           </LinearGradient>
         </TouchableOpacity>

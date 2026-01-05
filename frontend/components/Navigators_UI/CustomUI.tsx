@@ -57,9 +57,7 @@ export function CustomTabBar({
 // =======================================================
 export function CustomDrawer(props: DrawerContentComponentProps) {
   const navigation = props.navigation;
-
-
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <DrawerContentScrollView
@@ -73,15 +71,16 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       {/* USER INFO */}
       <View className="flex-row items-center mb-10">
         <Image
-          source={{ uri: "https://randomuser.me/api/portraits/men/75.jpg" }}
+          source={{ uri: user?.avatar || "https://i.pravatar.cc/150?img=5" }}
           className="w-20 h-20 rounded-full mr-4"
+          defaultSource={{ uri: "https://i.pravatar.cc/150?img=5" }}
         />
-        <View>
+        <View className="flex-1">
           <Text className="text-xl font-semibold text-gray-900">
-            MD Rafi Islam
+            {user?.name || "User"}
           </Text>
           <Text className="text-gray-500 text-sm mt-1">
-            rafiislama...@gmail.com
+            {user?.email || "user@example.com"}
           </Text>
         </View>
       </View>

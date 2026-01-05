@@ -1,11 +1,49 @@
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
+import { getOrganizerFollowers } from "../../services/bookmark.service";
+import { getOrganizerEvents } from "../../services/event.service";
+import EventPriceCard from "../../components/Cards/EventPriceCard";
 
 export default function OrganizerProfile() {
   const [tab, setTab] = useState<"about" | "events" | "reviews">("about");
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const route = useRoute<any>();
+  const isFocused = useIsFocused();
+  
+  const organizer = route.params?.organizer;
+  
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!organizer?._id) return;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch followers
+        const followersCount = await getOrganizerFollowers(organizer._id);
+        setFollowers(followersCount);
+        
+        // Fetch organizer's events
+        const organizerEvents = await getOrganizerEvents(organizer._id);
+        setEvents(organizerEvents);
+      } catch (error) {
+        console.log("Fetch organizer data error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isFocused) {
+      fetchData();
+    }
+  }, [organizer?._id, isFocused]);
 
   return (
     <ScrollView className="flex-1 bg-white px-5 pt-12">
@@ -23,25 +61,25 @@ export default function OrganizerProfile() {
       <View className="items-center">
         <Image
           source={{
-            uri: "https://i.pravatar.cc/300?img=12",
+            uri: organizer?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg",
           }}
           className="w-24 h-24 rounded-full"
         />
-        <Text className="mt-3 text-lg font-semibold">Tamim Ikram</Text>
+        <Text className="mt-3 text-lg font-semibold">{organizer?.name || "Unknown Organizer"}</Text>
       </View>
 
       {/* Stats */}
       <View className="flex-row justify-center mt-6">
         <View className="items-center mx-4">
-          <Text className="text-lg font-bold">3,583</Text>
+          <Text className="text-lg font-bold">{followers}</Text>
           <Text className="text-gray-500 text-sm">Followers</Text>
         </View>
         <View className="items-center mx-4">
-          <Text className="text-lg font-bold">167</Text>
+          <Text className="text-lg font-bold">{following}</Text>
           <Text className="text-gray-500 text-sm">Following</Text>
         </View>
         <View className="items-center mx-4">
-          <Text className="text-lg font-bold">20</Text>
+          <Text className="text-lg font-bold">{events.length}</Text>
           <Text className="text-gray-500 text-sm">Events</Text>
         </View>
       </View>
@@ -74,17 +112,23 @@ export default function OrganizerProfile() {
         <View className="mt-6">
           <Text className="text-lg font-semibold mb-2">About</Text>
           <Text className="text-gray-600 leading-6">
-            Ultricies arcu venenatis in lorem faucibus lobortis at. East odio
-            varius nisl congue aliquam nunc est sit pulvinar magna. Est
-            scelerisque dignissim non nibh arcu venenatis in lorem faucibus
-            lobortis at. East odio…
-            <Text className="text-orange-500 font-semibold"> Read More</Text>
+            {organizer?.description || "No description"}
           </Text>
         </View>
       )}
 
       {tab === "events" && (
-        <Text className="text-center mt-10 text-gray-400">Events List…</Text>
+        <View className="mt-6">
+          {events.length === 0 ? (
+            <Text className="text-center mt-10 text-gray-400">No events yet</Text>
+          ) : (
+            events.map((event) => (
+              <View key={event._id} className="mb-4">
+                <EventPriceCard {...event} />
+              </View>
+            ))
+          )}
+        </View>
       )}
 
       {tab === "reviews" && (

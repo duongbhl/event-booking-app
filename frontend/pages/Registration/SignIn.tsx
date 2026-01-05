@@ -46,14 +46,29 @@ export default function SignIn() {
                     name: data.name,
                     email: data.email,
                     role: data.role,
+                    country: data.country,
+                    interests: data.interests,
+                    location: data.location,
+                    avatar: data.avatar,
                 },
                 data.token
             );
 
-
             Alert.alert("Success", "Login successfully");
-
-
+            
+            // Check if user has completed profile setup
+            const hasCountry = data.country && data.country.trim() !== "";
+            const hasInterests = data.interests && Array.isArray(data.interests) && data.interests.length > 0;
+            const hasLocation = data.location && data.location.trim() !== "";
+            
+            // Navigate based on profile completion
+            if (hasCountry && hasInterests && hasLocation) {
+              // Profile complete - go to Home (drawer)
+              navigation.navigate("Drawer" as never);
+            } else {
+              // Profile incomplete - go through registration flow
+              navigation.navigate("SelectCountry" as never);
+            }
 
         } catch (error: any) {
             console.log("LOGIN ERROR:", error?.response?.data);

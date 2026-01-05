@@ -18,10 +18,34 @@ export interface CreateEventPayload {
 
 export const getEvents = async () => {
   try {
-    const { data } = await api.get("/events");
+    const { data } = await api.get("/events/");
     return data.items as EventCardProps[];
   } catch (error: any) {
     console.error("Error fetching events:", error.message);
+    throw error;
+  }
+};
+
+export const getMyEvents = async (token: string) => {
+  try {
+    const { data } = await api.get("/events/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data as EventCardProps[];
+  } catch (error: any) {
+    console.error("Error fetching my events:", error.message);
+    throw error;
+  }
+};
+
+export const getOrganizerEvents = async (organizerId: string) => {
+  try {
+    const { data } = await api.get(`/events/organizer/${organizerId}`);
+    return data as EventCardProps[];
+  } catch (error: any) {
+    console.error("Error fetching organizer events:", error.message);
     throw error;
   }
 };

@@ -64,9 +64,23 @@ export default function Home() {
    */
   const myEvents = useMemo(() => {
     if (!user || !user._id) return [];
-    const now = new Date();
+    // Compare dates at the beginning of the day (ignore time)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    
     return events.filter(
-      (ev) => ev.organizer && ev.organizer._id === user._id&&new Date(ev.date) >= now
+      (ev) => {
+        // Check if event belongs to current user
+        const isOwnEvent = (ev.organizer && ev.organizer._id === user?._id) || 
+                          ev.organizer?._id === user?._id;
+        
+        // Only show events from today onwards (ignore time part)
+        const eventDate = new Date(ev.date);
+        eventDate.setHours(0, 0, 0, 0);
+        const isFutureEvent = eventDate >= todayStart;
+        
+        return isOwnEvent && isFutureEvent;
+      }
     );
   }, [events, user]);
 
@@ -75,11 +89,25 @@ export default function Home() {
    */
   const filteredEvents = useMemo(() => {
     if (!user || !user._id) return [];
-    const now = new Date();
+    // Compare dates at the beginning of the day (ignore time)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    
     return events.filter(
-      (ev) =>
-        ev.organizer && ev.organizer._id !== user._id &&
-        ev.category === selectedCategory && new Date(ev.date) >= now
+      (ev) => {
+        // Check if event belongs to another user
+        const isOtherEvent = ev.organizer && ev.organizer._id !== user._id;
+        
+        // Check category match
+        const isSameCategory = ev.category === selectedCategory;
+        
+        // Only show events from today onwards (ignore time part)
+        const eventDate = new Date(ev.date);
+        eventDate.setHours(0, 0, 0, 0);
+        const isFutureEvent = eventDate >= todayStart;
+        
+        return isOtherEvent && isSameCategory && isFutureEvent;
+      }
     );
   }, [events, selectedCategory, user]);
 
@@ -89,11 +117,21 @@ export default function Home() {
       {/* HEADER */}
       <View className="flex-row justify-between items-center mt-2 mb-4">
         <View className="flex-row items-center">
-          <Image
-            source={{ uri: user?.avatar || "https://i.pravatar.cc/150?img=5" }}
-            className="w-10 h-10 rounded-full"
-            defaultSource={{ uri: "https://i.pravatar.cc/150?img=5" }}
-          />
+          <TouchableOpacity 
+            onPress={() => navigation.openDrawer?.()}
+            className="w-10 h-10 rounded-full items-center justify-center mr-2"
+          >
+            <Ionicons name="menu" size={28} color="#111827" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={() => navigation.navigate("Profile" as never)}>
+            <Image
+              source={{ uri: user?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
+              className="w-10 h-10 rounded-full"
+              defaultSource={{ uri: "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
+            />
+          </TouchableOpacity>
+          
           <View className="ml-2">
             <Text className="text-xs text-gray-600">Hello,</Text>
             <Text className="font-semibold text-gray-900">

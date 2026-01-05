@@ -155,7 +155,7 @@ export default function EventBookmark() {
 
           {!query.trim() && (
             <TouchableOpacity
-              className="mt-5 bg-black px-5 py-3 rounded-2xl"
+              className="mt-5 bg-orange-500 px-5 py-3 rounded-2xl"
               onPress={() => navigation.navigate("Home")}
             >
               <Text className="text-white font-semibold">Explore events</Text>

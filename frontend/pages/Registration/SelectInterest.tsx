@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../context/AuthContext";
+import { updateProfile } from "../../services/user.service";
 
 export default function SelectInterest({ navigation }: any) {
+    const { user, token, login } = useAuth();
     const [selected, setSelected] = useState<number[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const toggleSelect = (id: number) => {
         if (selected.includes(id)) {
@@ -100,9 +104,33 @@ export default function SelectInterest({ navigation }: any) {
                 {/* NEXT Button */}
                 <TouchableOpacity 
                     className="mt-12"
-                    onPress={() => navigation.navigate("Home")}
-                    disabled={selected.length === 0}
-                    style={{ opacity: selected.length === 0 ? 0.5 : 1 }}
+                    onPress={async () => {
+                        if (selected.length === 0 || !user || !token) return;
+                        
+                        try {
+                            setLoading(true);
+                            
+                            const interestNames = selected
+                                .map(id => interests.find(i => i.id === id)?.name)
+                                .filter(Boolean) as string[];
+                            
+                            await updateProfile({ interests: interestNames }, token);
+                            
+                            // Update local auth context
+                            if (user) {
+                                await login({ ...user, interests: interestNames }, token);
+                            }
+                            
+                            navigation.navigate("Drawer" as never);
+                        } catch (error) {
+                            console.error("Error updating interests:", error);
+                            Alert.alert("Error", "Failed to save interests. Please try again.");
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    disabled={selected.length === 0 || loading}
+                    style={{ opacity: selected.length === 0 || loading ? 0.5 : 1 }}
                 >
                     <LinearGradient
                         colors={["#383838", "#121212"]}
@@ -115,7 +143,7 @@ export default function SelectInterest({ navigation }: any) {
                         }}
                     >
                         <Text className="text-white text-center mt-5 text-lg font-semibold tracking-wider">
-                            FINISH
+                            {loading ? "SAVING..." : "FINISH"}
                         </Text>
                     </LinearGradient>
                 </TouchableOpacity>

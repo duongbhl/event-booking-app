@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -56,8 +56,13 @@ export default function EventDetails() {
 
     try {
       await toggleBookmark(event._id, token);
+      Alert.alert(
+        "Success",
+        isBookmarked ? "Removed from favorites" : "Added to favorites"
+      );
     } catch (e) {
       setIsBookmarked(prev); // rollback
+      Alert.alert("Error", "Failed to update bookmark");
     }
   };
 
@@ -198,22 +203,26 @@ export default function EventDetails() {
             </TouchableOpacity>
           </View>
 
-          {/* Organizer (FIX CỨNG) */}
+          {/* Organizer */}
           <View className="mt-6 flex-row items-center justify-between bg-orange-50 rounded-xl p-3">
-            <View className="flex-row items-center">
+            <TouchableOpacity 
+              className="flex-row items-center flex-1"
+              onPress={() => navigation.navigate("OrganizerProfile", { organizer: event.organizer })}
+            >
               <Image
-                source={{ uri: "https://i.pravatar.cc/100?img=12" }}
+                source={{ uri: event.organizer?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
                 className="w-12 h-12 rounded-full"
+                defaultSource={{ uri: "https://i.pravatar.cc/100?img=12" }}
               />
               <View className="ml-3">
                 <Text className="font-semibold text-gray-800">
-                  Tamim Ikram
+                  {event.organizer?.name || "Unknown Organizer"}
                 </Text>
                 <Text className="text-gray-500 text-sm">
                   Event Organiser
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
 
             <TouchableOpacity className="bg-white w-10 h-10 rounded-full items-center justify-center shadow">
               <Ionicons name="chatbubble-outline" size={22} color="#555" />
@@ -236,14 +245,44 @@ export default function EventDetails() {
           <TouchableOpacity className="bg-black rounded-2xl py-4 items-center">
             <Text className="text-white text-lg font-semibold">Check</Text>
           </TouchableOpacity>
-        ) : !isBooked ? (
-          <TouchableOpacity className="bg-black rounded-2xl py-4 flex-row items-center justify-center" onPress={handleBooked} >
+        ) : isBooked ? (
+          // Show 2 buttons when already booked
+          <View className="flex-row gap-3">
+            <TouchableOpacity 
+              className="flex-1 bg-orange-500 rounded-2xl py-4 items-center"
+              onPress={handleViewTicket}
+              disabled={isOutOfDate}
+              style={{ opacity: isOutOfDate ? 0.5 : 1 }}
+            >
+              <Text className="text-white text-lg font-semibold">
+                {isOutOfDate ? "EVENT ENDED" : "My Tickets"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className="flex-1 bg-black rounded-2xl py-4 flex-row items-center justify-center"
+              onPress={handleBooked}
+              disabled={isOutOfDate}
+              style={{ opacity: isOutOfDate ? 0.5 : 1 }}
+            >
+              <Ionicons name="add-circle-outline" size={22} color="white" />
+              <Text className="text-white text-lg font-semibold ml-2">
+                {isOutOfDate ? "EVENT ENDED" : "Buy More"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity 
+            className="bg-black rounded-2xl py-4 flex-row items-center justify-center" 
+            onPress={handleBooked}
+            disabled={isOutOfDate}
+            style={{ opacity: isOutOfDate ? 0.5 : 1 }}
+          >
             <Ionicons name="ticket-outline" size={22} color="white" />
-            <Text className="text-white text-lg font-semibold ml-2"> BUY TICKET </Text>
-          </TouchableOpacity>) : (
-          <TouchableOpacity className="bg-black rounded-2xl py-4 items-center" onPress={handleBooked}>
-            <Text className="text-white text-lg font-semibold">Buy Ticket</Text>
-          </TouchableOpacity>)}
+            <Text className="text-white text-lg font-semibold ml-2">
+              {isOutOfDate ? "EVENT ENDED" : "BUY TICKET"}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
     </SafeAreaView>

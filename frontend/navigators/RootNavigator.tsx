@@ -31,6 +31,8 @@ import Payment from "../pages/Checkout/Payment";
 import ScanCard from "../pages/Checkout/ScanCard";
 import EditProfile from "../pages/Profile/EditProfile";
 import EventBookmark from "../pages/MyEvent/EventBookmark";
+import Location from "../pages/Location/Location";
+import Home from "../pages/Home";
 
 const Stack = createStackNavigator();
 
@@ -46,6 +48,12 @@ export default function RootNavigator() {
     );
   }
 
+  // Check if user needs to complete profile
+  const needsCountry = !user?.country || user.country.trim() === "";
+  const needsLocation = !user?.location || user.location.trim() === "";
+  const needsInterests = !user?.interests || user.interests.length === 0;
+  const needsProfileSetup = user && (needsCountry || needsLocation || needsInterests);
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* ---------- CHƯA LOGIN ---------- */}
@@ -55,16 +63,21 @@ export default function RootNavigator() {
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="Verification" component={Verification} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
-          <Stack.Screen name="SelectCountry" component={SelectionCountry} />
-          <Stack.Screen name="SelectInterest" component={SelectInterest} />
-          <Stack.Screen name="SelectLocation" component={SelectLocation} />
         </>
       ) : (
         <>
           {/* ---------- ĐÃ LOGIN ---------- */}
+
+          {/* Show setup screens only if needed */}
+          {needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
+          {needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
+          {needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
+
           <Stack.Screen name="Drawer" component={DrawerNavigation} />
 
           {/* GLOBAL SCREENS */}
+          <Stack.Screen name="Home" component={Home} />
+
           <Stack.Screen name="Notifications" component={Notification} />
           <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />
           <Stack.Screen name="Message" component={Message} />
@@ -77,7 +90,6 @@ export default function RootNavigator() {
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="MyEvent" component={Events} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
-          <Stack.Screen name="SelectLocation" component={SelectLocation} />
           <Stack.Screen name="OrganizerProfile" component={OrganizerProfile} />
           <Stack.Screen name="BuyTicket" component={BuyTicket} />
           <Stack.Screen name="Payment" component={Payment} />
