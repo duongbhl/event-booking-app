@@ -49,6 +49,14 @@ export default function EditProfile() {
     fetchProfile();
   }, [token, user]);
 
+  // Listen for country from SelectCountry
+  useEffect(() => {
+    const selectedCountry = route.params?.selectedCountry;
+    if (selectedCountry) {
+      setCountry(selectedCountry);
+    }
+  }, [route.params?.selectedCountry]);
+
   // Listen for location from SelectLocation
   useEffect(() => {
     const selectedLocation = route.params?.selectedLocation;
@@ -165,12 +173,16 @@ export default function EditProfile() {
 
       {/* Country */}
       <Text className="font-medium">Country</Text>
-      <TextInput
-        className="border border-gray-200 rounded-xl p-3 mt-1 mb-4"
-        value={country}
-        onChangeText={setCountry}
-        placeholder="Enter your country"
-      />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("SelectCountry", { fromEditProfile: true })}
+      >
+        <View className="border border-gray-200 rounded-xl p-3 mt-1 mb-4 flex-row justify-between items-center">
+          <Text className={country ? "text-gray-900" : "text-gray-400"}>
+            {country || "Tap to select country"}
+          </Text>
+          <Ionicons name="chevron-forward" size={20} color="#FF7A00" />
+        </View>
+      </TouchableOpacity>
 
       {/* Location */}
       <Text className="font-medium">Location</Text>

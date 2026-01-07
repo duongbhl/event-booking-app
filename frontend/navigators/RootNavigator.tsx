@@ -72,11 +72,17 @@ export default function RootNavigator() {
           {needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
           {needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
           {needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
+          
+          {/* Always register setup screens for EditProfile navigation */}
+          {!needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
+          {!needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
+          {!needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
 
           <Stack.Screen name="Drawer" component={DrawerNavigation} />
 
           {/* GLOBAL SCREENS */}
           <Stack.Screen name="Home" component={Home} />
+          
 
           <Stack.Screen name="Notifications" component={Notification} />
           <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />

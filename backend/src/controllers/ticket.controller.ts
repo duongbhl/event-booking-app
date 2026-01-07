@@ -4,40 +4,41 @@ import Ticket from '../models/ticket.model';
 import Payment from '../models/payment.model';
 
 export const bookTicket = async (req: any, res: Response) => {
-    const {
-        eventId,
-        ticketType,
-        quantity,
-        price,
-        seatInfo,
-        method = 'wallet',
-    } = req.body as {
-        eventId: string;
-        ticketType: 'VIP' | 'Economy';
-        quantity: number;
-        price: number;
-        seatInfo?: string;
-        method?: 'credit' | 'paypal' | 'wallet';
-    };
+    try {
+        const {
+            eventId,
+            ticketType,
+            quantity,
+            price,
+            seatInfo,
+            method = 'wallet',
+        } = req.body as {
+            eventId: string;
+            ticketType: 'VIP' | 'Economy';
+            quantity: number;
+            price: number;
+            seatInfo?: string;
+            method?: 'credit' | 'paypal' | 'wallet';
+        };
 
-    if (!quantity || quantity < 1) {
-        return res.status(400).json({ message: 'Invalid quantity' });
-    }
+        if (!quantity || quantity < 1) {
+            return res.status(400).json({ message: 'Invalid quantity' });
+        }
 
-    const event = await Event.findById(eventId);
-    if (!event) {
-        return res.status(404).json({ message: 'Event not found' });
-    }
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
 
-    /** 🔒 Validate giá */
-    const unitPrice =
-        ticketType === 'VIP' ? event.price * 50 : event.price;
+        /** 🔒 Validate giá */
+        const unitPrice =
+            ticketType === 'VIP' ? event.price * 50 : event.price;
 
-    const expectedTotal = unitPrice * quantity;
+        const expectedTotal = unitPrice * quantity;
 
-    if (price !== expectedTotal) {
-        return res.status(400).json({ message: 'Invalid ticket price' });
-    }
+        if (price !== expectedTotal) {
+            return res.status(400).json({ message: 'Invalid ticket price' });
+        }
 
     /** 🔒 Check sold out */
     const sold = await Ticket.countDocuments({
@@ -75,39 +76,55 @@ export const bookTicket = async (req: any, res: Response) => {
     });
 
     res.status(201).json({ tickets, payment });
+    } catch (error) {
+        console.error("Book ticket error:", error);
+        res.status(500).json({ message: "Failed to book ticket" });
+    }
 };
 
 
 export const confirmPayment = async (req: any, res: Response) => {
-    const { paymentId, success = true } = req.body;
+    try {
+        const { paymentId, success = true } = req.body;
 
-    const payment = await Payment.findById(paymentId);
-    if (!payment) {
-        return res.status(404).json({ message: "Payment not found" });
+        if (!paymentId) {
+            return res.status(400).json({ message: "Payment ID is required" });
+        }
+
+        const payment = await Payment.findById(paymentId);
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found" });
+        }
+
+        if (String(payment.user) !== String(req.user!._id)) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+
+        payment.status = success ? "success" : "failed";
+        await payment.save();
+
+        /** 🔥 Update ticket status */
+        await Ticket.updateMany(
+            { _id: { $in: payment.tickets } },
+            { paymentStatus: success ? "paid" : "failed" }
+        );
+
+        /** 🔥 FETCH LẠI TICKETS ĐẦY ĐỦ - Optimize with lean() */
+        const tickets = await Ticket.find({
+            _id: { $in: payment.tickets },
+        }).populate({
+            path: "event",
+            select: "title location date images price"
+        });
+
+        res.json({
+            payment,
+            tickets,
+        });
+    } catch (error) {
+        console.error("Confirm payment error:", error);
+        res.status(500).json({ message: "Failed to confirm payment" });
     }
-
-    if (String(payment.user) !== String(req.user!._id)) {
-        return res.status(403).json({ message: "Forbidden" });
-    }
-
-    payment.status = success ? "success" : "failed";
-    await payment.save();
-
-    /** 🔥 Update ticket status */
-    await Ticket.updateMany(
-        { _id: { $in: payment.tickets } },
-        { paymentStatus: success ? "paid" : "failed" }
-    );
-
-    /** 🔥 FETCH LẠI TICKETS ĐẦY ĐỦ */
-    const tickets = await Ticket.find({
-        _id: { $in: payment.tickets },
-    }).populate("event");
-
-    res.json({
-        payment,
-        tickets, // ✅ Ticket[] thật
-    });
 };
 
 

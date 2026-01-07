@@ -1,83 +1,104 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
   TextInput,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { MessagePreviewProps } from "../../components/Interface/MessagePreviewProps";
-import MessageCard from "../../components/Cards/MessageCard";
-
-const MOCK_MESSAGES: MessagePreviewProps[] = [
-  {
-    id: "1",
-    name: "Cristofer",
-    avatar: "https://randomuser.me/api/portraits/men/77.jpg",
-    lastMessage: "Hi :)",
-    time: "Just now",
-    unread: 2,
-  },
-  {
-    id: "2",
-    name: "David Silbia",
-    avatar: "https://randomuser.me/api/portraits/men/20.jpg",
-    lastMessage: "This is very good",
-    time: "3 min ago",
-    unread: 4,
-  },
-  {
-    id: "3",
-    name: "Micheal Ullasi",
-    avatar: "https://randomuser.me/api/portraits/men/17.jpg",
-    lastMessage: "Hey, How are you?",
-    time: "10 min ago",
-    unread: 7,
-  },
-  {
-    id: "4",
-    name: "Ashfak Sayem",
-    avatar: "https://randomuser.me/api/portraits/men/41.jpg",
-    lastMessage: "Looking forward to it!",
-    time: "27 min ago",
-    unread: 0,
-  },
-  {
-    id: "5",
-    name: "Roman Kutepov",
-    avatar: "https://randomuser.me/api/portraits/men/26.jpg",
-    lastMessage: "Nothing man, cheers!",
-    time: "40 min ago",
-    unread: 0,
-  },
-  {
-    id: "6",
-    name: "Jhon Wick",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    lastMessage: "You can take this up?",
-    time: "1 hour ago",
-    unread: 0,
-  },
-  {
-    id: "7",
-    name: "Zenifero Bolex",
-    avatar: "https://randomuser.me/api/portraits/women/30.jpg",
-    lastMessage: "Okay, Bye!",
-    time: "1 day ago",
-    unread: 0,
-  },
-];
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
+import { searchUsers, getMyRooms, createRoom } from "../../services/chat.service";
 
 export default function Message() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const { user, token } = useAuth();
+  const isFocused = useIsFocused();
+  
   const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const filtered = MOCK_MESSAGES.filter((m) =>
-    m.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Fetch saved rooms when screen is focused
+  useEffect(() => {
+    if (!isFocused || !token) return;
+    
+    const fetchRooms = async () => {
+      try {
+        setLoading(true);
+        const data = await getMyRooms(token);
+        setRooms(data);
+      } catch (error) {
+        console.log("Fetch rooms error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, [isFocused, token]);
+
+  // Search users
+  useEffect(() => {
+    if (!search.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayTimer = setTimeout(async () => {
+      try {
+        setIsSearching(true);
+        const results = await searchUsers(search, token!);
+        setSearchResults(results);
+      } catch (error) {
+        console.log("Search error:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayTimer);
+  }, [search, token]);
+
+  // Get other member in 1-on-1 conversation
+  const getOtherMember = (room: any) => {
+    return room.members.find((m: any) => m._id !== user?._id);
+  };
+
+  // Handle user selection from search results
+  const handleSelectUser = async (selectedUser: any) => {
+    try {
+      setLoading(true);
+      const room = await createRoom(
+        { memberIds: [selectedUser._id], isGroup: false },
+        token!
+      );
+      setSearch("");
+      setSearchResults([]);
+      
+      // Navigate to Chat screen with room
+      navigation.navigate("Chat", { roomId: room._id, room });
+    } catch (error) {
+      console.log("Create room error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle room selection from saved conversations
+  const handleSelectRoom = (room: any) => {
+    navigation.navigate("Chat", { roomId: room._id, room });
+  };
+
+  // Display search results if searching, otherwise display saved rooms
+  const displayData = search.trim() ? searchResults : rooms;
+  const isShowingSearch = search.trim();
 
   return (
     <SafeAreaView className="flex-1 bg-white px-4 pt-4">
@@ -98,27 +119,105 @@ export default function Message() {
       <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-12 mb-4">
         <Ionicons name="search" size={18} color="#9CA3AF" />
         <TextInput
-          placeholder="Find Conversation"
+          placeholder={isShowingSearch ? "Find User" : "Find Conversation"}
           placeholderTextColor="#9CA3AF"
           value={search}
           onChangeText={setSearch}
           className="flex-1 ml-2 text-gray-900"
         />
+        {search && (
+          <TouchableOpacity onPress={() => setSearch("")}>
+            <Ionicons name="close" size={18} color="#9CA3AF" />
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* MESSAGE LIST */}
+      {/* CONTENT */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {filtered.map((item) => (
-          <MessageCard
-            key={item.id}
-            id={item.id}
-            name={item.name}
-            avatar={item.avatar}
-            lastMessage={item.lastMessage}
-            time={item.time}
-            unread={item.unread}
-          />
-        ))}
+        {loading ? (
+          <View className="flex-1 justify-center items-center py-10">
+            <ActivityIndicator size="large" color="#FF7A00" />
+          </View>
+        ) : isShowingSearch ? (
+          // Search Results
+          <>
+            {isSearching ? (
+              <View className="flex-1 justify-center items-center py-10">
+                <ActivityIndicator size="large" color="#FF7A00" />
+              </View>
+            ) : searchResults.length > 0 ? (
+              searchResults.map((user) => (
+                <TouchableOpacity
+                  key={user._id}
+                  onPress={() => handleSelectUser(user)}
+                  className="flex-row items-center bg-gray-50 rounded-xl p-4 mb-3"
+                >
+                  <Image
+                    source={{ uri: user.avatar || "https://via.placeholder.com/48" }}
+                    className="w-12 h-12 rounded-full mr-3"
+                    defaultSource={require("../../assets/no-task.png")}
+                  />
+                  <View className="flex-1">
+                    <Text className="font-semibold text-gray-900">
+                      {user.name}
+                    </Text>
+                    <Text className="text-gray-500 text-xs">
+                      {user.email}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View className="flex-1 justify-center items-center py-10">
+                <Text className="text-gray-500">No users found</Text>
+              </View>
+            )}
+          </>
+        ) : (
+          // Saved Conversations
+          <>
+            {rooms.length > 0 ? (
+              rooms.map((room) => {
+                const otherMember = getOtherMember(room);
+                if (!otherMember) return null;
+
+                return (
+                  <TouchableOpacity
+                    key={room._id}
+                    onPress={() => handleSelectRoom(room)}
+                    className="flex-row items-center justify-between bg-gray-50 rounded-xl p-4 mb-3"
+                  >
+                    <View className="flex-row items-center flex-1">
+                      <Image
+                        source={{
+                          uri: otherMember.avatar || "https://via.placeholder.com/48",
+                        }}
+                        className="w-12 h-12 rounded-full mr-3"
+                        defaultSource={require("../../assets/no-task.png")}
+                      />
+                      <View className="flex-1">
+                        <Text className="font-semibold text-gray-900">
+                          {otherMember.name}
+                        </Text>
+                        <Text className="text-gray-500 text-xs">
+                          {otherMember.email}
+                        </Text>
+                      </View>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <View className="flex-1 justify-center items-center py-10">
+                <Text className="text-gray-500">
+                  No conversations yet. Search for users to start chatting!
+                </Text>
+              </View>
+            )}
+          </>
+        )}
 
         <View className="h-20" />
       </ScrollView>

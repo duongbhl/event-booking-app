@@ -8,6 +8,7 @@ import { formatDateTime } from "../../utils/utils";
 import { getMyBookmarks, toggleBookmark } from "../../services/bookmark.service";
 import { useAuth } from "../../context/AuthContext";
 import { getMyTickets } from "../../services/ticket.service";
+import { createRoom } from "../../services/chat.service";
 
 
 export default function EventDetails() {
@@ -44,6 +45,28 @@ export default function EventDetails() {
     navigation.navigate("Ticket", {
       tickets: myTickets,
     } as never);
+  };
+
+  const handleChatWithOrganizer = async () => {
+    if (!token || !event.organizer?._id) return;
+
+    try {
+      const room = await createRoom(
+        { memberIds: [event.organizer._id], isGroup: false },
+        token
+      );
+      navigation.navigate("Chat", { roomId: room._id, room });
+    } catch (error) {
+      console.log("Create chat room error:", error);
+      Alert.alert("Error", "Failed to create chat room");
+    }
+  };
+
+  const handleViewLocation = () => {
+    navigation.navigate("Location", {
+      address: event.location,
+      title: event.title,
+    });
   };
 
 
@@ -173,10 +196,14 @@ export default function EventDetails() {
 
           {/* Location + Date */}
           <View className="mt-3 gap-3">
-            <View className="flex-row items-center gap-2">
+            <TouchableOpacity 
+              onPress={handleViewLocation}
+              className="flex-row items-center gap-2"
+            >
               <Ionicons name="location" size={18} color="#F97316" />
-              <Text className="text-gray-600">{event.location}</Text>
-            </View>
+              <Text className="text-orange-600 font-semibold underline flex-1">{event.location}</Text>
+              <Ionicons name="chevron-forward" size={18} color="#F97316" />
+            </TouchableOpacity>
 
             <View className="flex-row items-center gap-2">
               <Ionicons name="calendar" size={18} color="#F97316" />
@@ -193,7 +220,7 @@ export default function EventDetails() {
             </Text>
 
             <TouchableOpacity 
-              onPress={() => navigation.navigate("InviteFriend" as never)}
+              onPress={() => navigation.navigate("InviteFriend" as never, {event: event} as never)}
               disabled={isOwnEvent || isOutOfDate}
               style={{ opacity: isOwnEvent || isOutOfDate ? 0.5 : 1 }}
             >
@@ -224,7 +251,10 @@ export default function EventDetails() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity className="bg-white w-10 h-10 rounded-full items-center justify-center shadow">
+            <TouchableOpacity 
+              className="bg-white w-10 h-10 rounded-full items-center justify-center shadow"
+              onPress={handleChatWithOrganizer}
+            >
               <Ionicons name="chatbubble-outline" size={22} color="#555" />
             </TouchableOpacity>
           </View>
@@ -248,16 +278,7 @@ export default function EventDetails() {
         ) : isBooked ? (
           // Show 2 buttons when already booked
           <View className="flex-row gap-3">
-            <TouchableOpacity 
-              className="flex-1 bg-orange-500 rounded-2xl py-4 items-center"
-              onPress={handleViewTicket}
-              disabled={isOutOfDate}
-              style={{ opacity: isOutOfDate ? 0.5 : 1 }}
-            >
-              <Text className="text-white text-lg font-semibold">
-                {isOutOfDate ? "EVENT ENDED" : "My Tickets"}
-              </Text>
-            </TouchableOpacity>
+
             <TouchableOpacity 
               className="flex-1 bg-black rounded-2xl py-4 flex-row items-center justify-center"
               onPress={handleBooked}

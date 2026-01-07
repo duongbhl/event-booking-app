@@ -3,6 +3,8 @@ import mongoose, { Document, Model } from 'mongoose';
 
 export interface INotification extends Document {
     user: mongoose.Types.ObjectId;
+    fromUser?: mongoose.Types.ObjectId;
+    event?: mongoose.Types.ObjectId;
     title: string;
     message: string;
     type: 'reminder' | 'chat' | 'payment' | 'system' | 'invitation';
@@ -15,6 +17,8 @@ export interface INotification extends Document {
 const schema = new mongoose.Schema<INotification>(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        fromUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
         title: { type: String, required: true },
         message: { type: String, required: true },
         type: { type: String, enum: ['reminder', 'chat', 'payment', 'system', 'invitation'], default: 'system' },

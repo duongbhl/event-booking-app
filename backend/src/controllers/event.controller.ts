@@ -8,7 +8,7 @@ export const listEvents = async (req: Request, res: Response) => {
     try {
         const {
             page = "1",
-            limit = "10",
+            limit = "100",
             q,
             category,
             status,
@@ -72,6 +72,29 @@ export const getEvent = async (req: any, res: Response) => {
     const event = await Event.findById(req.params.id).populate('organizer', 'name avatar');
     if (!event) return res.status(404).json({ message: 'Event not found' });
     res.json(event);
+};
+
+// Get my events (events created by current user)
+export const getMyEvents = async (req: any, res: Response) => {
+    try {
+        const events = await Event.find({ organizer: req.user._id }).populate('organizer', 'name avatar');
+        res.json(events);
+    } catch (error) {
+        console.error("Get my events error:", error);
+        res.status(500).json({ message: 'Failed to fetch my events' });
+    }
+};
+
+// Get events by organizer ID
+export const getOrganizerEvents = async (req: any, res: Response) => {
+    try {
+        const { organizerId } = req.params;
+        const events = await Event.find({ organizer: organizerId }).populate('organizer', 'name avatar');
+        res.json(events);
+    } catch (error) {
+        console.error("Get organizer events error:", error);
+        res.status(500).json({ message: 'Failed to fetch organizer events' });
+    }
 };
 
 /**

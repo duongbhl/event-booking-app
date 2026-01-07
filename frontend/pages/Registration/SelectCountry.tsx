@@ -38,8 +38,9 @@ interface Country {
 // COMPONENT
 // =============================
 
-export const SelectionCountry = ({ navigation }: any) => {
+export const SelectionCountry = ({ navigation, route }: any) => {
   const { user, token, login } = useAuth();
+  const isFromEditProfile = route?.params?.fromEditProfile || false;
   const [countries, setCountries] = useState<Country[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selected, setSelected] = useState<string>("");
@@ -114,7 +115,7 @@ export const SelectionCountry = ({ navigation }: any) => {
     <SafeAreaView className="flex-1 bg-white px-4 pt-4">
       {/* HEADER */}
       <View className="flex-row items-center justify-between mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={26} color="#111" />
         </TouchableOpacity>
 
@@ -258,7 +259,16 @@ export const SelectionCountry = ({ navigation }: any) => {
                 await login({ ...user, country: selected }, token);
               }
               
-              navigation.navigate("SelectLocation");
+              if (isFromEditProfile) {
+                // Return country to EditProfile and update it
+                navigation.goBack();
+                navigation.navigate("EditProfile", {
+                  selectedCountry: selected,
+                });
+              } else {
+                // Continue to SelectLocation (registration flow)
+                navigation.navigate("SelectLocation");
+              }
             } catch (error) {
               console.error("Error updating country:", error);
               Alert.alert("Error", "Failed to save country. Please try again.");
@@ -268,7 +278,7 @@ export const SelectionCountry = ({ navigation }: any) => {
           }}
           disabled={!selected || loading}
         >
-          <Text className="text-white font-semibold text-lg">{loading ? "SAVING..." : "NEXT"}</Text>
+          <Text className="text-white font-semibold text-lg">{loading ? "SAVING..." : (isFromEditProfile ? "ADD" : "NEXT")}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

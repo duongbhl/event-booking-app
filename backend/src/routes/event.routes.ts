@@ -1,12 +1,16 @@
 import { Router } from "express";
 import express from 'express';
 import { protect, authorize } from '../middleware/auth.middleware';
-import { createEvent, deleteEvent, getEvent, listEvents, updateEvent } from '../controllers/event.controller';
+import { createEvent, deleteEvent, getEvent, getMyEvents, getOrganizerEvents, listEvents, updateEvent } from '../controllers/event.controller';
 
 export const eventRoutes = express.Router()
 
 
 eventRoutes.get('/', listEvents);
+
+eventRoutes.get('/me', protect, getMyEvents);
+
+eventRoutes.get('/organizer/:organizerId', getOrganizerEvents);
 
 eventRoutes.get('/:id', getEvent);
 

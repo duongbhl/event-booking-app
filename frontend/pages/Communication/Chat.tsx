@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,61 +8,90 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { ChatMessageProp } from "../../components/Interface/ChatMessageProps";
-
-
-const MOCK_MESSAGES: ChatMessageProp[] = [
-  {
-    id: "1",
-    text: "Halo, bro",
-    time: "08:50 AM",
-    fromMe: true,
-  },
-  {
-    id: "2",
-    text: "kepwiwe kie rawone ra mudun-mudun",
-    time: "08:50 AM",
-    fromMe: true,
-  },
-  {
-    id: "3",
-    text: "hooh kie selak kaliren weteng inyong...",
-    time: "08:51 AM",
-    fromMe: false,
-  },
-  {
-    id: "4",
-    text: "opo tak tuku bae",
-    time: "07:53 AM",
-    fromMe: true,
-  },
-  {
-    id: "5",
-    text: "karuane inyong metu nyang pasar bae",
-    time: "07:53 AM",
-    fromMe: true,
-  },
-  {
-    id: "6",
-    text: "Njluk duwite yoo",
-    time: "07:53 AM",
-    fromMe: true,
-  },
-  {
-    id: "7",
-    text: "peeh ra modal koen cuk",
-    time: "07:52 AM",
-    fromMe: false,
-  },
-];
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
+import { getMessages, sendMessage, markRoomAsRead } from "../../services/chat.service";
 
 export default function Chat() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const { user, token } = useAuth();
+
+  const roomId = route.params?.roomId;
+  const initialRoom = route.params?.room;
+
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  // Get other member from room
+  const otherMember = initialRoom?.members?.find((m: any) => m._id !== user?._id);
+
+  // Fetch messages
+  useEffect(() => {
+    if (!roomId || !token) return;
+
+    const fetchMessages = async () => {
+      try {
+        setLoading(true);
+        const data = await getMessages(roomId, token);
+        // Sort messages chronologically (oldest first)
+        const sorted = data.sort(
+          (a: any, b: any) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        setMessages(sorted);
+        
+        // Mark room as read
+        await markRoomAsRead(roomId, token);
+      } catch (error) {
+        console.log("Fetch messages error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [roomId, token]);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
+  // Send message
+  const handleSendMessage = async () => {
+    if (!input.trim() || !roomId || !token) return;
+
+    try {
+      setSending(true);
+      const messageText = input;
+      setInput("");
+
+      const newMessage = await sendMessage(
+        roomId,
+        { content: messageText, type: "text" },
+        token
+      );
+
+      setMessages((prev) => [...prev, newMessage]);
+    } catch (error) {
+      console.log("Send message error:", error);
+      setInput(input); // Restore input on error
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -74,17 +103,25 @@ export default function Chat() {
           </TouchableOpacity>
 
           {/* Avatar + Info */}
-          <Image
-            source={{ uri: "https://randomuser.me/api/portraits/men/20.jpg" }}
-            className="w-12 h-12 rounded-full"
-          />
+          {otherMember && (
+            <>
+              <Image
+                source={{
+                  uri: otherMember.avatar || "https://via.placeholder.com/48",
+                }}
+                className="w-12 h-12 rounded-full"
+              />
 
-          <View className="ml-3">
-            <Text className="font-semibold text-gray-800 text-[16px]">
-              David Silbia
-            </Text>
-            <Text className="text-gray-500 text-xs">davidsilbia1997@gmail.com</Text>
-          </View>
+              <View className="ml-3">
+                <Text className="font-semibold text-gray-800 text-[16px]">
+                  {otherMember.name}
+                </Text>
+                <Text className="text-gray-500 text-xs">
+                  {otherMember.email}
+                </Text>
+              </View>
+            </>
+          )}
         </View>
 
         <TouchableOpacity>
@@ -93,39 +130,67 @@ export default function Chat() {
       </View>
 
       {/* CHAT AREA */}
-      <ScrollView className="flex-1 px-4 py-3">
-        <Text className="text-center text-gray-400 text-xs mb-4">Today</Text>
-
-        {MOCK_MESSAGES.map((msg) => (
-          <View key={msg.id} className="mb-4">
-            {/* Time above message group */}
-            <Text
-              className={`text-xs text-gray-400 mb-1 ${
-                msg.fromMe ? "text-right" : "text-left"
-              }`}
-            >
-              {msg.time}
-            </Text>
-
-            {/* BUBBLE */}
-            <View
-              className={`max-w-[80%] px-4 py-2 rounded-2xl ${
-                msg.fromMe
-                  ? "self-end bg-orange-500 rounded-br-none"
-                  : "self-start bg-gray-100 rounded-bl-none"
-              }`}
-            >
-              <Text
-                className={`${msg.fromMe ? "text-white" : "text-gray-800"} text-[15px]`}
-              >
-                {msg.text}
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#FF7A00" />
+        </View>
+      ) : (
+        <ScrollView
+          ref={scrollViewRef}
+          className="flex-1 px-4 py-3"
+          scrollEnabled={true}
+          onContentSizeChange={() =>
+            scrollViewRef.current?.scrollToEnd({ animated: false })
+          }
+        >
+          {messages.length === 0 ? (
+            <View className="flex-1 justify-center items-center py-10">
+              <Text className="text-center text-gray-400 text-sm">
+                No messages yet. Start the conversation!
               </Text>
             </View>
-          </View>
-        ))}
+          ) : (
+            messages.map((msg) => (
+              <View key={msg._id} className="mb-4">
+                {/* Time */}
+                <Text
+                  className={`text-xs text-gray-400 mb-1 ${
+                    String(msg.sender?._id) === user?._id
+                      ? "text-right"
+                      : "text-left"
+                  }`}
+                >
+                  {new Date(msg.createdAt).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Text>
 
-        <View className="h-20" />
-      </ScrollView>
+                {/* BUBBLE */}
+                <View
+                  className={`max-w-[80%] px-4 py-2 rounded-2xl ${
+                    String(msg.sender?._id) === user?._id
+                      ? "self-end bg-orange-500 rounded-br-none"
+                      : "self-start bg-gray-100 rounded-bl-none"
+                  }`}
+                >
+                  <Text
+                    className={`${
+                      String(msg.sender?._id) === user?._id
+                        ? "text-white"
+                        : "text-gray-800"
+                    } text-[15px]`}
+                  >
+                    {msg.content}
+                  </Text>
+                </View>
+              </View>
+            ))
+          )}
+
+          <View className="h-10" />
+        </ScrollView>
+      )}
 
       {/* INPUT BAR */}
       <KeyboardAvoidingView
@@ -140,19 +205,25 @@ export default function Chat() {
               placeholder="Write a reply..."
               placeholderTextColor="#888"
               className="text-gray-800"
+              editable={!sending}
             />
           </View>
 
-          <TouchableOpacity className="ml-3">
-            <Ionicons name="happy-outline" size={26} color="#777" />
-          </TouchableOpacity>
 
-          <TouchableOpacity className="ml-3">
+          <TouchableOpacity className="ml-3 mr-3" disabled={sending}>
             <Ionicons name="attach-outline" size={26} color="#777" />
           </TouchableOpacity>
 
-          <TouchableOpacity className="ml-3">
-            <Ionicons name="send" size={26} color="#FF6B00" />
+          <TouchableOpacity
+            onPress={handleSendMessage}
+            disabled={!input.trim() || sending}
+            className={input.trim() && !sending ? "" : "opacity-50"}
+          >
+            {sending ? (
+              <ActivityIndicator size="small" color="#FF6B00" />
+            ) : (
+              <Ionicons name="send" size={26} color="#FF6B00" />
+            )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
