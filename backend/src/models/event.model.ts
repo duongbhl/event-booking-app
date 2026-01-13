@@ -13,6 +13,7 @@ export interface IEvent extends Document {
   attendees?: number;
   rating?: number;
   status: "upcoming" | "ongoing" | "finished" | "cancelled";
+  approvalStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   organizer: mongoose.Types.ObjectId;
 }
 
@@ -40,6 +41,12 @@ const EventSchema = new mongoose.Schema<IEvent>(
       type: String,
       enum: ["upcoming", "ongoing", "finished", "cancelled"],
       default: "upcoming",
+    },
+
+    approvalStatus: {
+      type: String,
+      enum: ["PENDING", "ACCEPTED", "REJECTED"],
+      default: "PENDING",
     },
 
     // ✅ organizer đúng nghĩa

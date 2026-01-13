@@ -1,12 +1,20 @@
 import { Router } from "express";
 import express from 'express';
 import { protect, authorize } from '../middleware/auth.middleware';
-import { createEvent, deleteEvent, getEvent, getMyEvents, getOrganizerEvents, listEvents, updateEvent } from '../controllers/event.controller';
+import { createEvent, deleteEvent, getEvent, getMyEvents, getOrganizerEvents, listEvents, updateEvent, getPendingEvents, approveEvent, rejectEvent, autoRejectExpiredEvents } from '../controllers/event.controller';
 
 export const eventRoutes = express.Router()
 
 
 eventRoutes.get('/', listEvents);
+
+eventRoutes.get('/admin/pending', getPendingEvents);
+
+eventRoutes.post('/admin/auto-reject-expired', autoRejectExpiredEvents);
+
+eventRoutes.put('/admin/approve/:id', approveEvent);
+
+eventRoutes.put('/admin/reject/:id', rejectEvent);
 
 eventRoutes.get('/me', protect, getMyEvents);
 

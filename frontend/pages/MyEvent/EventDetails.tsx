@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import { getMyBookmarks, toggleBookmark } from "../../services/bookmark.service"
 import { useAuth } from "../../context/AuthContext";
 import { getMyTickets } from "../../services/ticket.service";
 import { createRoom } from "../../services/chat.service";
+import { getEvents, approveEvent, rejectEvent } from "../../services/event.service";
 
 
 export default function EventDetails() {
@@ -16,10 +17,16 @@ export default function EventDetails() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
 
-  const event = route.params?.event;
+  let event = route.params?.event;
+  const eventId = route.params?.eventId;
+  const [fetchedEvent, setFetchedEvent] = useState<any>(null);
+  const [eventLoading, setEventLoading] = useState(!!eventId);
 
-  const isOwnEvent = user && event?.organizer && event.organizer._id === user._id;
-  const isOutOfDate = event && new Date(event.date) < new Date();
+  const displayEvent = event || fetchedEvent;
+  const isAdmin = user?.role === "admin";
+
+  const isOwnEvent = user && displayEvent?.organizer && displayEvent.organizer._id === user._id;
+  const isOutOfDate = displayEvent && new Date(displayEvent.date) < new Date();
 
   const [myTickets, setMyTickets] = useState<any[]>([]);
   const isBooked = myTickets.length > 0;
@@ -27,18 +34,89 @@ export default function EventDetails() {
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [approvingOrRejecting, setApprovingOrRejecting] = useState(false);
+
+  // Fetch event by ID if eventId is provided (from admin)
+  useEffect(() => {
+    if (eventId && !event) {
+      const fetchEventData = async () => {
+        try {
+          const events = await getEvents();
+          const data = events.find((e: any) => e._id === eventId);
+          setFetchedEvent(data);
+        } catch (error) {
+          console.log("Fetch event error:", error);
+          Alert.alert("Error", "Failed to fetch event details");
+        } finally {
+          setEventLoading(false);
+        }
+      };
+      fetchEventData();
+    }
+  }, [eventId]);
 
 
-  if (!event) return null;
+
+  if (eventLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-100 justify-center items-center">
+        <ActivityIndicator size="large" color="#FF7A00" />
+        <Text className="mt-2 text-gray-600">Loading event...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!displayEvent) return null;
 
 
 
 
   const handleBooked = () => {
     navigation.navigate("BuyTicket", {
-      eventId: event._id,
-      price: event.price,
+      eventId: displayEvent._id,
+      price: displayEvent.price,
     } as never);
+  };
+
+  const handleApproveEvent = async () => {
+    setApprovingOrRejecting(true);
+    try {
+      const updatedEvent = await approveEvent(displayEvent._id);
+      setFetchedEvent(updatedEvent);
+      Alert.alert("Success", "Event approved successfully");
+    } catch (error) {
+      Alert.alert("Error", "Failed to approve event");
+      console.error(error);
+    } finally {
+      setApprovingOrRejecting(false);
+    }
+  };
+
+  const handleRejectEvent = async () => {
+    Alert.alert(
+      "Reject Event",
+      "Are you sure you want to reject this event?",
+      [
+        { text: "Cancel", onPress: () => {} },
+        {
+          text: "Reject",
+          onPress: async () => {
+            setApprovingOrRejecting(true);
+            try {
+              const updatedEvent = await rejectEvent(displayEvent._id);
+              setFetchedEvent(updatedEvent);
+              Alert.alert("Success", "Event rejected successfully");
+            } catch (error) {
+              Alert.alert("Error", "Failed to reject event");
+              console.error(error);
+            } finally {
+              setApprovingOrRejecting(false);
+            }
+          },
+          style: "destructive",
+        },
+      ]
+    );
   };
 
   const handleViewTicket = () => {
@@ -48,11 +126,11 @@ export default function EventDetails() {
   };
 
   const handleChatWithOrganizer = async () => {
-    if (!token || !event.organizer?._id) return;
+    if (!token || !displayEvent.organizer?._id) return;
 
     try {
       const room = await createRoom(
-        { memberIds: [event.organizer._id], isGroup: false },
+        { memberIds: [displayEvent.organizer._id], isGroup: false },
         token
       );
       navigation.navigate("Chat", { roomId: room._id, room });
@@ -64,8 +142,8 @@ export default function EventDetails() {
 
   const handleViewLocation = () => {
     navigation.navigate("Location", {
-      address: event.location,
-      title: event.title,
+      address: displayEvent.location,
+      title: displayEvent.title,
     });
   };
 
@@ -78,7 +156,7 @@ export default function EventDetails() {
     setIsBookmarked(!prev);
 
     try {
-      await toggleBookmark(event._id, token);
+      await toggleBookmark(displayEvent._id, token);
       Alert.alert(
         "Success",
         isBookmarked ? "Removed from favorites" : "Added to favorites"
@@ -91,14 +169,14 @@ export default function EventDetails() {
 
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || isAdmin) return;
 
     const fetchBookmarkStatus = async () => {
       try {
         const bookmarks = await getMyBookmarks(token);
 
         const found = bookmarks.find(
-          (b: any) => b.event?._id === event._id
+          (b: any) => b.event?._id === displayEvent._id
         );
 
         setIsBookmarked(!!found);
@@ -108,11 +186,11 @@ export default function EventDetails() {
     };
 
     fetchBookmarkStatus();
-  }, [token]);
+  }, [token, isAdmin]);
 
 
   useEffect(() => {
-    if (!token || !event?._id) return;
+    if (!token || !displayEvent?._id || isAdmin) return;
 
     const fetchMyTickets = async () => {
       try {
@@ -120,7 +198,7 @@ export default function EventDetails() {
 
         const matched = tickets.filter(
           (t: any) =>
-            t.event?._id === event._id &&
+            t.event?._id === displayEvent._id &&
             t.paymentStatus === "paid"
         );
 
@@ -133,7 +211,7 @@ export default function EventDetails() {
     };
 
     fetchMyTickets();
-  }, [token, event?._id]);
+  }, [token, displayEvent?._id, isAdmin]);
 
 
   return (
@@ -143,7 +221,7 @@ export default function EventDetails() {
         {/* 🔥 BANNER */}
         <View className="relative">
           <Image
-            source={{ uri: event.images }}
+            source={{ uri: displayEvent.images }}
             className="w-full h-72"
           />
 
@@ -178,7 +256,7 @@ export default function EventDetails() {
           {/* Title + Price */}
           <View className="flex-row justify-between items-start">
             <Text className="text-2xl font-semibold text-gray-900">
-              {event.title}
+              {displayEvent.title}
             </Text>
 
             {isBooked ? (
@@ -188,7 +266,7 @@ export default function EventDetails() {
             ) : (
               <View className="bg-orange-100 px-4 py-1 rounded-full">
                 <Text className="text-orange-500 font-semibold">
-                  ${event.price} USD
+                  ${displayEvent.price} USD
                 </Text>
               </View>
             )}
@@ -201,14 +279,14 @@ export default function EventDetails() {
               className="flex-row items-center gap-2"
             >
               <Ionicons name="location" size={18} color="#F97316" />
-              <Text className="text-orange-600 font-semibold underline flex-1">{event.location}</Text>
+              <Text className="text-orange-600 font-semibold underline flex-1">{displayEvent.location}</Text>
               <Ionicons name="chevron-forward" size={18} color="#F97316" />
             </TouchableOpacity>
 
             <View className="flex-row items-center gap-2">
               <Ionicons name="calendar" size={18} color="#F97316" />
               <Text className="text-gray-600">
-                {formatDateTime(event.date)}
+                {formatDateTime(displayEvent.date)}
               </Text>
             </View>
           </View>
@@ -216,11 +294,11 @@ export default function EventDetails() {
           {/* Members */}
           <View className="flex-row justify-between items-center mt-4">
             <Text className="text-gray-700 font-medium">
-              {event.attendees || 0}+ Members are joined
+              {displayEvent.attendees || 0}+ Members are joined
             </Text>
 
             <TouchableOpacity 
-              onPress={() => navigation.navigate("InviteFriend" as never, {event: event} as never)}
+              onPress={() => navigation.navigate("InviteFriend" as never, {event: displayEvent} as never)}
               disabled={isOwnEvent || isOutOfDate}
               style={{ opacity: isOwnEvent || isOutOfDate ? 0.5 : 1 }}
             >
@@ -234,16 +312,16 @@ export default function EventDetails() {
           <View className="mt-6 flex-row items-center justify-between bg-orange-50 rounded-xl p-3">
             <TouchableOpacity 
               className="flex-row items-center flex-1"
-              onPress={() => navigation.navigate("OrganizerProfile", { organizer: event.organizer })}
+              onPress={() => navigation.navigate("OrganizerProfile", { organizer: displayEvent.organizer })}
             >
               <Image
-                source={{ uri: event.organizer?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
+                source={{ uri: displayEvent.organizer?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
                 className="w-12 h-12 rounded-full"
                 defaultSource={{ uri: "https://i.pravatar.cc/100?img=12" }}
               />
               <View className="ml-3">
                 <Text className="font-semibold text-gray-800">
-                  {event.organizer?.name || "Unknown Organizer"}
+                  {displayEvent.organizer?.name || "Unknown Organizer"}
                 </Text>
                 <Text className="text-gray-500 text-sm">
                   Event Organiser
@@ -263,7 +341,7 @@ export default function EventDetails() {
           <View className="mt-6">
             <Text className="font-semibold text-lg">Description</Text>
             <Text className="text-gray-600 mt-2 leading-6">
-              {event.description || "No description"}
+              {displayEvent.description || "No description"}
             </Text>
           </View>
         </View>
@@ -271,7 +349,47 @@ export default function EventDetails() {
 
       {/* 🔥 Bottom Button */}
       <View className="px-6 pb-10">
-        {isOwnEvent ? (
+        {isAdmin ? (
+          // Admin approve/reject buttons
+          displayEvent.approvalStatus === "PENDING" ? (
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                className="flex-1 bg-green-500 rounded-2xl py-4 flex-row items-center justify-center"
+                onPress={handleApproveEvent}
+                disabled={approvingOrRejecting}
+              >
+                {approvingOrRejecting ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={22} color="white" />
+                    <Text className="text-white text-lg font-semibold ml-2">Approve</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-1 bg-red-500 rounded-2xl py-4 flex-row items-center justify-center"
+                onPress={handleRejectEvent}
+                disabled={approvingOrRejecting}
+              >
+                {approvingOrRejecting ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <>
+                    <Ionicons name="close-circle" size={22} color="white" />
+                    <Text className="text-white text-lg font-semibold ml-2">Reject</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity className="bg-gray-400 rounded-2xl py-4 items-center" disabled>
+              <Text className="text-white text-lg font-semibold">
+                {displayEvent.approvalStatus === "ACCEPTED" ? "✓ Approved" : "✗ Rejected"}
+              </Text>
+            </TouchableOpacity>
+          )
+        ) : isOwnEvent ? (
           <TouchableOpacity className="bg-black rounded-2xl py-4 items-center">
             <Text className="text-white text-lg font-semibold">Check</Text>
           </TouchableOpacity>

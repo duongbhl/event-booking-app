@@ -85,7 +85,7 @@ export default function Home() {
   }, [events, user]);
 
   /**
-   * Other Events – không phải của mình + filter category
+   * Other Events – không phải của mình + filter category + chỉ ACCEPTED
    */
   const filteredEvents = useMemo(() => {
     if (!user || !user._id) return [];
@@ -101,12 +101,15 @@ export default function Home() {
         // Check category match
         const isSameCategory = ev.category === selectedCategory;
         
+        // Only show ACCEPTED events
+        const isAccepted = ev.approvalStatus === "ACCEPTED";
+        
         // Only show events from today onwards (ignore time part)
         const eventDate = new Date(ev.date);
         eventDate.setHours(0, 0, 0, 0);
         const isFutureEvent = eventDate >= todayStart;
         
-        return isOtherEvent && isSameCategory && isFutureEvent;
+        return isOtherEvent && isSameCategory && isFutureEvent && isAccepted;
       }
     );
   }, [events, selectedCategory, user]);

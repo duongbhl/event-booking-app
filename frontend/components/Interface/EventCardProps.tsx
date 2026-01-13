@@ -17,4 +17,5 @@ export interface EventCardProps  {
   images?: string;
   rating?: number;
   status: 'upcoming' | 'ongoing' | 'finished' | 'cancelled';
+  approvalStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED';
 };

@@ -16,6 +16,7 @@ export interface ScheduleCardProps {
     images?: string;
     rating?: number;
     status: 'upcoming' | 'ongoing' | 'finished' | 'cancelled';
+    approvalStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED';
     organizer: {
       _id: string;
       name: string;

@@ -90,6 +90,9 @@ export default function Search() {
       // ❌ không lấy event của mình
       if (ev.organizer?._id === user?._id) return false;
 
+      // ✅ chỉ lấy event ACCEPTED
+      if (ev.approvalStatus !== "ACCEPTED") return false;
+
       // ✅ category
       if (filters?.category && ev.category !== filters.category) {
         return false;

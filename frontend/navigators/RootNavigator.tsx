@@ -33,6 +33,8 @@ import EditProfile from "../pages/Profile/EditProfile";
 import EventBookmark from "../pages/MyEvent/EventBookmark";
 import Location from "../pages/Location/Location";
 import Home from "../pages/Home";
+import AdminHomeScreen from "../pages/Admin/Admin";
+import AdminMessages from "../pages/Admin/AdminMessages";
 
 const Stack = createStackNavigator();
 
@@ -68,40 +70,48 @@ export default function RootNavigator() {
         <>
           {/* ---------- ĐÃ LOGIN ---------- */}
 
-          {/* Show setup screens only if needed */}
-          {needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
-          {needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
-          {needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
-          
-          {/* Always register setup screens for EditProfile navigation */}
-          {!needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
-          {!needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
-          {!needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
+          {/* ADMIN NAVIGATION */}
+          {user.role === "admin" && (
+            <Stack.Screen name="Admin" component={AdminHomeScreen} />
+          )}
 
-          <Stack.Screen name="Drawer" component={DrawerNavigation} />
+          {/* ADMIN MESSAGES SCREEN */}
+          {user.role === "admin" && (
+            <Stack.Screen name="AdminMessages" component={AdminMessages} />
+          )}
 
-          {/* GLOBAL SCREENS */}
-          <Stack.Screen name="Home" component={Home} />
-          
+          {/* USER NAVIGATION */}
+          {user.role !== "admin" && (
+            <>
+              {/* Show setup screens only if needed */}
+              {needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
+              {needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
+              {needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
 
-          <Stack.Screen name="Notifications" component={Notification} />
-          <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />
-          <Stack.Screen name="Message" component={Message} />
-          <Stack.Screen name="EventBookmark" component={EventBookmark} />
-          {/* <Stack.Screen name="Setting" component={} /> */}
-          <Stack.Screen name="Search" component={Search} />
-          <Stack.Screen name="Filter" component={Filter} />
-          <Stack.Screen name="EventDetails" component={EventDetails} />
-          <Stack.Screen name="InviteFriend" component={InviteFriend} />
-          <Stack.Screen name="Chat" component={Chat} />
-          <Stack.Screen name="MyEvent" component={Events} />
-          <Stack.Screen name="EditProfile" component={EditProfile} />
-          <Stack.Screen name="OrganizerProfile" component={OrganizerProfile} />
-          <Stack.Screen name="BuyTicket" component={BuyTicket} />
-          <Stack.Screen name="Payment" component={Payment} />
-          <Stack.Screen name="AddCard" component={AddCard} />
-          <Stack.Screen name="ScanCard" component={ScanCard} />
-          <Stack.Screen name="Ticket" component={Ticket} />
+              <Stack.Screen name="Drawer" component={DrawerNavigation} />
+
+              {/* GLOBAL SCREENS */}
+              <Stack.Screen name="Home" component={Home} />
+
+              <Stack.Screen name="Notifications" component={Notification} />
+              <Stack.Screen name="CreateEditEvent" component={CreateEditEvent} />
+              <Stack.Screen name="Message" component={Message} />
+              <Stack.Screen name="EventBookmark" component={EventBookmark} />
+              <Stack.Screen name="Search" component={Search} />
+              <Stack.Screen name="Filter" component={Filter} />
+              <Stack.Screen name="EventDetails" component={EventDetails} />
+              <Stack.Screen name="InviteFriend" component={InviteFriend} />
+              <Stack.Screen name="Chat" component={Chat} />
+              <Stack.Screen name="MyEvent" component={Events} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+              <Stack.Screen name="OrganizerProfile" component={OrganizerProfile} />
+              <Stack.Screen name="BuyTicket" component={BuyTicket} />
+              <Stack.Screen name="Payment" component={Payment} />
+              <Stack.Screen name="AddCard" component={AddCard} />
+              <Stack.Screen name="ScanCard" component={ScanCard} />
+              <Stack.Screen name="Ticket" component={Ticket} />
+            </>
+          )}
         </>
       )}
     </Stack.Navigator>

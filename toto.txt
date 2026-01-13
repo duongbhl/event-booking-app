@@ -1,14 +1,8 @@
 //standard functions
 location page, location search+change position to name 
-admin
 review
-
-
-
-//fix logic
-DELETE PENDING myevents
-only edit pending myevents
-ADMIN: Accept PENDING myevent submission
-ADMIN: Reject PENDING myevent submission
 tickect types increase
+
+
+
 

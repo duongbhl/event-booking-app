@@ -133,6 +133,7 @@ export const createEvent = async (req: any, res: Response) => {
     images,
     organizer: req.user._id, // ✅ chính là bản thân user
     status: "upcoming",
+    approvalStatus: "PENDING",
   });
 
   res.status(201).json(event);
@@ -176,3 +177,98 @@ export const deleteEvent = async (req: any, res: Response) => {
 
   res.json({ success: true });
 };
+
+/**
+ * Get all pending events (for admin)
+ */
+export const getPendingEvents = async (req: Request, res: Response) => {
+  try {
+    const { q } = req.query;
+    const filter: Record<string, any> = { approvalStatus: "PENDING" };
+
+    if (q) {
+      filter.title = { $regex: q, $options: "i" };
+    }
+
+    const events = await Event.find(filter)
+      .populate("organizer", "name avatar")
+      .sort({ createdAt: -1 });
+
+    res.json(events);
+  } catch (error) {
+    console.error("Get pending events error:", error);
+    res.status(500).json({ message: "Failed to fetch pending events" });
+  }
+};
+
+/**
+ * Approve event (admin)
+ */
+export const approveEvent = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findByIdAndUpdate(
+      id,
+      { approvalStatus: "ACCEPTED" },
+      { new: true }
+    ).populate("organizer", "name avatar");
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error("Approve event error:", error);
+    res.status(500).json({ message: "Failed to approve event" });
+  }
+};
+
+/**
+ * Reject event (admin)
+ */
+export const rejectEvent = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findByIdAndUpdate(
+      id,
+      { approvalStatus: "REJECTED" },
+      { new: true }
+    ).populate("organizer", "name avatar");
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error("Reject event error:", error);
+    res.status(500).json({ message: "Failed to reject event" });
+  }
+};
+
+/**
+ * Auto reject expired pending events
+ */
+export const autoRejectExpiredEvents = async (req: Request, res: Response) => {
+  try {
+    const now = new Date();
+    const result = await Event.updateMany(
+      {
+        approvalStatus: "PENDING",
+        date: { $lt: now },
+      },
+      { approvalStatus: "REJECTED" }
+    );
+
+    res.json({
+      success: true,
+      modifiedCount: result.modifiedCount,
+      message: `${result.modifiedCount} expired pending events rejected`,
+    });
+  } catch (error) {
+    console.error("Auto reject expired events error:", error);
+    res.status(500).json({ message: "Failed to auto reject expired events" });
+  }
+};
+

@@ -56,6 +56,12 @@ export default function SignIn() {
 
             Alert.alert("Success", "Login successfully");
             
+            // Check if user is admin
+            if (data.role === "admin") {
+              navigation.navigate("Admin" as never);
+              return;
+            }
+            
             // Check if user has completed profile setup
             const hasCountry = data.country && data.country.trim() !== "";
             const hasInterests = data.interests && Array.isArray(data.interests) && data.interests.length > 0;

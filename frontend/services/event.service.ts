@@ -80,3 +80,58 @@ export const updateEvent = async (
 
   return res.data;
 };
+export const getPendingEvents = async (q?: string) => {
+  try {
+    const params = new URLSearchParams();
+    if (q) params.append("q", q);
+    
+    const { data } = await api.get(`/events/admin/pending?${params.toString()}`);
+    return data as EventCardProps[];
+  } catch (error: any) {
+    console.error("Error fetching pending events:", error.message);
+    throw error;
+  }
+};
+
+export const getAllEventsForAdmin = async (q?: string) => {
+  try {
+    const params = new URLSearchParams();
+    if (q) params.append("q", q);
+    
+    const { data } = await api.get(`/events/?${params.toString()}`);
+    return data.items as EventCardProps[];
+  } catch (error: any) {
+    console.error("Error fetching all events:", error.message);
+    throw error;
+  }
+};
+
+export const approveEvent = async (eventId: string) => {
+  try {
+    const { data } = await api.put(`/events/admin/approve/${eventId}`);
+    return data as EventCardProps;
+  } catch (error: any) {
+    console.error("Error approving event:", error.message);
+    throw error;
+  }
+};
+
+export const rejectEvent = async (eventId: string) => {
+  try {
+    const { data } = await api.put(`/events/admin/reject/${eventId}`);
+    return data as EventCardProps;
+  } catch (error: any) {
+    console.error("Error rejecting event:", error.message);
+    throw error;
+  }
+};
+
+export const autoRejectExpiredEvents = async () => {
+  try {
+    const { data } = await api.post(`/events/admin/auto-reject-expired`);
+    return data;
+  } catch (error: any) {
+    console.error("Error auto rejecting expired events:", error.message);
+    throw error;
+  }
+};
