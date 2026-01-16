@@ -196,7 +196,7 @@ export default function AdminEventCard({
       {/* Action Buttons */}
       <View className="border-t border-gray-100 flex-row">
         {/* View Details Button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className="flex-1 py-2 px-3 border-r border-gray-100 items-center justify-center"
           onPress={() => onViewDetails?.(_id)}
           disabled={loading}
@@ -205,7 +205,7 @@ export default function AdminEventCard({
             <Ionicons name="eye" size={14} color="#FF7A00" />
             <Text className="text-xs font-semibold text-orange-500">Details</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Accept Button - Only show if PENDING */}
         {approvalStatus === "PENDING" && (

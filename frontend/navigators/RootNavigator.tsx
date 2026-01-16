@@ -101,7 +101,7 @@ export default function RootNavigator() {
               <Stack.Screen name="Filter" component={Filter} />
               <Stack.Screen name="EventDetails" component={EventDetails} />
               <Stack.Screen name="InviteFriend" component={InviteFriend} />
-              <Stack.Screen name="Chat" component={Chat} />
+              {/* <Stack.Screen name="Chat" component={Chat} /> */}
               <Stack.Screen name="MyEvent" component={Events} />
               <Stack.Screen name="EditProfile" component={EditProfile} />
               <Stack.Screen name="OrganizerProfile" component={OrganizerProfile} />
@@ -110,8 +110,12 @@ export default function RootNavigator() {
               <Stack.Screen name="AddCard" component={AddCard} />
               <Stack.Screen name="ScanCard" component={ScanCard} />
               <Stack.Screen name="Ticket" component={Ticket} />
+              <Stack.Screen name="Location" component={Location} />
             </>
           )}
+          {/* SHARED SCREENS - Available for both admin and users */}
+          <Stack.Screen name="Chat" component={Chat} />
+
         </>
       )}
     </Stack.Navigator>

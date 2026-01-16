@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { 
   Text, 
   View, 
@@ -7,154 +7,300 @@ import {
   TouchableOpacity, 
   ScrollView,
   ActivityIndicator,
-  Image
+  Image,
+  Linking,
+  Alert,
+  FlatList,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Camera, Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
+import * as Crypto from 'expo-crypto';
+import { reverseGeocode, calculateDistance } from '../../utils/geocoding';
 
-const Location = () => {
+const GOOGLE_KEY = "YOUR_GOOGLE_API_KEY";
+
+interface Suggestion {
+  place_id: string;
+  description: string;
+}
+
+const LocationScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const mapRef = useRef<MapView | null>(null);
+  const sessionToken = useRef(Crypto.randomUUID()).current;
   
   const eventAddress = route.params?.address || '';
   const eventTitle = route.params?.title || 'Event';
+  const eventCoordinates = route.params?.coordinates || null; // {latitude, longitude}
   
   const [search, setSearch] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [myLocation, setMyLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [region, setRegion] = useState({
+    latitude: eventCoordinates?.latitude || 10.762622,
+    longitude: eventCoordinates?.longitude || 106.660172,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+  const [distance, setDistance] = useState<number | null>(null);
 
-  // Mock locations database
-  const COMMON_LOCATIONS = [
-    { id: 1, address: 'Times Square, New York, NY, USA', city: 'New York' },
-    { id: 2, address: 'Golden Gate Park, San Francisco, CA, USA', city: 'San Francisco' },
-    { id: 3, address: 'Central Park, Manhattan, NY, USA', city: 'Manhattan' },
-    { id: 4, address: 'Santa Monica Pier, Los Angeles, CA, USA', city: 'Los Angeles' },
-    { id: 5, address: 'Navy Pier, Chicago, IL, USA', city: 'Chicago' },
-    { id: 6, address: 'Las Vegas Strip, Las Vegas, NV, USA', city: 'Las Vegas' },
-  ];
+  // Get user's current location on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") return;
 
-  const filteredLocations = search.trim() 
-    ? COMMON_LOCATIONS.filter(loc =>
-        loc.address.toLowerCase().includes(search.toLowerCase()) ||
-        loc.city.toLowerCase().includes(search.toLowerCase())
-      )
-    : COMMON_LOCATIONS;
+        const current = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Highest,
+        });
 
-  const handleSelectLocation = (location: any) => {
-    setSelectedLocation(location);
+        const lat = current.coords.latitude;
+        const lng = current.coords.longitude;
+        setMyLocation({ latitude: lat, longitude: lng });
+
+        // Calculate distance to event if event coordinates exist
+        if (eventCoordinates) {
+          const dist = calculateDistance(
+            lat,
+            lng,
+            eventCoordinates.latitude,
+            eventCoordinates.longitude
+          );
+          setDistance(dist);
+        }
+      } catch (error) {
+        console.log("Location error:", error);
+      }
+    })();
+  }, []);
+
+  // Animate to event location when coordinates are available
+  useEffect(() => {
+    if (eventCoordinates && mapRef.current) {
+      mapRef.current.animateCamera(
+        {
+          center: {
+            latitude: eventCoordinates.latitude,
+            longitude: eventCoordinates.longitude,
+          },
+          zoom: 15,
+        } as Camera,
+        { duration: 1000 }
+      );
+    }
+  }, [eventCoordinates]);
+
+  // Fetch search suggestions
+  const fetchSuggestions = async (text: string) => {
+    setSearch(text);
+
+    if (text.length < 2) return setSuggestions([]);
+
+    const encodedText = encodeURIComponent(text);
+    let currentPos = myLocation || { latitude: 10.7626, longitude: 106.6601 };
+
+    const url =
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json` +
+      `?input=${encodedText}` +
+      `&key=${GOOGLE_KEY}` +
+      `&language=vi` +
+      `&location=${currentPos.latitude},${currentPos.longitude}` +
+      `&radius=20000` +
+      `&sessiontoken=${sessionToken}`;
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+
+      if (json.status !== "OK") {
+        setSuggestions([]);
+        return;
+      }
+
+      setSuggestions(json.predictions || []);
+    } catch (error) {
+      console.log("AutoComplete Error:", error);
+    }
   };
 
-  const handleViewDirection = async () => {
-    if (!selectedLocation) {
-      alert('Please select a location first');
+  // Select a place from suggestions
+  const selectPlace = async (placeId: string, placeName?: string) => {
+    const url =
+      `https://maps.googleapis.com/maps/api/place/details/json` +
+      `?place_id=${placeId}` +
+      `&fields=geometry,name,formatted_address` +
+      `&key=${GOOGLE_KEY}` +
+      `&sessiontoken=${sessionToken}`;
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+
+      if (!json.result || !json.result.geometry) return;
+
+      const { lat, lng } = json.result.geometry.location;
+
+      setRegion((prev) => ({
+        ...prev,
+        latitude: lat,
+        longitude: lng,
+      }));
+
+      mapRef.current?.animateCamera(
+        {
+          center: { latitude: lat, longitude: lng },
+          zoom: 15,
+        },
+        { duration: 800 }
+      );
+
+      setSuggestions([]);
+      setSearch('');
+    } catch (error) {
+      console.log("Select place error:", error);
+    }
+  };
+
+  // Open directions in Google Maps
+  const handleGetDirections = async () => {
+    if (!myLocation || !eventCoordinates) {
+      Alert.alert("Error", "Location information not available");
       return;
     }
 
-    // In a real app, you would use react-native-maps or similar
-    // and calculate the route between selectedLocation and eventAddress
-    // For now, just show an alert with the route info
-    
-    alert(
-      `Directions\n\nFrom: ${selectedLocation.address}\nTo: ${eventAddress}\n\n` +
-      'In production, this would show directions using Google Maps or Apple Maps'
-    );
+    const mapsUrl =
+      `https://www.google.com/maps/dir/?api=1` +
+      `&origin=${myLocation.latitude},${myLocation.longitude}` +
+      `&destination=${eventCoordinates.latitude},${eventCoordinates.longitude}` +
+      `&travelmode=driving`;
 
-    // If you want to close the location picker and go back:
-    // navigation.goBack();
+    try {
+      const canOpen = await Linking.canOpenURL(mapsUrl);
+      if (canOpen) {
+        await Linking.openURL(mapsUrl);
+      } else {
+        // Fallback to web Google Maps
+        const webUrl =
+          `https://maps.google.com/?q=${eventCoordinates.latitude},${eventCoordinates.longitude}`;
+        await Linking.openURL(webUrl);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Could not open maps application");
+      console.log("Open maps error:", error);
+    }
+  };
+
+  // Focus on user location
+
+  const focusMyLocation = () => {
+    if (!myLocation || !mapRef.current) return;
+
+    const { latitude, longitude } = myLocation;
+
+    setRegion((prev) => ({
+      ...prev,
+      latitude,
+      longitude,
+    }));
+
+    mapRef.current.animateCamera(
+      {
+        center: { latitude, longitude },
+        zoom: 15,
+      },
+      { duration: 800 }
+    );
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
+      {/* HEADER WITH BACK BUTTON */}
+      <View className="flex-row items-center justify-between  border-b border-gray-200 bg-white ml-2 p-4">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={28} color="#111" />
+          <Ionicons name="chevron-back" size={28} color="#111827" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold">{eventTitle}</Text>
+        <Text className="text-lg font-semibold text-gray-900">{eventTitle}</Text>
         <View className="w-8" />
       </View>
 
-      {/* Event Address Display */}
-      {eventAddress && (
-        <View className="bg-orange-50 mx-4 mt-4 rounded-xl p-4">
-          <Text className="text-sm font-semibold text-gray-600 mb-1">Event Location</Text>
-          <Text className="text-gray-900 font-semibold">{eventAddress}</Text>
-        </View>
-      )}
-
-      {/* Search Bar */}
-      <View className="px-4 mt-4">
-        <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-12">
-          <Ionicons name="search" size={18} color="#9CA3AF" />
-          <TextInput
-            placeholder="Search starting location..."
-            placeholderTextColor="#9CA3AF"
-            value={search}
-            onChangeText={setSearch}
-            className="flex-1 ml-2 text-gray-900"
+      {/* MAP */}
+      <MapView
+        ref={mapRef}
+        style={{ width: "100%", height: "60%" }}
+        region={region}
+        onRegionChangeComplete={setRegion}
+        showsUserLocation
+        showsMyLocationButton={false}
+      >
+        {/* Event marker */}
+        {eventCoordinates && (
+          <Marker
+            coordinate={{
+              latitude: eventCoordinates.latitude,
+              longitude: eventCoordinates.longitude,
+            }}
+            title={eventTitle}
+            description={eventAddress}
+            pinColor="#FF7A00"
           />
-          {search && (
-            <TouchableOpacity onPress={() => setSearch('')}>
-              <Ionicons name="close" size={18} color="#9CA3AF" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
+        )}
 
-      {/* Locations List */}
-      <ScrollView className="flex-1 px-4 mt-4" showsVerticalScrollIndicator={false}>
-        {loading ? (
-          <View className="flex-1 justify-center items-center py-10">
-            <ActivityIndicator size="large" color="#FF7A00" />
-          </View>
-        ) : filteredLocations.length > 0 ? (
-          filteredLocations.map((location) => (
-            <TouchableOpacity
-              key={location.id}
-              onPress={() => handleSelectLocation(location)}
-              className={`flex-row items-center rounded-xl p-4 mb-3 border-2 ${
-                selectedLocation?.id === location.id
-                  ? 'border-orange-500 bg-orange-50'
-                  : 'border-gray-200 bg-white'
-              }`}
-            >
-              <View className="flex-1">
-                <Text className="font-semibold text-gray-900">
-                  {location.city}
-                </Text>
-                <Text className="text-gray-600 text-xs mt-1">
-                  {location.address}
-                </Text>
-              </View>
-              {selectedLocation?.id === location.id && (
-                <Ionicons name="checkmark-circle" size={24} color="#FF7A00" />
-              )}
-            </TouchableOpacity>
-          ))
-        ) : (
-          <View className="flex-1 justify-center items-center py-10">
-            <Text className="text-gray-500">No locations found</Text>
+        {/* User location marker */}
+        {myLocation && (
+          <Marker
+            coordinate={myLocation}
+            title="Your Location"
+            pinColor="#3b82f6"
+          />
+        )}
+      </MapView>
+
+      {/* Locate button */}
+ 
+
+      {/* Search bar */}
+
+
+      {/* Event and Distance Info */}
+      <View className="bg-white px-4 pt-4 border-t border-gray-200">
+        {eventAddress && (
+          <View className="bg-orange-50 rounded-xl p-4 mb-3">
+            <Text className="text-sm font-semibold text-gray-600 mb-1">
+              📍 Event Location
+            </Text>
+            <Text className="text-gray-900 font-semibold text-sm">
+              {eventAddress}
+            </Text>
+            {distance !== null && (
+              <Text className="text-orange-600 text-xs mt-2 font-medium">
+                📏 {distance} km from your location
+              </Text>
+            )}
           </View>
         )}
-        <View className="h-20" />
-      </ScrollView>
 
-      {/* Direction Button */}
-      {selectedLocation && (
-        <View className="px-4 pb-6 border-t border-gray-200">
+        {/* Get Directions Button */}
+        {eventCoordinates && myLocation && (
           <TouchableOpacity
-            onPress={handleViewDirection}
-            className="bg-orange-500 rounded-2xl py-4 flex-row items-center justify-center mt-4"
+            onPress={handleGetDirections}
+            className="bg-orange-500 rounded-xl py-3 flex-row items-center justify-center mb-4"
           >
-            <Ionicons name="navigate-outline" size={22} color="white" />
-            <Text className="text-white text-lg font-semibold ml-2">
+            <Ionicons name="navigate" size={20} color="white" />
+            <Text className="text-white text-base font-semibold ml-2">
               Get Directions
             </Text>
           </TouchableOpacity>
-        </View>
-      )}
+        )}
+
+        <View className="h-4" />
+      </View>
     </SafeAreaView>
   );
 };
 
-export default Location;
+export default LocationScreen;

@@ -125,31 +125,37 @@ export default function SelectLocation({ navigation, route }: any) {
       `&key=${GOOGLE_KEY}` +
       `&sessiontoken=${sessionToken}`;
 
-    const res = await fetch(url);
-    const json = await res.json();
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
 
-    if (!json.result || !json.result.geometry) return;
+      if (!json.result || !json.result.geometry) return;
 
-    const { lat, lng } = json.result.geometry.location;
-    const locationName = placeName || json.result.formatted_address;
+      const { lat, lng } = json.result.geometry.location;
+      // Use formatted_address from Google Maps (already human-readable)
+      const locationName = json.result.formatted_address || placeName;
 
-    setRegion((prev) => ({
-      ...prev,
-      latitude: lat,
-      longitude: lng,
-    }));
+      setRegion((prev) => ({
+        ...prev,
+        latitude: lat,
+        longitude: lng,
+      }));
 
-    setSelectedPlaceName(locationName);
+      // Store both the address text and coordinates for future use
+      setSelectedPlaceName(locationName);
 
-    mapRef.current?.animateCamera(
-      {
-        center: { latitude: lat, longitude: lng },
-        zoom: 17,
-      },
-      { duration: 800 }
-    );
+      mapRef.current?.animateCamera(
+        {
+          center: { latitude: lat, longitude: lng },
+          zoom: 17,
+        },
+        { duration: 800 }
+      );
 
-    setSuggestions([]);
+      setSuggestions([]);
+    } catch (error) {
+      console.log("Select place error:", error);
+    }
   };
 
 

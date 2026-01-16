@@ -10,6 +10,11 @@ export interface IUser {
     country?: string;
     interests?: string[];
     location?: string;
+    coordinates?: {
+        latitude: number;
+        longitude: number;
+    };
+    phone?: string;
     description?: string;
     role: 'user' | 'admin';
     verified: boolean;
@@ -26,6 +31,11 @@ const schema = new mongoose.Schema<IUser>(
         country: String,
         interests: [{ type: String }],
         location: String,
+        coordinates: {
+            latitude: { type: Number },
+            longitude: { type: Number },
+        },
+        phone: String,
         description: String,
         role: { type: String, enum: ['user', 'admin'], default: 'user' },
         verified: { type: Boolean, default: false },

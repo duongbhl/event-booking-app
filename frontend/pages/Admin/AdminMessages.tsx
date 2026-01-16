@@ -2,156 +2,225 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
+  TextInput,
   ScrollView,
+  TouchableOpacity,
   ActivityIndicator,
   Image,
-  TextInput,
-  FlatList,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../services/api";
-import { createRoom } from "../../services/chat.service";
-
-interface User {
-  _id: string;
-  name: string;
-  avatar?: string;
-  email?: string;
-}
+import { searchUsers, getMyRooms, createRoom } from "../../services/chat.service";
 
 export default function AdminMessages() {
   const navigation = useNavigation<any>();
-  const { token, user } = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [creatingChat, setCreatingChat] = useState(false);
+  const { user, token } = useAuth();
+  const isFocused = useIsFocused();
+  
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch saved rooms when screen is focused
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (!isFocused || !token) return;
+    
+    const fetchRooms = async () => {
+      try {
+        setLoading(true);
+        const data = await getMyRooms(token);
+        setRooms(data);
+      } catch (error) {
+        console.log("Fetch rooms error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchUsers = async () => {
+    fetchRooms();
+  }, [isFocused, token]);
+
+  // Search users
+  useEffect(() => {
+    if (!search.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayTimer = setTimeout(async () => {
+      try {
+        setIsSearching(true);
+        const results = await searchUsers(search, token!);
+        setSearchResults(results);
+      } catch (error) {
+        console.log("Search error:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayTimer);
+  }, [search, token]);
+
+  // Get other member in 1-on-1 conversation
+  const getOtherMember = (room: any) => {
+    return room.members.find((m: any) => m._id !== user?._id);
+  };
+
+  // Handle user selection from search results
+  const handleSelectUser = async (selectedUser: any) => {
     try {
       setLoading(true);
-      const { data } = await api.get("/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Filter out current admin user
-      const filteredUsers = (data || []).filter(
-        (u: User) => u._id !== user?._id
+      const room = await createRoom(
+        { memberIds: [selectedUser._id], isGroup: false },
+        token!
       );
-      setUsers(filteredUsers);
+      setSearch("");
+      setSearchResults([]);
+      
+      // Navigate to Chat screen with room
+      navigation.navigate("Chat", { roomId: room._id, room });
     } catch (error) {
-      console.log("Fetch users error:", error);
+      console.log("Create room error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStartChat = async (selectedUser: User) => {
-    setCreatingChat(true);
-    try {
-      const room = await createRoom(
-        { memberIds: [selectedUser._id], isGroup: false },
-        token || ""
-      );
-      navigation.navigate("Chat", { roomId: room._id, room });
-    } catch (error) {
-      console.log("Create chat room error:", error);
-    } finally {
-      setCreatingChat(false);
-    }
+  // Handle room selection from saved conversations
+  const handleSelectRoom = (room: any) => {
+    navigation.navigate("Chat", { roomId: room._id, room });
   };
 
-  const filteredUsers = users.filter((u) =>
-    u.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const renderUserItem = ({ item }: { item: User }) => (
-    <TouchableOpacity
-      onPress={() => handleStartChat(item)}
-      disabled={creatingChat}
-      className="flex-row items-center px-4 py-4 border-b border-gray-100"
-    >
-      <Image
-        source={{
-          uri: item.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg",
-        }}
-        className="w-12 h-12 rounded-full"
-      />
-      <View className="flex-1 ml-3">
-        <Text className="text-lg font-semibold text-gray-900">{item.name}</Text>
-        <Text className="text-sm text-gray-500">{item.email}</Text>
-      </View>
-      {creatingChat ? (
-        <ActivityIndicator size="small" color="#FF7A00" />
-      ) : (
-        <Ionicons name="chevron-forward" size={22} color="#9CA3AF" />
-      )}
-    </TouchableOpacity>
-  );
+  // Display search results if searching, otherwise display saved rooms
+  const displayData = search.trim() ? searchResults : rooms;
+  const isShowingSearch = search.trim();
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-white px-4 pt-4 pb-3 border-b border-gray-200">
-        <View className="flex-row items-center mb-4">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} color="#111827" />
-          </TouchableOpacity>
-          <Text className="flex-1 text-center text-xl font-bold text-gray-900 mr-6">
-            Messages
-          </Text>
-        </View>
+    <SafeAreaView className="flex-1 bg-white px-4 pt-4">
+      {/* HEADER */}
+      <View className="flex-row items-center justify-between mb-4">
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={26} color="#111" />
+        </TouchableOpacity>
 
-        {/* Search bar */}
-        <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-10">
-          <Ionicons name="search" size={18} color="#9CA3AF" />
-          <TextInput
-            placeholder="Search users..."
-            placeholderTextColor="#9CA3AF"
-            className="flex-1 ml-2 text-gray-900 text-sm"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          {searchQuery ? (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <Ionicons name="close-circle" size={18} color="#9CA3AF" />
-            </TouchableOpacity>
-          ) : null}
-        </View>
+        <Text className="text-lg font-semibold">Message</Text>
+
+        <TouchableOpacity>
+          <Ionicons name="ellipsis-horizontal" size={22} color="#111" />
+        </TouchableOpacity>
       </View>
 
-      {/* Users List */}
-      {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#FF7A00" />
-          <Text className="mt-2 text-gray-600">Loading users...</Text>
-        </View>
-      ) : filteredUsers.length > 0 ? (
-        <FlatList
-          data={filteredUsers}
-          renderItem={renderUserItem}
-          keyExtractor={(item) => item._id}
-          scrollEnabled
+      {/* SEARCH BAR */}
+      <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-12 mb-4">
+        <Ionicons name="search" size={18} color="#9CA3AF" />
+        <TextInput
+          placeholder={isShowingSearch ? "Find User" : "Find Conversation"}
+          placeholderTextColor="#9CA3AF"
+          value={search}
+          onChangeText={setSearch}
+          className="flex-1 ml-2 text-gray-900"
         />
-      ) : (
-        <View className="flex-1 items-center justify-center">
-          <Ionicons name="people" size={48} color="#D1D5DB" />
-          <Text className="mt-3 text-gray-500 font-semibold">
-            No users found
-          </Text>
-        </View>
-      )}
+        {search && (
+          <TouchableOpacity onPress={() => setSearch("")}>
+            <Ionicons name="close" size={18} color="#9CA3AF" />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* CONTENT */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {loading ? (
+          <View className="flex-1 justify-center items-center py-10">
+            <ActivityIndicator size="large" color="#FF7A00" />
+          </View>
+        ) : isShowingSearch ? (
+          // Search Results
+          <>
+            {isSearching ? (
+              <View className="flex-1 justify-center items-center py-10">
+                <ActivityIndicator size="large" color="#FF7A00" />
+              </View>
+            ) : searchResults.length > 0 ? (
+              searchResults.map((user) => (
+                <TouchableOpacity
+                  key={user._id}
+                  onPress={() => handleSelectUser(user)}
+                  className="flex-row items-center bg-gray-50 rounded-xl p-4 mb-3"
+                >
+                  <Image
+                    source={{ uri: user.avatar || "https://via.placeholder.com/48" }}
+                    className="w-12 h-12 rounded-full mr-3"
+                    defaultSource={require("../../assets/no-task.png")}
+                  />
+                  <View className="flex-1">
+                    <Text className="font-semibold text-gray-900">
+                      {user.name}
+                    </Text>
+                    <Text className="text-gray-500 text-xs">
+                      {user.email}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View className="flex-1 justify-center items-center py-10">
+                <Text className="text-gray-500">No users found</Text>
+              </View>
+            )}
+          </>
+        ) : (
+          // Saved Conversations
+          <>
+            {rooms.length > 0 ? (
+              rooms.map((room) => {
+                const otherMember = getOtherMember(room);
+                if (!otherMember) return null;
+
+                return (
+                  <TouchableOpacity
+                    key={room._id}
+                    onPress={() => handleSelectRoom(room)}
+                    className="flex-row items-center justify-between bg-gray-50 rounded-xl p-4 mb-3"
+                  >
+                    <View className="flex-row items-center flex-1">
+                      <Image
+                        source={{
+                          uri: otherMember.avatar || "https://via.placeholder.com/48",
+                        }}
+                        className="w-12 h-12 rounded-full mr-3"
+                        defaultSource={require("../../assets/no-task.png")}
+                      />
+                      <View className="flex-1">
+                        <Text className="font-semibold text-gray-900">
+                          {otherMember.name}
+                        </Text>
+                        <Text className="text-gray-500 text-xs">
+                          {otherMember.email}
+                        </Text>
+                      </View>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <View className="flex-1 justify-center items-center py-10">
+                <Text className="text-gray-500">
+                  No conversations yet. Search for users to start chatting!
+                </Text>
+              </View>
+            )}
+          </>
+        )}
+
+        <View className="h-20" />
+      </ScrollView>
     </SafeAreaView>
   );
 }

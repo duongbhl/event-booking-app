@@ -48,13 +48,6 @@ export default function ActionBar() {
         <Text className="text-xs mt-2 text-gray-700">Call</Text>
       </TouchableOpacity>
 
-      {/* Directions */}
-      <TouchableOpacity className="items-center">
-        <View className="bg-orange-100 p-4 rounded-full">
-          <MaterialIcons name="directions" size={26} color={Colors.primary} />
-        </View>
-        <Text className="text-xs mt-2 text-gray-700">Directions</Text>
-      </TouchableOpacity>
 
       {/* 🎟 MY TICKET */}
       <TouchableOpacity

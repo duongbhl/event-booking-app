@@ -144,6 +144,7 @@ export default function EventDetails() {
     navigation.navigate("Location", {
       address: displayEvent.location,
       title: displayEvent.title,
+      coordinates: displayEvent.coordinates || null, // Pass coordinates if available
     });
   };
 

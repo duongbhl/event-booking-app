@@ -8,6 +8,10 @@ export interface IEvent extends Document {
   date: Date;
   time: string;
   location: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
   images?: string;
   member: number;
   attendees?: number;
@@ -30,6 +34,10 @@ const EventSchema = new mongoose.Schema<IEvent>(
     time: { type: String, required: true },
 
     location: { type: String, required: true },
+    coordinates: {
+      latitude: { type: Number },
+      longitude: { type: Number },
+    },
 
     images: String,
 
