@@ -7,14 +7,14 @@ export const bookTicket = async (req: any, res: Response) => {
     try {
         const {
             eventId,
-            ticketType,
+            tierName,
             quantity,
             price,
             seatInfo,
             method = 'wallet',
         } = req.body as {
             eventId: string;
-            ticketType: 'VIP' | 'Economy';
+            tierName: string;
             quantity: number;
             price: number;
             seatInfo?: string;
@@ -25,57 +25,59 @@ export const bookTicket = async (req: any, res: Response) => {
             return res.status(400).json({ message: 'Invalid quantity' });
         }
 
+        if (!tierName) {
+            return res.status(400).json({ message: 'Tier name is required' });
+        }
+
         const event = await Event.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
         }
 
-        /** 🔒 Validate giá */
-        const unitPrice =
-            ticketType === 'VIP' ? event.price * 50 : event.price;
+        // ✅ Find the tier
+        const tier = event.ticketTiers?.find(t => t.name === tierName);
+        if (!tier) {
+            return res.status(400).json({ message: 'Invalid ticket tier' });
+        }
 
-        const expectedTotal = unitPrice * quantity;
-
+        // ✅ Validate price
+        const expectedTotal = tier.price * quantity;
         if (price !== expectedTotal) {
             return res.status(400).json({ message: 'Invalid ticket price' });
         }
 
-    /** 🔒 Check sold out */
-    const sold = await Ticket.countDocuments({
-        event: eventId,
-        paymentStatus: 'paid',
-    });
+        // ✅ Check for quota
+        if (tier.sold + quantity > tier.quota) {
+            return res.status(400).json({ message: 'Not enough tickets available for this tier' });
+        }
 
-    if (sold + quantity > event.member) {
-        return res.status(400).json({ message: 'Not enough seats' });
-    }
+        // 🎫 Create multiple tickets
+        const tickets = await Ticket.insertMany(
+            Array.from({ length: quantity }).map((_, index) => ({
+                user: req.user!._id,
+                event: eventId,
+                ticketType: tierName,
+                tierName: tierName,
+                price: tier.price,
+                seatInfo: seatInfo
+                    ? `${seatInfo}-${index + 1}`
+                    : `${tierName}-${index + 1}`,
+                paymentStatus: 'pending',
+            }))
+        );
 
-    /** 🎫 Create multiple tickets */
-    const tickets = await Ticket.insertMany(
-        Array.from({ length: quantity }).map((_, index) => ({
+        // 💳 Create ONE payment
+        const payment = await Payment.create({
             user: req.user!._id,
             event: eventId,
-            ticketType,
-            price: unitPrice,
-            seatInfo: seatInfo
-                ? `${seatInfo}-${index + 1}`
-                : `${ticketType}-${index + 1}`,
-            paymentStatus: 'pending',
-        }))
-    );
+            tickets: tickets.map((t) => t._id),
+            amount: price,
+            method,
+            status: 'pending',
+            transactionId: `TX-${Date.now()}`,
+        });
 
-    /** 💳 Create ONE payment */
-    const payment = await Payment.create({
-        user: req.user!._id,
-        event: eventId,
-        tickets: tickets.map((t) => t._id), // 👈 sửa type
-        amount: price,
-        method,
-        status: 'pending',
-        transactionId: `TX-${Date.now()}`,
-    });
-
-    res.status(201).json({ tickets, payment });
+        res.status(201).json({ tickets, payment });
     } catch (error) {
         console.error("Book ticket error:", error);
         res.status(500).json({ message: "Failed to book ticket" });
@@ -103,13 +105,46 @@ export const confirmPayment = async (req: any, res: Response) => {
         payment.status = success ? "success" : "failed";
         await payment.save();
 
-        /** 🔥 Update ticket status */
+        // 🔥 Update ticket status
         await Ticket.updateMany(
             { _id: { $in: payment.tickets } },
             { paymentStatus: success ? "paid" : "failed" }
         );
 
-        /** 🔥 FETCH LẠI TICKETS ĐẦY ĐỦ - Optimize with lean() */
+        // ✅ If payment successful, update tier sold count and event member
+        if (success) {
+            const tickets = await Ticket.find({ _id: { $in: payment.tickets } });
+            const tierName = tickets[0]?.tierName;
+            const quantity = tickets.length;
+
+            if (tierName) {
+                // Update tier sold count
+                const event = await Event.findByIdAndUpdate(
+                    payment.event,
+                    {
+                        $inc: {
+                            "ticketTiers.$[tier].sold": quantity
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "tier.name": tierName }],
+                        new: true
+                    }
+                );
+
+                // Calculate total members = sum of all sold tickets
+                const totalSold = event?.ticketTiers?.reduce((sum, tier) => sum + (tier.sold || 0), 0) || 0;
+                
+                // Update event member count
+                await Event.findByIdAndUpdate(
+                    payment.event,
+                    { member: totalSold },
+                    { new: true }
+                );
+            }
+        }
+
+        // 🔥 FETCH full tickets - Optimize with lean()
         const tickets = await Ticket.find({
             _id: { $in: payment.tickets },
         }).populate({

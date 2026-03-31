@@ -40,6 +40,10 @@ export default function UpcomingEvents() {
     );
   }, [events, user]);
 
+  const handleDeleteEvent = (eventId: string) => {
+    setEvents((prev) => prev.filter((ev) => ev._id !== eventId));
+  };
+
 
 
   if (upcomingEvents.length === 0)
@@ -68,6 +72,7 @@ export default function UpcomingEvents() {
           <EventCard
             key={ev._id}
             {...ev}
+            onDelete={handleDeleteEvent}
           />
         ))}
       </View>

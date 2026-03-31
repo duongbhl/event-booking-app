@@ -5,7 +5,8 @@ export interface ITicket extends Document {
     user: mongoose.Types.ObjectId;
     event: mongoose.Types.ObjectId;
     price: number;
-    ticketType: 'VIP' | 'Economy';
+    ticketType: 'VIP' | 'Economy' | string; // Can be tier name now
+    tierName?: string; // Reference to ticket tier name
     seatInfo?: string;
     qrCode?: string;
     paymentStatus: 'pending' | 'paid' | 'failed';
@@ -20,12 +21,14 @@ const schema = new mongoose.Schema<ITicket>(
         event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
         price: { type: Number, required: true },
 
-        // 🔥 NEW
+        // Support both old format (VIP/Economy) and new tier-based format
         ticketType: {
             type: String,
-            enum: ['VIP', 'Economy'],
             required: true,
         },
+
+        // ✅ Link to ticket tier name
+        tierName: String,
 
         seatInfo: String,
         qrCode: String,

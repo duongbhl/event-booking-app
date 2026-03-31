@@ -1,5 +1,12 @@
 import mongoose, { Document, Model } from "mongoose";
 
+export interface ITicketTier {
+  name: string;
+  price: number;
+  quota: number;
+  sold: number;
+}
+
 export interface IEvent extends Document {
   title: string;
   description?: string;
@@ -19,6 +26,7 @@ export interface IEvent extends Document {
   status: "upcoming" | "ongoing" | "finished" | "cancelled";
   approvalStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   organizer: mongoose.Types.ObjectId;
+  ticketTiers?: ITicketTier[];
 }
 
 const EventSchema = new mongoose.Schema<IEvent>(
@@ -63,6 +71,16 @@ const EventSchema = new mongoose.Schema<IEvent>(
       ref: "User",
       required: true,
     },
+
+    // ✅ Ticket tiers
+    ticketTiers: [
+      {
+        name: { type: String, required: true },
+        price: { type: Number, required: true },
+        quota: { type: Number, required: true },
+        sold: { type: Number, default: 0 },
+      },
+    ],
   },
   { timestamps: true }
 );

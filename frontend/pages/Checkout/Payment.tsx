@@ -20,9 +20,9 @@ export default function Payment() {
   const route = useRoute<any>();
   const { token } = useAuth();
 
-  const { eventId, ticketType, quantity, total } = route.params as {
+  const { eventId, tierName, quantity, total } = route.params as {
     eventId: string;
-    ticketType: "VIP" | "Economy";
+    tierName: string;
     quantity: number;
     total: number;
   };
@@ -74,12 +74,12 @@ export default function Payment() {
 
       /** 1️⃣ Book tickets */
       const mappedMethod = mapPaymentMethod(method);
-      console.log("📌 Booking tickets...", { eventId, ticketType, quantity, total, method, mappedMethod });
+      console.log("📌 Booking tickets...", { eventId, tierName, quantity, total, method, mappedMethod });
       
       const bookResponse = await bookTicket(
         {
           eventId,
-          ticketType,
+          tierName,
           quantity,
           price: total,
           method: mappedMethod,

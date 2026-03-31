@@ -9,12 +9,10 @@ export interface CreateEventPayload {
   category: string;
   price?: number;
   date: Date; // ISO string
-  member:number;
   time: string;
   location: string;
   images?: string;
 }
-
 
 export const getEvents = async () => {
   try {
@@ -64,7 +62,6 @@ export const createEvent = async (payload: CreateEventPayload) => {
   return res.data;
 };
 
-
 export const updateEvent = async (
   eventId: string,
   payload: CreateEventPayload
@@ -80,6 +77,19 @@ export const updateEvent = async (
 
   return res.data;
 };
+
+export const deleteEvent = async (eventId: string) => {
+  const token = await AsyncStorage.getItem("token");
+
+  const res = await api.delete(`/events/${eventId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
 export const getPendingEvents = async (q?: string) => {
   try {
     const params = new URLSearchParams();
@@ -92,6 +102,7 @@ export const getPendingEvents = async (q?: string) => {
     throw error;
   }
 };
+
 
 export const getAllEventsForAdmin = async (q?: string) => {
   try {

@@ -74,7 +74,7 @@ export default function EventDetails() {
   const handleBooked = () => {
     navigation.navigate("BuyTicket", {
       eventId: displayEvent._id,
-      price: displayEvent.price,
+      ticketTiers: displayEvent.ticketTiers || [],
     } as never);
   };
 
@@ -345,6 +345,47 @@ export default function EventDetails() {
               {displayEvent.description || "No description"}
             </Text>
           </View>
+
+          {/* Ticket Tiers */}
+          {displayEvent.ticketTiers && displayEvent.ticketTiers.length > 0 && (
+            <View className="mt-6">
+              <Text className="font-semibold text-lg mb-3">Ticket Tiers</Text>
+              <View className="flex-row flex-wrap">
+                {displayEvent.ticketTiers.map(
+                  (tier: any, index: number) => {
+                    const available = tier.quota - tier.sold;
+                    const isSoldOut = available <= 0;
+                    return (
+                      <View
+                        key={index}
+                        className={`flex-1 min-w-48 mr-2 mb-2 p-3 rounded-xl border-2 ${
+                          isSoldOut
+                            ? "border-gray-300 bg-gray-100"
+                            : "border-orange-500 bg-orange-50"
+                        }`}
+                      >
+                        <Text className="font-semibold text-lg text-gray-900">
+                          {tier.name}
+                        </Text>
+                        <Text className="text-orange-600 font-bold mt-1">
+                          ${tier.price.toFixed(2)}
+                        </Text>
+                        <Text
+                          className={`text-sm mt-1 ${
+                            isSoldOut ? "text-red-600" : "text-gray-600"
+                          }`}
+                        >
+                          {isSoldOut
+                            ? "Sold Out"
+                            : `${available}/${tier.quota} available`}
+                        </Text>
+                      </View>
+                    );
+                  }
+                )}
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
 

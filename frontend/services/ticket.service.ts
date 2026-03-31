@@ -6,7 +6,7 @@ import { authHeader } from "./auHeader";
 export const bookTicket = async (
   data: {
     eventId: string;
-    ticketType: "VIP" | "Economy";
+    tierName: string;
     quantity: number;
     price: number;
     method?: "wallet" | "paypal" | "credit";

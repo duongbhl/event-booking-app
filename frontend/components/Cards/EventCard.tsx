@@ -5,10 +5,14 @@ import Colors from "../../constants/colors";
 import { EventCardProps } from "../Interface/EventCardProps";
 import { useNavigation } from "@react-navigation/native";
 import { formatDateTime } from "../../utils/utils";
+import { deleteEvent } from "../../services/event.service";
 
-interface EventCardProp extends EventCardProps { }
+interface EventCardProp extends EventCardProps {
+  onDelete?: (eventId: string) => void;
+}
 
-const EventCard: React.FC<EventCardProp> = (event) => {
+const EventCard: React.FC<EventCardProp> = (props) => {
+  const { onDelete, ...event } = props;
   const navigation = useNavigation<any>();
 
   const handleEdit = () => {
@@ -45,8 +49,14 @@ const EventCard: React.FC<EventCardProp> = (event) => {
         {
           text: "Delete",
           onPress: async () => {
-            // Handle delete logic here
-            console.log("Delete event:", event._id);
+            try {
+              await deleteEvent(event._id);
+              onDelete?.(event._id);
+              Alert.alert("Success", "Event deleted successfully");
+            } catch (error) {
+              Alert.alert("Error", "Failed to delete event");
+              console.error("Delete event error:", error);
+            }
           },
           style: "destructive",
         },

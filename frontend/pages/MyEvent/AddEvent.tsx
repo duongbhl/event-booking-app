@@ -16,6 +16,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { createEvent, updateEvent } from "../../services/event.service";
 import { uploadImageToCloudinary } from "../../services/upload.service";
 import { CATEGORIES } from "../Home";
+import TicketTierForm, { ITicketTier } from "../../components/Cards/TicketTierForm";
 
 
 
@@ -25,6 +26,7 @@ type Errors = {
   location?: string;
   description?: string;
   date?: string;
+  ticketTiers?: string;
 };
 
 export default function CreateEditEvent() {
@@ -39,9 +41,8 @@ export default function CreateEditEvent() {
   const [eventType, setEventType] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number>(0);
   const [date, setDate] = useState<Date>(new Date());
-  const [member, setMember] = useState<number>(0);
+  const [ticketTiers, setTicketTiers] = useState<ITicketTier[]>([]);
 
   const [showPicker, setShowPicker] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -93,6 +94,8 @@ export default function CreateEditEvent() {
       newErrors.description = "Description is required";
     if (!date || date <= now)
       newErrors.date = "Event date must be in the future";
+    if (ticketTiers.length === 0)
+      newErrors.ticketTiers = "At least one ticket tier is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -100,8 +103,12 @@ export default function CreateEditEvent() {
 
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     try {
-      let imageUrl = coverImage||undefined;
+      let imageUrl = coverImage || undefined;
 
       if (coverImage && coverImage.startsWith("file")) {
         imageUrl = await uploadImageToCloudinary(coverImage);
@@ -111,12 +118,11 @@ export default function CreateEditEvent() {
         title: eventName.trim(),
         description: description.trim(),
         category: eventType,
-        price,
         date,
-        member,
         time: date.toTimeString().split(" ")[0],
         location: location.trim(),
         images: imageUrl,
+        ticketTiers,
       };
 
       if (isEdit) {
@@ -141,7 +147,8 @@ export default function CreateEditEvent() {
     !!eventType &&
     !!location.trim() &&
     !!description.trim() &&
-    date > new Date();
+    date > new Date() &&
+    ticketTiers.length > 0;
 
   useEffect(() => {
     if (isEdit && editEvent) {
@@ -149,9 +156,11 @@ export default function CreateEditEvent() {
       setEventType(editEvent.category);
       setLocation(editEvent.location);
       setDescription(editEvent.description || "");
-      setPrice(editEvent.price || 0);
       setDate(new Date(editEvent.date));
       setCoverImage(editEvent.images);
+      if (editEvent.ticketTiers) {
+        setTicketTiers(editEvent.ticketTiers);
+      }
     }
   }, [isEdit, editEvent]);
 
@@ -288,18 +297,7 @@ export default function CreateEditEvent() {
           />
         )}
 
-        {/* Member */}
-        {/* Price */}
-        <Text className="font-medium mb-1">Member</Text>
-        <TextInput
-          className="border border-gray-300 rounded-xl p-3 mb-4"
-          keyboardType="numeric"
-          value={member === 0 ? "" : String(member)}
-          onChangeText={text =>
-            setMember(Number(text.replace(/[^0-9]/g, "")))
-          }
-          placeholder="0"
-        />
+        
 
         {/* Location */}
         <Text className="font-medium mb-1">Location *</Text>
@@ -316,17 +314,16 @@ export default function CreateEditEvent() {
           </Text>
         )}
 
-        {/* Price */}
-        <Text className="font-medium mb-1">Price</Text>
-        <TextInput
-          className="border border-gray-300 rounded-xl p-3 mb-4"
-          keyboardType="numeric"
-          value={price === 0 ? "" : String(price)}
-          onChangeText={text =>
-            setPrice(Number(text.replace(/[^0-9]/g, "")))
-          }
-          placeholder="$0"
+        {/* Ticket Tiers */}
+        <TicketTierForm
+          tiers={ticketTiers}
+          onTiersChange={setTicketTiers}
         />
+        {errors.ticketTiers && (
+          <Text className="text-red-500 text-xs mb-3">
+            {errors.ticketTiers}
+          </Text>
+        )}
 
         {/* Description */}
         <Text className="font-medium mb-1">Event Description *</Text>

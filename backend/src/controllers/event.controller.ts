@@ -111,6 +111,7 @@ export const createEvent = async (req: any, res: Response) => {
     member,
     location,
     images,
+    ticketTiers,
   } = req.body;
 
   if (!title || !category || !date || !location) {
@@ -119,21 +120,55 @@ export const createEvent = async (req: any, res: Response) => {
     });
   }
 
+  // Validate ticket tiers
+  if (!ticketTiers || !Array.isArray(ticketTiers) || ticketTiers.length === 0) {
+    return res.status(400).json({
+      message: "At least one ticket tier is required",
+    });
+  }
+
+  // Validate each tier
+  for (const tier of ticketTiers) {
+    if (!tier.name || tier.price === undefined || !tier.quota) {
+      return res.status(400).json({
+        message: "Each ticket tier must have name, price, and quota",
+      });
+    }
+
+    if (typeof tier.price !== "number" || tier.price < 0) {
+      return res.status(400).json({
+        message: "Ticket price must be a positive number",
+      });
+    }
+
+    if (typeof tier.quota !== "number" || tier.quota <= 0) {
+      return res.status(400).json({
+        message: "Ticket quota must be a positive number",
+      });
+    }
+  }
+
   const eventDate = new Date(date);
 
   const event = await Event.create({
     title,
     description,
     category,
-    price: price || "$0",
+    price: price || ticketTiers[0].price, // Use first tier price as default
     date: eventDate,
     time,
     member: member || 0,
     location,
     images,
-    organizer: req.user._id, // ✅ chính là bản thân user
+    organizer: req.user._id,
     status: "upcoming",
     approvalStatus: "PENDING",
+    ticketTiers: ticketTiers.map((tier: any) => ({
+      name: tier.name,
+      price: tier.price,
+      quota: tier.quota,
+      sold: 0,
+    })),
   });
 
   res.status(201).json(event);
