@@ -91,6 +91,15 @@ const EventCard: React.FC<EventCardProp> = (props) => {
   };
 
   const isEditDisabled = event.approvalStatus !== "PENDING";
+  const isEventAccepted = event.approvalStatus === "ACCEPTED";
+  const isEventUpcoming = new Date(event.date) >= new Date();
+
+  const handleCheckIn = () => {
+    navigation.navigate("CheckIn", {
+      eventId: event._id,
+      eventTitle: event.title
+    } as never);
+  };
 
   return (
     <View
@@ -150,6 +159,16 @@ const EventCard: React.FC<EventCardProp> = (props) => {
 
           {/* Action Buttons */}
           <View className="flex-row gap-2">
+            {/* Check-in QR Button - Only for ACCEPTED and upcoming events */}
+            {isEventAccepted && isEventUpcoming && (
+              <TouchableOpacity
+                onPress={handleCheckIn}
+                className="bg-blue-500 rounded-full px-3 py-2"
+              >
+                <Ionicons name="qr-code" size={16} color="white" />
+              </TouchableOpacity>
+            )}
+
             {/* Delete Button - Only for PENDING */}
             {event.approvalStatus === "PENDING" && (
               <TouchableOpacity

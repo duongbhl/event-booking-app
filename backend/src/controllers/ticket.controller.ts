@@ -2,6 +2,7 @@ import { Response } from 'express';
 import Event from '../models/event.model';
 import Ticket from '../models/ticket.model';
 import Payment from '../models/payment.model';
+import { generateTicketQRCode, parseQRCodeData } from '../utils/generateQRCode';
 
 export const bookTicket = async (req: any, res: Response) => {
     try {
@@ -142,6 +143,25 @@ export const confirmPayment = async (req: any, res: Response) => {
                     { new: true }
                 );
             }
+
+            // 🎟️ Generate QR codes for all tickets
+            for (const ticket of tickets) {
+                try {
+                    const qrCode = await generateTicketQRCode(
+                        String(ticket._id),
+                        String(payment.event)
+                    );
+                    // Save QR code to ticket
+                    await Ticket.findByIdAndUpdate(
+                        ticket._id,
+                        { qrCode },
+                        { new: true }
+                    );
+                } catch (qrError) {
+                    console.error(`Failed to generate QR code for ticket ${ticket._id}:`, qrError);
+                    // Continue with other tickets even if one fails
+                }
+            }
         }
 
         // 🔥 FETCH full tickets - Optimize with lean()
@@ -166,4 +186,105 @@ export const confirmPayment = async (req: any, res: Response) => {
 export const myTickets = async (req: any, res: Response) => {
     const tickets = await Ticket.find({ user: req.user!._id }).populate('event');
     res.json(tickets);
+};
+
+/**
+ * Check in a ticket by scanning QR code
+ * Only organizers can check in tickets for their events
+ */
+export const checkInTicket = async (req: any, res: Response) => {
+    try {
+        const { qrCode, eventId } = req.body as {
+            qrCode: string;
+            eventId: string;
+        };
+
+        if (!qrCode || !eventId) {
+            return res.status(400).json({ message: "QR code and event ID are required" });
+        }
+
+        // ✅ Verify user is the organizer of this event
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        if (String(event.organizer) !== String(req.user!._id)) {
+            return res.status(403).json({ message: "You are not the organizer of this event" });
+        }
+
+        // ✅ Parse QR code data
+        const qrData = parseQRCodeData(qrCode);
+        if (!qrData) {
+            return res.status(400).json({ message: "Invalid QR code format" });
+        }
+
+        const { ticketId, eventId: qrEventId } = qrData;
+
+        // ✅ Verify QR code belongs to this event
+        if (qrEventId !== eventId) {
+            return res.status(400).json({ 
+                message: "QR code does not belong to this event",
+                status: "WRONG_EVENT"
+            });
+        }
+
+        // ✅ Check if ticket exists and belongs to this event
+        const ticket = await Ticket.findById(ticketId)
+            .populate('user', 'name email')
+            .populate('event', 'title');
+
+        if (!ticket) {
+            return res.status(404).json({ 
+                message: "Ticket not found",
+                status: "TICKET_NOT_FOUND"
+            });
+        }
+
+        if (String(ticket.event._id) !== eventId) {
+            return res.status(400).json({ 
+                message: "Ticket does not belong to this event",
+                status: "WRONG_EVENT"
+            });
+        }
+
+        // ✅ Check if ticket is valid (payment must be successful)
+        if (ticket.paymentStatus !== 'paid') {
+            return res.status(400).json({ 
+                message: "Ticket has not been paid yet",
+                status: "PAYMENT_PENDING"
+            });
+        }
+
+        // ✅ Check if already checked in
+        if (ticket.checked) {
+            return res.status(400).json({ 
+                message: "Ticket has already been checked in",
+                status: "ALREADY_CHECKED",
+                checkedAt: ticket.checkedAt,
+                checkedByUser: ticket.checkedBy
+            });
+        }
+
+        // ✅ Mark ticket as checked in
+        const updatedTicket = await Ticket.findByIdAndUpdate(
+            ticketId,
+            {
+                checked: true,
+                checkedAt: new Date(),
+                checkedBy: req.user!._id,
+            },
+            { new: true }
+        ).populate('user', 'name email')
+            .populate('event', 'title organizer');
+
+        res.json({
+            message: "Ticket checked in successfully",
+            status: "SUCCESS",
+            ticket: updatedTicket,
+        });
+    } catch (error) {
+        console.error("Check in ticket error:", error);
+        res.status(500).json({ message: "Failed to check in ticket" });
+    }
 };

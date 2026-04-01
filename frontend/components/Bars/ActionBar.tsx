@@ -6,7 +6,11 @@ import Colors from "../../constants/colors";
 import { useAuth } from "../../context/AuthContext";
 import { getMyTickets } from "../../services/ticket.service";
 
-export default function ActionBar() {
+interface ActionBarProps {
+  eventId?: string;
+}
+
+export default function ActionBar({ eventId }: ActionBarProps) {
   const navigation = useNavigation<any>();
   const { token } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -23,13 +27,23 @@ export default function ActionBar() {
       // 🔥 FETCH MỚI MỖI LẦN NHẤN
       const tickets = await getMyTickets(token);
 
-      if (!tickets || tickets.length === 0) {
+      // 🔥 FILTER TICKETS CHỈ CỦA EVENT ĐÓ NẾU CÓ EVENID
+      let filteredTickets = tickets;
+      if (eventId) {
+        filteredTickets = tickets.filter(
+          (t: any) =>
+            t.event?._id === eventId &&
+            t.paymentStatus === "paid"
+        );
+      }
+
+      if (!filteredTickets || filteredTickets.length === 0) {
         Alert.alert("No tickets", "You have not booked any tickets yet");
         return;
       }
 
       // 👉 luôn truyền data mới
-      navigation.navigate("Ticket", { tickets });
+      navigation.navigate("Ticket", { tickets: filteredTickets });
     } catch (err) {
       console.log("Fetch tickets error", err);
       Alert.alert("Error", "Failed to load tickets");

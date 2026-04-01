@@ -249,7 +249,7 @@ export default function EventDetails() {
         </View>
 
         {/* 🔥 ActionBar */}
-        {isBooked && <ActionBar/>}
+        {isBooked && <ActionBar eventId={displayEvent._id} />}
 
         {/* 🔥 EVENT CARD */}
         <View className={`bg-white mx-4 ${isBooked ? "mt-4" : "-mt-10"} rounded-3xl p-5 shadow`}>
@@ -432,25 +432,31 @@ export default function EventDetails() {
             </TouchableOpacity>
           )
         ) : isOwnEvent ? (
-          <TouchableOpacity className="bg-black rounded-2xl py-4 items-center">
-            <Text className="text-white text-lg font-semibold">Check</Text>
+          <TouchableOpacity 
+            className="bg-orange-500 rounded-2xl py-4 items-center"
+            onPress={() => navigation.navigate("CheckIn", {
+              eventId: displayEvent._id,
+              eventTitle: displayEvent.title
+            })}
+          >
+            <View className="flex-row items-center justify-center">
+              <Ionicons name="qr-code" size={22} color="white" />
+              <Text className="text-white text-lg font-semibold ml-2">Check-in Tickets</Text>
+            </View>
           </TouchableOpacity>
         ) : isBooked ? (
-          // Show 2 buttons when already booked
-          <View className="flex-row gap-3">
-
-            <TouchableOpacity 
-              className="flex-1 bg-black rounded-2xl py-4 flex-row items-center justify-center"
-              onPress={handleBooked}
-              disabled={isOutOfDate}
-              style={{ opacity: isOutOfDate ? 0.5 : 1 }}
-            >
-              <Ionicons name="add-circle-outline" size={22} color="white" />
-              <Text className="text-white text-lg font-semibold ml-2">
-                {isOutOfDate ? "EVENT ENDED" : "Buy More"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          // Show Buy More button when already booked
+          <TouchableOpacity 
+            className="bg-black rounded-2xl py-4 flex-row items-center justify-center"
+            onPress={handleBooked}
+            disabled={isOutOfDate}
+            style={{ opacity: isOutOfDate ? 0.5 : 1 }}
+          >
+            <Ionicons name="add-circle-outline" size={22} color="white" />
+            <Text className="text-white text-lg font-semibold ml-2">
+              {isOutOfDate ? "EVENT ENDED" : "Buy More"}
+            </Text>
+          </TouchableOpacity>
         ) : (
           <TouchableOpacity 
             className="bg-black rounded-2xl py-4 flex-row items-center justify-center" 

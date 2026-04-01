@@ -20,6 +20,7 @@ import Search from "../pages/Search_Filter/Search";
 import Filter from "../pages/Search_Filter/Filter";
 import Events from "../pages/MyEvent/Events";
 import EventDetails from "../pages/MyEvent/EventDetails";
+import CheckIn from "../pages/MyEvent/CheckIn";
 import OrganizerProfile from "../pages/Profile/OrganizerProfile";
 import InviteFriend from "../pages/Communication/InviteFriend";
 import Message from "../pages/Communication/Message";
@@ -111,6 +112,7 @@ export default function RootNavigator() {
               <Stack.Screen name="ScanCard" component={ScanCard} />
               <Stack.Screen name="Ticket" component={Ticket} />
               <Stack.Screen name="Location" component={Location} />
+              <Stack.Screen name="CheckIn" component={CheckIn} />
             </>
           )}
           {/* SHARED SCREENS - Available for both admin and users */}

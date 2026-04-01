@@ -10,6 +10,9 @@ export interface ITicket extends Document {
     seatInfo?: string;
     qrCode?: string;
     paymentStatus: 'pending' | 'paid' | 'failed';
+    checked: boolean; // Whether ticket has been checked in
+    checkedAt?: Date; // Timestamp when ticket was checked in
+    checkedBy?: mongoose.Types.ObjectId; // Organizer who checked in the ticket
     bookedAt: Date;
 }
 
@@ -37,6 +40,12 @@ const schema = new mongoose.Schema<ITicket>(
             enum: ['pending', 'paid', 'failed'],
             default: 'pending',
         },
+        checked: {
+            type: Boolean,
+            default: false,
+        },
+        checkedAt: Date,
+        checkedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         bookedAt: { type: Date, default: Date.now },
     },
     { timestamps: true }

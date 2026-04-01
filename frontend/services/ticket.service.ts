@@ -42,3 +42,17 @@ export const getMyTickets = async (token: string) => {
   const res = await api.get("/tickets/me", authHeader(token));
   return res.data; // Ticket[]
 };
+
+/**
+ * Check in a ticket by scanning QR code
+ */
+export const checkInTicket = async (
+  data: {
+    qrCode: string;
+    eventId: string;
+  },
+  token: string
+) => {
+  const res = await api.post("/tickets/checkin", data, authHeader(token));
+  return res.data; // { message, status, ticket }
+};

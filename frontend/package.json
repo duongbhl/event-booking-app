@@ -21,6 +21,7 @@
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "expo": "^54.0.30",
+    "expo-camera": "^55.0.11",
     "expo-crypto": "~15.0.8",
     "expo-image-picker": "^17.0.10",
     "expo-linear-gradient": "^15.0.8",
