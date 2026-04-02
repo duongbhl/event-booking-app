@@ -92,8 +92,23 @@ const EventCard: React.FC<EventCardProp> = (props) => {
 
   const isEditDisabled = event.approvalStatus !== "PENDING";
   const isEventAccepted = event.approvalStatus === "ACCEPTED";
-  const isEventUpcoming = new Date(event.date) >= new Date();
-
+  
+  // Safely parse date - handle both Date objects and strings
+  const parseEventDate = () => {
+    try {
+      const date = typeof event.date === 'string' 
+        ? new Date(event.date)
+        : event.date;
+      return date;
+    } catch (error) {
+      console.warn('Failed to parse event date:', event.date, error);
+      return new Date(0); // Return past date on error
+    }
+  };
+  
+  const eventDate = parseEventDate();
+  const isEventUpcoming = eventDate >= new Date();
+  
   const handleCheckIn = () => {
     navigation.navigate("CheckIn", {
       eventId: event._id,
@@ -154,18 +169,19 @@ const EventCard: React.FC<EventCardProp> = (props) => {
 
         <View className="flex-row justify-between items-center mt-3">
           <Text className="text-gray-400">
-            {event.attendees || 0} Members joined
+            {event.attendees || 0} joined
           </Text>
 
           {/* Action Buttons */}
-          <View className="flex-row gap-2">
+          <View className="flex-row gap-2 items-center">
             {/* Check-in QR Button - Only for ACCEPTED and upcoming events */}
             {isEventAccepted && isEventUpcoming && (
               <TouchableOpacity
                 onPress={handleCheckIn}
-                className="bg-blue-500 rounded-full px-3 py-2"
+                className="bg-slate-900 rounded-full justify-center items-center"
+                style={{ width: 40, height: 40 }}
               >
-                <Ionicons name="qr-code" size={16} color="white" />
+                <Ionicons name="qr-code" size={20} color="white" />
               </TouchableOpacity>
             )}
 
@@ -173,19 +189,20 @@ const EventCard: React.FC<EventCardProp> = (props) => {
             {event.approvalStatus === "PENDING" && (
               <TouchableOpacity
                 onPress={handleDelete}
-                className="bg-red-500 rounded-full px-3 py-2"
+                className="bg-red-500 rounded-full justify-center items-center"
+                style={{ width: 40, height: 40 }}
               >
-                <Ionicons name="trash" size={16} color="white" />
+                <Ionicons name="trash" size={20} color="white" />
               </TouchableOpacity>
             )}
 
             {/* Edit Button */}
             <TouchableOpacity
               onPress={handleEdit}
+              disabled={isEditDisabled}
               className={`rounded-full px-4 py-2 ${
                 isEditDisabled ? "bg-gray-300" : "bg-primary"
               }`}
-              disabled={isEditDisabled}
             >
               <Text
                 className={`font-semibold text-sm ${

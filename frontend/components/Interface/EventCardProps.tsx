@@ -8,7 +8,7 @@ export interface EventCardProps  {
   title: string;
   description?: string;
   category: string;
-  date: Date;
+  date: Date | string; // Support both Date object and ISO string from API
   time: string;
   member: number;
   attendees?: number;

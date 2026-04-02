@@ -1,6 +1,6 @@
 
 //format DateTime to "Month Day, Year, Time PM/AM"
-export const formatDateTime = (date: Date) => {
+export const formatDateTime = (date: string | Date) => {
   const d = new Date(date);
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -13,7 +13,7 @@ export const formatDateTime = (date: Date) => {
 };
 
 //format Date to "YEAR-MONTH-DAY"
-export const formatDate = (date: Date) => {
+export const formatDate = (date: string | Date) => {
   const d = new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");

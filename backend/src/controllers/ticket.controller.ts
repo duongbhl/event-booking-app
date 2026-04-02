@@ -35,19 +35,19 @@ export const bookTicket = async (req: any, res: Response) => {
             return res.status(404).json({ message: 'Event not found' });
         }
 
-        // ✅ Find the tier
+        //  Find the tier
         const tier = event.ticketTiers?.find(t => t.name === tierName);
         if (!tier) {
             return res.status(400).json({ message: 'Invalid ticket tier' });
         }
 
-        // ✅ Validate price
+        //  Validate price
         const expectedTotal = tier.price * quantity;
         if (price !== expectedTotal) {
             return res.status(400).json({ message: 'Invalid ticket price' });
         }
 
-        // ✅ Check for quota
+        //  Check for quota
         if (tier.sold + quantity > tier.quota) {
             return res.status(400).json({ message: 'Not enough tickets available for this tier' });
         }
@@ -112,7 +112,7 @@ export const confirmPayment = async (req: any, res: Response) => {
             { paymentStatus: success ? "paid" : "failed" }
         );
 
-        // ✅ If payment successful, update tier sold count and event member
+        //  If payment successful, update tier sold count and event member
         if (success) {
             const tickets = await Ticket.find({ _id: { $in: payment.tickets } });
             const tierName = tickets[0]?.tierName;
@@ -199,11 +199,15 @@ export const checkInTicket = async (req: any, res: Response) => {
             eventId: string;
         };
 
+        console.log('[checkInTicket] Received QR code:', JSON.stringify(qrCode));
+        console.log('[checkInTicket] QR code length:', qrCode?.length);
+        console.log('[checkInTicket] Event ID:', eventId);
+
         if (!qrCode || !eventId) {
             return res.status(400).json({ message: "QR code and event ID are required" });
         }
 
-        // ✅ Verify user is the organizer of this event
+        // Verify user is the organizer of this event
         const event = await Event.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: "Event not found" });
@@ -213,15 +217,20 @@ export const checkInTicket = async (req: any, res: Response) => {
             return res.status(403).json({ message: "You are not the organizer of this event" });
         }
 
-        // ✅ Parse QR code data
+        // Parse QR code data
         const qrData = parseQRCodeData(qrCode);
         if (!qrData) {
-            return res.status(400).json({ message: "Invalid QR code format" });
+            console.warn('[checkInTicket] Failed to parse QR code:', qrCode);
+            return res.status(400).json({ 
+                message: "Invalid QR code format",
+                status: "INVALID_FORMAT",
+                received: qrCode
+            });
         }
 
         const { ticketId, eventId: qrEventId } = qrData;
 
-        // ✅ Verify QR code belongs to this event
+        // Verify QR code belongs to this event
         if (qrEventId !== eventId) {
             return res.status(400).json({ 
                 message: "QR code does not belong to this event",
@@ -229,7 +238,7 @@ export const checkInTicket = async (req: any, res: Response) => {
             });
         }
 
-        // ✅ Check if ticket exists and belongs to this event
+        // Check if ticket exists and belongs to this event
         const ticket = await Ticket.findById(ticketId)
             .populate('user', 'name email')
             .populate('event', 'title');
@@ -248,7 +257,7 @@ export const checkInTicket = async (req: any, res: Response) => {
             });
         }
 
-        // ✅ Check if ticket is valid (payment must be successful)
+        // Check if ticket is valid (payment must be successful)
         if (ticket.paymentStatus !== 'paid') {
             return res.status(400).json({ 
                 message: "Ticket has not been paid yet",
@@ -256,7 +265,7 @@ export const checkInTicket = async (req: any, res: Response) => {
             });
         }
 
-        // ✅ Check if already checked in
+        //  Check if already checked in
         if (ticket.checked) {
             return res.status(400).json({ 
                 message: "Ticket has already been checked in",
@@ -266,7 +275,7 @@ export const checkInTicket = async (req: any, res: Response) => {
             });
         }
 
-        // ✅ Mark ticket as checked in
+        //  Mark ticket as checked in
         const updatedTicket = await Ticket.findByIdAndUpdate(
             ticketId,
             {

@@ -50,7 +50,7 @@ export default function Search() {
   }, [isFocused]);
 
   /* ---------------- TIME FILTER HELPER ---------------- */
-  const isWithinTimeRange = (eventDate: Date, time?: string) => {
+  const isWithinTimeRange = (eventDate: string | Date, time?: string) => {
     const now = new Date();
     const date = new Date(eventDate);
 
