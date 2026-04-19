@@ -3,6 +3,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
+import { useLocalization } from "../../context/LocalizationContext";
 import { getMyProfile, UserProfile } from "../../services/user.service";
 import { getMyEvents } from "../../services/event.service";
 import { getMyBookmarks, getMyFollowers } from "../../services/bookmark.service";
@@ -10,6 +11,7 @@ import { getMyBookmarks, getMyFollowers } from "../../services/bookmark.service"
 export default function Profile() {
   const navigation = useNavigation();
   const { token, user } = useAuth();
+  const { t } = useLocalization();
   const isFocused = useIsFocused();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -60,14 +62,21 @@ export default function Profile() {
           <Ionicons name="chevron-back" size={26} color="black" />
         </TouchableOpacity>
 
-        <Text className="text-xl font-semibold">Profile</Text>
+        <Text className="text-xl font-semibold">{t('profile.profile')}</Text>
 
-        {/* ⭐ Nút Edit */}
-        <TouchableOpacity
-          onPress={() => navigation.navigate("EditProfile" as never)}
-        >
-          <Ionicons name="create-outline" size={24} color="#FF7A00" />
-        </TouchableOpacity>
+        {/* ⭐ Edit & Settings buttons */}
+        <View className="flex-row gap-2">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Settings" as never)}
+          >
+            <Ionicons name="settings-outline" size={24} color="#FF7A00" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("EditProfile" as never)}
+          >
+            <Ionicons name="create-outline" size={24} color="#FF7A00" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Avatar */}
@@ -90,43 +99,35 @@ export default function Profile() {
       <View className="flex-row justify-between px-3 mt-4 mb-6">
         <View className="items-center">
           <Text className="text-lg font-bold">{followers}</Text>
-          <Text className="text-gray-500 text-xs">Followers</Text>
+          <Text className="text-gray-500 text-xs">{t('profile.followersCount')}</Text>
         </View>
 
         <View className="items-center">
           <Text className="text-lg font-bold">{following}</Text>
-          <Text className="text-gray-500 text-xs">Following</Text>
+          <Text className="text-gray-500 text-xs">{t('profile.followingCount')}</Text>
         </View>
 
         <View className="items-center">
           <Text className="text-lg font-bold">{events}</Text>
-          <Text className="text-gray-500 text-xs">Events</Text>
+          <Text className="text-gray-500 text-xs">{t('profile.eventsCount')}</Text>
         </View>
       </View>
 
       {/* About Me */}
       <View className="mb-6">
-        <Text className="text-gray-900 font-semibold text-base mb-2">About Me</Text>
+        <Text className="text-gray-900 font-semibold text-base mb-2">{t('profile.aboutMe')}</Text>
 
         <Text className="text-gray-600">
-          {profile?.description || "No description yet"}
+          {profile?.description || t('profile.noDescriptionYet')}
         </Text>
       </View>
 
-      {/* Country & Location */}
+      {/* Country */}
       {(profile?.country ) && (
         <View className="mb-6">
-          <Text className="text-gray-900 font-semibold text-base mb-2">Country</Text>
+          <Text className="text-gray-900 font-semibold text-base mb-2">{t('profile.country')}</Text>
           <Text className="text-gray-600">
             {profile?.country && `🌍 ${profile.country}`}
-          </Text>
-        </View>
-      )}
-      {(profile?.location) && (
-        <View className="mb-6">
-          <Text className="text-gray-900 font-semibold text-base mb-2">Location</Text>
-          <Text className="text-gray-600">
-            {profile?.location && `📍 ${profile.location}`}
           </Text>
         </View>
       )}
@@ -135,7 +136,7 @@ export default function Profile() {
       {profile?.interests && profile.interests.length > 0 && (
         <View>
           <Text className="text-gray-900 font-semibold text-base mb-3">
-            Interests
+            {t('profile.interests')}
           </Text>
 
           <View className="flex-row flex-wrap gap-2">

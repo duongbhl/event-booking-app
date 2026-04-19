@@ -1,19 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import "./global.css";
 import RootNavigator from './navigators/RootNavigator';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { LocalizationProvider } from './context/LocalizationContext';
+import { setupNotificationListeners, setupNotificationHandler } from './services/notification.service';
 
-export default function App() {
+function AppContent() {
+  const { user, token } = useAuth();
+
+  useEffect(() => {
+    // Setup notification handler and listeners on app start
+    setupNotificationHandler();
+    
+    const unsubscribe = setupNotificationListeners(
+      (notification) => {
+        // Handle notification received in foreground
+        console.log('Notification received in foreground:', notification);
+      },
+      (notification) => {
+        // Handle notification tap
+        console.log('Notification tapped:', notification);
+        // You can navigate to specific screen based on notification data
+        // For example: navigate to Notifications screen
+      }
+    );
+
+    return unsubscribe;
+  }, []);
 
   return (
-    <>
-      <AuthProvider>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </AuthProvider>
-    </>
+    <NavigationContainer>
+      <RootNavigator />
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <LocalizationProvider>
+        <AppContent />
+      </LocalizationProvider>
+    </AuthProvider>
   )
 }
 

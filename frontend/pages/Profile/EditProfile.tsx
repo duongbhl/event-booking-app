@@ -22,7 +22,6 @@ export default function EditProfile() {
 
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
-  const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [avatar, setAvatar] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
@@ -37,7 +36,6 @@ export default function EditProfile() {
         const profile = await getMyProfile(token);
         setName(profile.name || "");
         setCountry(profile.country || "");
-        setLocation(profile.location || "");
         setDescription(profile.description || "");
         setAvatar(profile.avatar || "");
         setSelectedInterests(profile.interests || []);
@@ -57,13 +55,7 @@ export default function EditProfile() {
     }
   }, [route.params?.selectedCountry]);
 
-  // Listen for location from SelectLocation
-  useEffect(() => {
-    const selectedLocation = route.params?.selectedLocation;
-    if (selectedLocation) {
-      setLocation(selectedLocation);
-    }
-  }, [route.params?.selectedLocation]);
+
 
   const pickImage = async () => {
     try {
@@ -105,7 +97,6 @@ export default function EditProfile() {
             name,
             avatar,
             country,
-            location,
             description,
             interests: selectedInterests,
           },
@@ -184,18 +175,7 @@ export default function EditProfile() {
         </View>
       </TouchableOpacity>
 
-      {/* Location */}
-      <Text className="font-medium">Location</Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("SelectLocation", { fromEditProfile: true })}
-      >
-        <View className="border border-gray-200 rounded-xl p-3 mt-1 mb-4 flex-row justify-between items-center">
-          <Text className={location ? "text-gray-900" : "text-gray-400"}>
-            {location || "Tap to select location"}
-          </Text>
-          <Ionicons name="chevron-forward" size={20} color="#FF7A00" />
-        </View>
-      </TouchableOpacity>
+
 
       {/* Description */}
       <Text className="font-medium">Description</Text>

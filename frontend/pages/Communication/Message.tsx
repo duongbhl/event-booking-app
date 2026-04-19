@@ -205,6 +205,16 @@ export default function Message() {
                         </Text>
                       </View>
                     </View>
+
+                    {/* Unread badge */}
+                    {room.unreadCount > 0 && (
+                      <View className="bg-orange-500 rounded-full w-6 h-6 items-center justify-center mr-3">
+                        <Text className="text-white text-xs font-bold">
+                          {room.unreadCount}
+                        </Text>
+                      </View>
+                    )}
+
                     <Ionicons name="chevron-forward" size={20} color="#CCC" />
                   </TouchableOpacity>
                 );

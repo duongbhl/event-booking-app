@@ -2,6 +2,7 @@ import {Response } from 'express';
 import ChatRoom from '../models/chatroom.model';
 import Message from '../models/message.model';
 import User from '../models/user.model';
+import { sendPushNotification } from '../utils/pushNotification';
 
 
 export const searchUsers = async (req: any, res: Response) => {
@@ -48,15 +49,23 @@ export const myRooms = async (req: any, res: Response) => {
         .populate('event', 'title')
         .sort({ updatedAt: -1 });
     
-    // Add unread count for each room
+    // Get unread senders count for each room (instead of message count)
     const roomsWithUnread = await Promise.all(
         rooms.map(async (room: any) => {
-            const unreadCount = await Message.countDocuments({
+            // Find all messages from others that current user hasn't read
+            const unreadMessages = await Message.find({
                 room: room._id,
                 sender: { $ne: req.user!._id },
-                // Assuming there's a way to track read status, for now count all messages from others
+                readBy: { $nin: [req.user!._id] } // Messages where current user hasn't marked as read
+            }).select('sender');
+            
+            // Get distinct senders of unread messages
+            const unreadSenders = new Set<string>();
+            unreadMessages.forEach((msg: any) => {
+                unreadSenders.add(msg.sender.toString());
             });
-            return { ...room.toObject(), unreadCount };
+            
+            return { ...room.toObject(), unreadCount: unreadSenders.size };
         })
     );
     
@@ -67,12 +76,44 @@ export const myRooms = async (req: any, res: Response) => {
 export const sendMessage = async (req: any, res: Response) => {
     const { roomId } = req.params as { roomId: string };
     const { content, type = 'text', attachments = [] } = req.body as { content?: string; type?: 'text' | 'image' | 'file'; attachments?: string[] };
-    const message = await Message.create({ room: roomId, sender: req.user!._id, content, type, attachments });
+    
+    // Create message WITHOUT marking as read - only mark as read when user opens the chat
+    const message = await Message.create({ 
+        room: roomId, 
+        sender: req.user!._id, 
+        content, 
+        type, 
+        attachments,
+        readBy: [] // Empty at first - will be filled when recipient opens chat
+    });
     
     // Update room's updatedAt
     await ChatRoom.findByIdAndUpdate(roomId, { updatedAt: new Date() });
     
     await message.populate('sender', 'name avatar');
+    
+    // Send push notification to other room members
+    try {
+        const room = await ChatRoom.findById(roomId).populate('members', '_id name expoPushToken');
+        if (room) {
+            const senderInfo = await User.findById(req.user!._id).select('name');
+            for (const member of room.members) {
+                // Don't send to sender
+                if (String(member._id) !== String(req.user!._id) && (member as any).expoPushToken) {
+                    await sendPushNotification({
+                        to: (member as any).expoPushToken,
+                        title: senderInfo?.name || 'New Message',
+                        body: content || '[' + type + ']',
+                        data: { roomId, messageId: String(message._id) }
+                    });
+                }
+            }
+        }
+    } catch (pushError) {
+        console.error('Failed to send push notification:', pushError);
+        // Don't fail the message send if push notification fails
+    }
+    
     res.status(201).json(message);
 };
 
@@ -84,7 +125,8 @@ export const getMessages = async (req: any, res: Response) => {
         .sort({ createdAt: -1 })
         .skip((+page - 1) * +limit)
         .limit(+limit)
-        .populate('sender', 'name avatar');
+        .populate('sender', 'name avatar')
+        .populate('readBy', 'name avatar email'); // Populate readBy with user details
     res.json(items);
 };
 
@@ -92,9 +134,18 @@ export const markRoomAsRead = async (req: any, res: Response) => {
     const { roomId } = req.params as { roomId: string };
     
     try {
-        // Mark all messages in this room as read for this user
-        // In this simple implementation, we just return success
-        // For a proper implementation, we'd need a readBy field in Message model
+        // Mark all messages in this room as read by the current user
+        await Message.updateMany(
+            {
+                room: roomId,
+                sender: { $ne: req.user!._id }, // Only mark messages from others
+                readBy: { $nin: [req.user!._id] } // Only update if not already read by this user
+            },
+            {
+                $addToSet: { readBy: req.user!._id } // Add current user to readBy array
+            }
+        );
+        
         res.json({ success: true });
     } catch (error) {
         console.error('Mark room as read error:', error);

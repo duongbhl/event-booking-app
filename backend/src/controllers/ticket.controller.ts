@@ -2,7 +2,10 @@ import { Response } from 'express';
 import Event from '../models/event.model';
 import Ticket from '../models/ticket.model';
 import Payment from '../models/payment.model';
+import User from '../models/user.model';
+import Notification from '../models/notification.model';
 import { generateTicketQRCode, parseQRCodeData } from '../utils/generateQRCode';
+import { sendPushNotification } from '../utils/pushNotification';
 
 export const bookTicket = async (req: any, res: Response) => {
     try {
@@ -142,6 +145,34 @@ export const confirmPayment = async (req: any, res: Response) => {
                     { member: totalSold },
                     { new: true }
                 );
+            }
+            
+            // 📢 Send push notification for successful payment
+            try {
+                const user = await User.findById(req.user!._id).select('expoPushToken name');
+                const eventData = await Event.findById(payment.event).select('title');
+                
+                if (user?.expoPushToken) {
+                    await sendPushNotification({
+                        to: user.expoPushToken,
+                        title: 'Payment Successful',
+                        body: `Your tickets for "${eventData?.title}" are confirmed! ${quantity} ticket(s) purchased.`,
+                        data: { eventId: String(payment.event), paymentId: String(paymentId) }
+                    });
+                }
+                
+                // Create in-app notification
+                await Notification.create({
+                    user: req.user!._id,
+                    fromUser: null,
+                    event: payment.event,
+                    title: 'Payment Successful',
+                    message: `Your payment for ${quantity} ticket(s) was successful!`,
+                    type: 'payment',
+                    isRead: false
+                });
+            } catch (error) {
+                console.error('Failed to send payment notification:', error);
             }
 
             // 🎟️ Generate QR codes for all tickets

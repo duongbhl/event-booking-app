@@ -7,6 +7,7 @@ export interface IMessage extends Document {
     content?: string;
     type: 'text' | 'image' | 'file';
     attachments?: string[];
+    readBy?: mongoose.Types.ObjectId[]; // Array of user IDs who have read this message
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -19,6 +20,7 @@ const schema = new mongoose.Schema<IMessage>(
         content: String,
         type: { type: String, enum: ['text', 'image', 'file'], default: 'text' },
         attachments: [{ type: String }],
+        readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
     },
     { timestamps: true }
 );

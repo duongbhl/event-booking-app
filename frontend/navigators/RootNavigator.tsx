@@ -9,7 +9,7 @@ import SignUp from "../pages/Registration/SignUp";
 import Verification from "../pages/Registration/Verification";
 import ResetPassword from "../pages/Registration/ResetPassword";
 import SelectInterest from "../pages/Registration/SelectInterest";
-import SelectLocation from "../pages/Registration/SelectLocation";
+
 import { SelectionCountry } from "../pages/Registration/SelectCountry";
 
 // APP SCREENS
@@ -31,6 +31,7 @@ import AddCard from "../pages/Checkout/AddCard";
 import Payment from "../pages/Checkout/Payment";
 import ScanCard from "../pages/Checkout/ScanCard";
 import EditProfile from "../pages/Profile/EditProfile";
+import Settings from "../pages/Profile/Settings";
 import EventBookmark from "../pages/MyEvent/EventBookmark";
 import Location from "../pages/Location/Location";
 import Home from "../pages/Home";
@@ -53,9 +54,8 @@ export default function RootNavigator() {
 
   // Check if user needs to complete profile
   const needsCountry = !user?.country || user.country.trim() === "";
-  const needsLocation = !user?.location || user.location.trim() === "";
   const needsInterests = !user?.interests || user.interests.length === 0;
-  const needsProfileSetup = user && (needsCountry || needsLocation || needsInterests);
+  const needsProfileSetup = user && (needsCountry || needsInterests);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -86,7 +86,6 @@ export default function RootNavigator() {
             <>
               {/* Show setup screens only if needed */}
               {needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
-              {needsLocation && <Stack.Screen name="SelectLocation" component={SelectLocation} />}
               {needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
 
               <Stack.Screen name="Drawer" component={DrawerNavigation} />
@@ -102,9 +101,9 @@ export default function RootNavigator() {
               <Stack.Screen name="Filter" component={Filter} />
               <Stack.Screen name="EventDetails" component={EventDetails} />
               <Stack.Screen name="InviteFriend" component={InviteFriend} />
-              {/* <Stack.Screen name="Chat" component={Chat} /> */}
               <Stack.Screen name="MyEvent" component={Events} />
               <Stack.Screen name="EditProfile" component={EditProfile} />
+              <Stack.Screen name="Settings" component={Settings} />
               <Stack.Screen name="OrganizerProfile" component={OrganizerProfile} />
               <Stack.Screen name="BuyTicket" component={BuyTicket} />
               <Stack.Screen name="Payment" component={Payment} />

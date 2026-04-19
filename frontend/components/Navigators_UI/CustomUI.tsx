@@ -143,7 +143,7 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       <DrawerItem
         label="Settings"
         icon={<Ionicons name="settings-outline" size={30} color="#FF7A00" />}
-        onPress={() => { }}
+        onPress={() => navigation.navigate("Settings")}
       />
 
       <DrawerItem

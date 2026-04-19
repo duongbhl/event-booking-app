@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
@@ -13,6 +14,7 @@ import EventPriceCard from "../../components/Cards/EventPriceCard";
 import EventCategoryBar from "../../components/Bars/EventCategoryBar";
 import { CATEGORIES } from "../Home";
 import { useAuth } from "../../context/AuthContext";
+import { useLocalization } from "../../context/LocalizationContext";
 import { EventCardProps } from "../../components/Interface/EventCardProps";
 import { getEvents } from "../../services/event.service";
 import { useRoute } from "@react-navigation/native";
@@ -22,6 +24,7 @@ import { useRoute } from "@react-navigation/native";
 export default function Search() {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
+  const { t } = useLocalization();
 
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const [keyword, setKeyword] = useState<string>("");
@@ -83,6 +86,31 @@ export default function Search() {
     }
   };
 
+  /* ---------------- SUGGEST LOGIC (For Autocomplete) ---------------- */
+  const suggestions = useMemo(() => {
+    if (keyword.length < 1) return [];
+
+    const keywordLower = keyword.toLowerCase();
+    const now = new Date();
+
+    // Get unique event titles that match the keyword
+    const uniqueTitles = new Set<string>();
+
+    events.forEach(ev => {
+      // Filter same as filteredEvents
+      if (ev.organizer?._id === user?._id) return;
+      if (ev.approvalStatus !== "ACCEPTED") return;
+      if (new Date(ev.date) < now) return;
+
+      // Match keyword
+      if (ev.title.toLowerCase().includes(keywordLower)) {
+        uniqueTitles.add(ev.title);
+      }
+    });
+
+    return Array.from(uniqueTitles).slice(0, 8); // Limit to 8 suggestions
+  }, [events, keyword, user]);
+
   /* ---------------- FILTER LOGIC ---------------- */
   const filteredEvents = useMemo(() => {
     const now = new Date();
@@ -114,12 +142,19 @@ export default function Search() {
         }
       }
 
+      // ✅ keyword search
+      if (keyword.length > 0) {
+        if (!ev.title.toLowerCase().includes(keyword.toLowerCase())) {
+          return false;
+        }
+      }
+
       //Out of date
       if(new Date(ev.date) < now) return false;
 
       return true;
     });
-  }, [events, user, filters]);
+  }, [events, user, filters, keyword]);
 
 
 
@@ -131,16 +166,16 @@ export default function Search() {
           <Ionicons name="chevron-back" size={26} color="black" />
         </TouchableOpacity>
         <Text className="text-xl font-semibold flex-1 text-center mr-6">
-          Search
+          {t('search.search')}
         </Text>
       </View>
 
       {/* ================= SEARCH BAR ================= */}
-      <View className="flex-row items-center bg-gray-100 px-4 py-3 rounded-2xl mb-6">
+      <View className="flex-row items-center bg-gray-100 px-4 py-3 rounded-2xl mb-2">
         <Ionicons name="search" size={20} color="#999" />
 
         <TextInput
-          placeholder="Find amazing events"
+          placeholder={t('home.findAmazingEvents')}
           className="flex-1 ml-2 text-[15px]"
           value={keyword}
           onChangeText={setKeyword}
@@ -161,6 +196,33 @@ export default function Search() {
           <Ionicons name="options-outline" size={22} color="#FF7A00" />
         </TouchableOpacity>
       </View>
+
+      {/* ================= SUGGESTIONS ================= */}
+      {suggestions.length > 0 && (
+        <View className="mb-4 bg-gray-50 rounded-2xl overflow-hidden">
+          <FlatList
+            data={suggestions}
+            scrollEnabled={false}
+            keyExtractor={(item, idx) => idx.toString()}
+            renderItem={({ item, index }) => (
+              <>
+                <TouchableOpacity
+                  onPress={() => setKeyword(item)}
+                  className="px-4 py-3 flex-row items-center"
+                >
+                  <Ionicons name="search" size={16} color="#999" />
+                  <Text className="ml-3 text-gray-700 flex-1" numberOfLines={1}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+                {index < suggestions.length - 1 && (
+                  <View className="h-px bg-gray-200 mx-4" />
+                )}
+              </>
+            )}
+          />
+        </View>
+      )}
 
 
       <ScrollView

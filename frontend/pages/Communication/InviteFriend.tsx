@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Image,
   Alert,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -126,7 +127,7 @@ export default function InviteFriend() {
       )}
 
       {/* Search bar */}
-      <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 h-12 mb-6">
+      <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 h-12 mb-2">
         <Ionicons name="search" size={20} color="#9CA3AF" />
         <TextInput
           placeholder="Search users..."
@@ -143,6 +144,43 @@ export default function InviteFriend() {
         )}
       </View>
 
+      {/* Suggestions Dropdown */}
+      {search && users.length > 0 && (
+        <View className="mb-4 bg-gray-50 rounded-2xl overflow-hidden">
+          <FlatList
+            data={users.slice(0, 5)}
+            scrollEnabled={false}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item, index }) => (
+              <>
+                <TouchableOpacity
+                  onPress={() => toggleUser(item._id)}
+                  className="px-4 py-3 flex-row items-center justify-between"
+                >
+                  <View className="flex-row items-center flex-1">
+                    <Image
+                      source={{
+                        uri: item.avatar || "https://via.placeholder.com/40",
+                      }}
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                    <Text className="text-gray-700 flex-1" numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                  </View>
+                  {selectedUsers.includes(item._id) && (
+                    <Ionicons name="checkmark-circle" size={18} color="#FF7A00" />
+                  )}
+                </TouchableOpacity>
+                {index < Math.min(4, users.length - 1) && (
+                  <View className="h-px bg-gray-200 mx-4" />
+                )}
+              </>
+            )}
+          />
+        </View>
+      )}
+
       {/* Users list */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {isSearching ? (
@@ -150,41 +188,49 @@ export default function InviteFriend() {
             <ActivityIndicator size="large" color="#FF7A00" />
           </View>
         ) : users.length > 0 ? (
-          users.map((u) => (
-            <TouchableOpacity
-              key={u._id}
-              onPress={() => toggleUser(u._id)}
-              className="flex-row items-center justify-between bg-gray-50 rounded-lg p-4 mb-3"
-              disabled={isSending}
-            >
-              <View className="flex-row items-center flex-1">
-                <Image
-                  source={{
-                    uri: u.avatar || "https://via.placeholder.com/48",
-                  }}
-                  className="w-12 h-12 rounded-full mr-3"
-                />
-                <View className="flex-1">
-                  <Text className="font-semibold text-gray-900">
-                    {u.name}
-                  </Text>
-                  <Text className="text-gray-500 text-xs">
-                    {u.email}
-                  </Text>
+          <>
+            {/* Show remaining users if there are more than 5 and search is active */}
+            {search && users.length > 5 && (
+              <Text className="text-gray-600 text-xs mt-2 mb-2">
+                More results below
+              </Text>
+            )}
+            {users.slice(search ? 5 : 0).map((u) => (
+              <TouchableOpacity
+                key={u._id}
+                onPress={() => toggleUser(u._id)}
+                className="flex-row items-center justify-between bg-gray-50 rounded-lg p-4 mb-3"
+                disabled={isSending}
+              >
+                <View className="flex-row items-center flex-1">
+                  <Image
+                    source={{
+                      uri: u.avatar || "https://via.placeholder.com/48",
+                    }}
+                    className="w-12 h-12 rounded-full mr-3"
+                  />
+                  <View className="flex-1">
+                    <Text className="font-semibold text-gray-900">
+                      {u.name}
+                    </Text>
+                    <Text className="text-gray-500 text-xs">
+                      {u.email}
+                    </Text>
+                  </View>
                 </View>
-              </View>
 
-              {selectedUsers.includes(u._id) ? (
-                <Ionicons name="checkmark-circle" size={24} color="#FF7A00" />
-              ) : (
-                <Ionicons
-                  name="checkmark-circle-outline"
-                  size={24}
-                  color="#CCC"
-                />
-              )}
-            </TouchableOpacity>
-          ))
+                {selectedUsers.includes(u._id) ? (
+                  <Ionicons name="checkmark-circle" size={24} color="#FF7A00" />
+                ) : (
+                  <Ionicons
+                    name="checkmark-circle-outline"
+                    size={24}
+                    color="#CCC"
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+          </>
         ) : search ? (
           <View className="py-10 justify-center items-center">
             <Text className="text-gray-500">No users found</Text>

@@ -12,6 +12,7 @@ import EventCard from "../components/Cards/EventCard";
 import { useNavigation } from "@react-navigation/native";
 import EventCategoryBar from "../components/Bars/EventCategoryBar";
 import { useAuth } from "../context/AuthContext";
+import { useLocalization } from "../context/LocalizationContext";
 import { getEvents } from "../services/event.service";
 import { EventCardProps } from "../components/Interface/EventCardProps";
 import { useIsFocused } from "@react-navigation/native";
@@ -32,6 +33,7 @@ export const CATEGORIES = [
 export default function Home() {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
+  const { t } = useLocalization();
 
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,7 +138,7 @@ export default function Home() {
           </TouchableOpacity>
           
           <View className="ml-2">
-            <Text className="text-xs text-gray-600">Hello,</Text>
+            <Text className="text-xs text-gray-600">{t('common.hello')},</Text>
             <Text className="font-semibold text-gray-900">
               {user?.name || "User"}
             </Text>
@@ -144,11 +146,11 @@ export default function Home() {
         </View>
 
         <View className="items-end">
-          <Text className="text-xs text-gray-500">Current location</Text>
+          
           <View className="flex-row items-center">
             <Ionicons name="location" size={14} color="#FF7A00" />
             <Text className="text-gray-900 ml-1 text-sm">
-              {user?.location && user.location.length > 0 ? user.location : "Add location"}
+              {user?.country && user.country.length > 0 ? user.country : t('profile.addCountry')}
             </Text>
           </View>
         </View>
@@ -163,15 +165,15 @@ export default function Home() {
         onPress={() => navigation.navigate("Search" as never)}
       >
         <Ionicons name="search" size={20} color="#9CA3AF" />
-        <Text className="ml-2 text-gray-500">Search for events...</Text>
+        <Text className="ml-2 text-gray-500">{t('home.findAmazingEvents')}</Text>
       </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* MY EVENTS */}
         <View className="flex-row justify-between items-center mb-3">
-          <Text className="text-xl font-semibold">My Events</Text>
+          <Text className="text-xl font-semibold">{t('home.myEvents')}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('MyEvent' as never)}>
-            <Text className="text-orange-500 font-semibold">VIEW ALL</Text>
+            <Text className="text-orange-500 font-semibold">{t('home.viewAll')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -185,7 +187,7 @@ export default function Home() {
 
         {/* CATEGORY FILTER */}
         <Text className="font-semibold text-lg mt-6 mb-3">
-          Choose By Category
+          {t('home.chooseByCategory')}
         </Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>

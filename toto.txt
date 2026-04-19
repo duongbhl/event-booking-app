@@ -1,8 +1,11 @@
-//standard functions
-location page, location search+change position to name 
-review
-tickect types increase
+//
+gg-map removed
+notifications
+language
 
+//
+responsive(ipad, android)
+settings(theme, account, privacy)
 
 
 

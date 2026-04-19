@@ -1,7 +1,7 @@
 import { Router } from "express";
 import express from 'express';
 import { protect } from '../middleware/auth.middleware';
-import { updateProfile, getMyProfile } from "../controllers/user.controller";
+import { updateProfile, getMyProfile, registerPushToken } from "../controllers/user.controller";
 
 
 
@@ -14,3 +14,4 @@ userRoutes.get('/test', (req, res) => {
 
 userRoutes.get('/me', protect, getMyProfile);
 userRoutes.put('/me', protect, updateProfile);
+userRoutes.post('/push-token', protect, registerPushToken);

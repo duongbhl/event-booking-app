@@ -18,6 +18,7 @@ export interface IUser {
     description?: string;
     role: 'user' | 'admin';
     verified: boolean;
+    expoPushToken?: string; // For push notifications
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -39,6 +40,7 @@ const schema = new mongoose.Schema<IUser>(
         description: String,
         role: { type: String, enum: ['user', 'admin'], default: 'user' },
         verified: { type: Boolean, default: false },
+        expoPushToken: { type: String, default: null },
     },
     { timestamps: true }
 );

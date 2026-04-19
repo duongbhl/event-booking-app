@@ -1,6 +1,9 @@
 import { Request,Response } from 'express';
 import Event from '../models/event.model';
 import Ticket from '../models/ticket.model';
+import User from '../models/user.model';
+import Notification from '../models/notification.model';
+import { sendPushNotification, sendPushNotifications } from '../utils/pushNotification';
 
 
 // List Events with filtering and pagination

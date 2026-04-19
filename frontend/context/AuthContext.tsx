@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMyProfile } from "../services/user.service";
+import { initializePushNotifications } from "../services/notification.service";
 
 interface User {
   _id: string;
@@ -56,6 +57,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(jwt);
     await AsyncStorage.setItem("token", jwt);
     await AsyncStorage.setItem("user", JSON.stringify(userData));
+    
+    // Initialize push notifications after login
+    try {
+      await initializePushNotifications(jwt);
+    } catch (error) {
+      console.log("Initialize push notifications error:", error);
+    }
     
     // Fetch full user profile immediately
     try {

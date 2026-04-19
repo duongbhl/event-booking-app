@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import Notification from '../models/notification.model';
 import Event from '../models/event.model';
+import User from '../models/user.model';
+import { sendPushNotification } from '../utils/pushNotification';
 
 
 
@@ -73,6 +75,19 @@ export const sendInvitation = async (req: any, res: Response) => {
                 isRead: false,
             }))
         );
+
+        // Send push notifications to invited users
+        const invitedUsers = await User.find({ _id: { $in: userIds }, expoPushToken: { $exists: true, $ne: null } });
+        for (const user of invitedUsers) {
+            if (user.expoPushToken) {
+                await sendPushNotification({
+                    to: user.expoPushToken,
+                    title: 'Event Invitation',
+                    body: `${req.user!.name} invited you to "${event.title}"`,
+                    data: { eventId, notificationType: 'invitation' }
+                });
+            }
+        }
 
         res.status(201).json(notifications);
     } catch (error) {

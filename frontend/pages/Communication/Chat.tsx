@@ -150,42 +150,70 @@ export default function Chat() {
               </Text>
             </View>
           ) : (
-            messages.map((msg) => (
-              <View key={msg._id} className="mb-4">
-                {/* Time */}
-                <Text
-                  className={`text-xs text-gray-400 mb-1 ${
-                    String(msg.sender?._id) === user?._id
-                      ? "text-right"
-                      : "text-left"
-                  }`}
-                >
-                  {new Date(msg.createdAt).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Text>
+            messages.map((msg) => {
+              // Check if message is from current user and has been seen by other member
+              const isOwnMessage = String(msg.sender?._id) === user?._id;
+              // readBy can be array of IDs (strings) or populated objects
+              const isSeen = msg.readBy && msg.readBy.some((reader: any) => {
+                if (typeof reader === 'string') {
+                  return reader === otherMember?._id;
+                } else {
+                  return String(reader._id) === otherMember?._id;
+                }
+              });
 
-                {/* BUBBLE */}
-                <View
-                  className={`max-w-[80%] px-4 py-2 rounded-2xl ${
-                    String(msg.sender?._id) === user?._id
-                      ? "self-end bg-orange-500 rounded-br-none"
-                      : "self-start bg-gray-100 rounded-bl-none"
-                  }`}
-                >
+              return (
+                <View key={msg._id} className="mb-4">
+                  {/* Time */}
                   <Text
-                    className={`${
-                      String(msg.sender?._id) === user?._id
-                        ? "text-white"
-                        : "text-gray-800"
-                    } text-[15px]`}
+                    className={`text-xs text-gray-400 mb-1 ${
+                      isOwnMessage ? "text-right" : "text-left"
+                    }`}
                   >
-                    {msg.content}
+                    {new Date(msg.createdAt).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </Text>
+
+                  {/* BUBBLE WITH SEEN INDICATOR */}
+                  <View
+                    className={`flex-row items-flex-end ${
+                      isOwnMessage ? "self-end" : "self-start"
+                    }`}
+                  >
+                    <View
+                      className={`max-w-[80%] px-4 py-2 rounded-2xl ${
+                        isOwnMessage
+                          ? "bg-orange-500 rounded-br-none"
+                          : "bg-gray-100 rounded-bl-none"
+                      }`}
+                    >
+                      <Text
+                        className={`${
+                          isOwnMessage ? "text-white" : "text-gray-800"
+                        } text-[15px]`}
+                      >
+                        {msg.content}
+                      </Text>
+                    </View>
+
+                    {/* SEEN INDICATOR - Show avatar if own message and seen */}
+                    {isOwnMessage && isSeen && otherMember && (
+                      <View className="ml-2 flex-row items-center">
+                        <Image
+                          source={{
+                            uri: otherMember.avatar || "https://via.placeholder.com/24",
+                          }}
+                          className="w-6 h-6 rounded-full"
+                        />
+                        <View className="w-3 h-3 rounded-full bg-green-500 -ml-1 -mb-1 border border-white" />
+                      </View>
+                    )}
+                  </View>
                 </View>
-              </View>
-            ))
+              );
+            })
           )}
 
           <View className="h-10" />
