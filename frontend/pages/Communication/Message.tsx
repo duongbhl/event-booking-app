@@ -11,10 +11,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { searchUsers, getMyRooms, createRoom } from "../../services/chat.service";
 
 export default function Message() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const { user, token } = useAuth();
   const isFocused = useIsFocused();
@@ -108,7 +110,7 @@ export default function Message() {
           <Ionicons name="chevron-back" size={26} color="#111" />
         </TouchableOpacity>
 
-        <Text className="text-lg font-semibold">Message</Text>
+        <Text className="text-lg font-semibold">{t('messagePage.message')}</Text>
 
         <TouchableOpacity>
           <Ionicons name="ellipsis-horizontal" size={22} color="#111" />
@@ -119,7 +121,7 @@ export default function Message() {
       <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-12 mb-4">
         <Ionicons name="search" size={18} color="#9CA3AF" />
         <TextInput
-          placeholder={isShowingSearch ? "Find User" : "Find Conversation"}
+          placeholder={isShowingSearch ? t('messagePage.findUser') : t('messagePage.findConversation')}
           placeholderTextColor="#9CA3AF"
           value={search}
           onChangeText={setSearch}
@@ -170,7 +172,7 @@ export default function Message() {
               ))
             ) : (
               <View className="flex-1 justify-center items-center py-10">
-                <Text className="text-gray-500">No users found</Text>
+                <Text className="text-gray-500">{t('messagePage.noUsersFound')}</Text>
               </View>
             )}
           </>
@@ -222,7 +224,7 @@ export default function Message() {
             ) : (
               <View className="flex-1 justify-center items-center py-10">
                 <Text className="text-gray-500">
-                  No conversations yet. Search for users to start chatting!
+                  {t('messagePage.noConversationsYet')}
                 </Text>
               </View>
             )}

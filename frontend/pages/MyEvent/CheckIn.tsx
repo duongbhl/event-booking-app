@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { useLocalization } from "../../context/LocalizationContext";
 import { checkInTicket } from "../../services/ticket.service";
 import { useAuth } from "../../context/AuthContext";
 
@@ -31,6 +32,7 @@ interface CheckInResult {
 }
 
 export default function CheckInScreen() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { token } = useAuth();
@@ -109,16 +111,16 @@ export default function CheckInScreen() {
   const handleManualInput = () => {
     // For testing purposes, allow manual QR input
     Alert.prompt(
-      "Enter QR Code",
-      "Paste the QR code data directly",
+      t('checkIn.enterQRCode'),
+      t('checkIn.pasteQRData'),
       [
         {
-          text: "Cancel",
+          text: t('checkIn.cancel'),
           onPress: () => {},
           style: "cancel",
         },
         {
-          text: "Submit",
+          text: t('checkIn.submit'),
           onPress: (text: string | undefined) => {
             if (text) {
               handleBarCodeScanned(text);
@@ -134,15 +136,15 @@ export default function CheckInScreen() {
     return (
       <SafeAreaView className="flex-1 bg-white items-center justify-center p-5">
         <Ionicons name="camera" size={64} color="#FF7A00" />
-        <Text className="text-lg font-semibold mt-4">Camera Permission Required</Text>
+        <Text className="text-lg font-semibold mt-4">{t('checkIn.cameraPermissionRequired')}</Text>
         <Text className="text-gray-600 text-center mt-2">
-          We need access to your camera to scan ticket QR codes
+          {t('checkIn.needCameraAccess')}
         </Text>
         <TouchableOpacity
           className="bg-orange-500 px-6 py-3 rounded-xl mt-6"
           onPress={requestPermission}
         >
-          <Text className="text-white font-semibold">Grant Permission</Text>
+          <Text className="text-white font-semibold">{t('checkIn.grantPermission')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -156,7 +158,7 @@ export default function CheckInScreen() {
           <Ionicons name="chevron-back" size={26} color="white" />
         </TouchableOpacity>
         <View className="flex-1 ml-3">
-          <Text className="text-white font-semibold">Check-in</Text>
+          <Text className="text-white font-semibold">{t('checkIn.checkInTitle')}</Text>
           <Text className="text-gray-400 text-sm">{eventTitle}</Text>
         </View>
       </View>
@@ -185,7 +187,7 @@ export default function CheckInScreen() {
               }}
             />
             <Text className="absolute bottom-20 text-white text-center font-semibold">
-              Align QR code within the frame
+              {t('checkIn.alignQRCode')}
             </Text>
           </View>
 
@@ -196,7 +198,7 @@ export default function CheckInScreen() {
               onPress={handleManualInput}
             >
               <Ionicons name="create" size={20} color="white" />
-              <Text className="text-white ml-2 font-semibold">Manual Input</Text>
+              <Text className="text-white ml-2 font-semibold">{t('checkIn.manualInput')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -204,7 +206,7 @@ export default function CheckInScreen() {
               onPress={() => navigation.goBack()}
             >
               <Ionicons name="close" size={20} color="white" />
-              <Text className="text-white ml-2 font-semibold">Exit</Text>
+              <Text className="text-white ml-2 font-semibold">{t('checkIn.exit')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -226,41 +228,41 @@ export default function CheckInScreen() {
                 </View>
 
                 <Text className="text-center text-2xl font-bold text-green-700">
-                  Check-in Success
+                  {t('checkIn.checkInSuccess')}
                 </Text>
 
                 <View className="bg-white p-4 rounded-xl mt-6">
                   <View className="mb-4 pb-4 border-b border-gray-200">
-                    <Text className="text-gray-600 text-sm">Passenger</Text>
+                    <Text className="text-gray-600 text-sm">{t('checkIn.passenger')}</Text>
                     <Text className="text-gray-900 font-semibold text-base">
                       {result.ticket.user.name}
                     </Text>
                   </View>
 
                   <View className="mb-4 pb-4 border-b border-gray-200">
-                    <Text className="text-gray-600 text-sm">Event</Text>
+                    <Text className="text-gray-600 text-sm">{t('checkIn.event')}</Text>
                     <Text className="text-gray-900 font-semibold text-base">
                       {result.ticket.event.title}
                     </Text>
                   </View>
 
                   <View className="mb-4 pb-4 border-b border-gray-200">
-                    <Text className="text-gray-600 text-sm">Ticket Type</Text>
+                    <Text className="text-gray-600 text-sm">{t('checkIn.ticketType')}</Text>
                     <Text className="text-gray-900 font-semibold text-base">
                       {result.ticket.tierName}
                     </Text>
                   </View>
 
                   <View>
-                    <Text className="text-gray-600 text-sm">Seat</Text>
+                    <Text className="text-gray-600 text-sm">{t('checkIn.seat')}</Text>
                     <Text className="text-gray-900 font-semibold text-base">
-                      {result.ticket.seatInfo || "No seat assignment"}
+                      {result.ticket.seatInfo || t('checkIn.noSeatAssignment')}
                     </Text>
                   </View>
                 </View>
 
                 <Text className="text-center text-gray-600 text-sm mt-6">
-                  Restarting scanner...
+                  {t('checkIn.restartingScanner')}
                 </Text>
               </View>
             ) : result.status === "ALREADY_CHECKED" ? (
@@ -272,12 +274,12 @@ export default function CheckInScreen() {
                 </View>
 
                 <Text className="text-center text-2xl font-bold text-yellow-700">
-                  Already Checked
+                  {t('checkIn.alreadyChecked')}
                 </Text>
 
                 <View className="bg-white p-4 rounded-xl mt-6">
                   <Text className="text-gray-700 text-center mb-4">
-                    This ticket has already been checked in
+                    {t('checkIn.ticketAlreadyChecked')}
                   </Text>
                   <Text className="text-gray-600 text-center text-sm">
                     {result.message}
@@ -285,7 +287,7 @@ export default function CheckInScreen() {
                 </View>
 
                 <Text className="text-center text-gray-600 text-sm mt-6">
-                  Restarting scanner...
+                  {t('checkIn.restartingScanner')}
                 </Text>
               </View>
             ) : result.status === "WRONG_EVENT" ? (
@@ -297,17 +299,17 @@ export default function CheckInScreen() {
                 </View>
 
                 <Text className="text-center text-2xl font-bold text-red-700">
-                  Wrong Event
+                  {t('checkIn.wrongEvent')}
                 </Text>
 
                 <View className="bg-white p-4 rounded-xl mt-6">
                   <Text className="text-gray-700 text-center">
-                    This QR code does not belong to this event
+                    {t('checkIn.wrongEventMessage')}
                   </Text>
                 </View>
 
                 <Text className="text-center text-gray-600 text-sm mt-6">
-                  Restarting scanner...
+                  {t('checkIn.restartingScanner')}
                 </Text>
               </View>
             ) : (
@@ -319,7 +321,7 @@ export default function CheckInScreen() {
                 </View>
 
                 <Text className="text-center text-xl font-bold text-red-700">
-                  Error
+                  {t('checkIn.error')}
                 </Text>
 
                 <View className="bg-white p-4 rounded-xl mt-6">
@@ -337,7 +339,7 @@ export default function CheckInScreen() {
                   }}
                 >
                   <Text className="text-white font-semibold text-center">
-                    Try Again
+                    {t('checkIn.tryAgain')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -350,7 +352,7 @@ export default function CheckInScreen() {
       {loading && (
         <View className="absolute inset-0 bg-black bg-opacity-50 items-center justify-center rounded-2xl">
           <ActivityIndicator size="large" color="#FF7A00" />
-          <Text className="text-white mt-4 font-semibold">Processing...</Text>
+          <Text className="text-white mt-4 font-semibold">{t('checkIn.processing')}</Text>
         </View>
       )}
     </SafeAreaView>

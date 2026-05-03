@@ -3,10 +3,12 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import UpcomingEvents from "./EventsUpcoming";
 import PastEvents from "./EventsPass";
 
 export default function Events() {
+  const { t } = useLocalization();
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const navigation = useNavigation();
 
@@ -18,7 +20,7 @@ export default function Events() {
           <Ionicons name="chevron-back" size={26} color="black" />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-xl font-semibold mr-6">
-          Events
+          {t('myEventList.events')}
         </Text>
       </View>
 
@@ -35,7 +37,7 @@ export default function Events() {
               tab === "upcoming" ? "text-white" : "text-gray-700"
             }`}
           >
-            UPCOMING
+            {t('myEventList.upcoming')}
           </Text>
         </TouchableOpacity>
 
@@ -50,7 +52,7 @@ export default function Events() {
               tab === "past" ? "text-white" : "text-gray-700"
             }`}
           >
-            PAST EVENTS
+            {t('myEventList.pastEvents')}
           </Text>
         </TouchableOpacity>
       </View>

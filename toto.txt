@@ -1,7 +1,5 @@
 //
 gg-map removed
-notifications
-language
 
 //
 responsive(ipad, android)

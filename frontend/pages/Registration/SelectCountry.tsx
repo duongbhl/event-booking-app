@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfile } from "../../services/user.service";
 
@@ -39,6 +40,7 @@ interface Country {
 // =============================
 
 export const SelectionCountry = ({ navigation, route }: any) => {
+  const { t } = useLocalization();
   const { user, token, login } = useAuth();
   const isFromEditProfile = route?.params?.fromEditProfile || false;
   const [countries, setCountries] = useState<Country[]>([]);
@@ -47,6 +49,7 @@ export const SelectionCountry = ({ navigation, route }: any) => {
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string>("");
   const [loadingCountries, setLoadingCountries] = useState(true);
+  
 
   // =============================
   // FETCH COUNTRIES
@@ -119,7 +122,7 @@ export const SelectionCountry = ({ navigation, route }: any) => {
           <Ionicons name="chevron-back" size={26} color="#111" />
         </TouchableOpacity>
 
-        <Text className="text-lg font-semibold">Country Selection</Text>
+        <Text className="text-lg font-semibold">{t('selectCountry.countrySelection')}</Text>
 
         <TouchableOpacity>
           <Ionicons name="ellipsis-horizontal" size={22} color="#111" />
@@ -130,7 +133,7 @@ export const SelectionCountry = ({ navigation, route }: any) => {
       <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-12 mb-4">
         <Ionicons name="search" size={18} color="#9CA3AF" />
         <TextInput
-          placeholder="Find Conversation"
+          placeholder={t('selectCountry.findCountry')}
           placeholderTextColor="#9CA3AF"
           className="flex-1 ml-2"
           value={search}
@@ -193,7 +196,7 @@ export const SelectionCountry = ({ navigation, route }: any) => {
               fetchCountries();
             }}
           >
-            <Text className="text-white font-semibold text-center">Retry</Text>
+            <Text className="text-white font-semibold text-center">{t('selectCountry.retry')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -202,7 +205,7 @@ export const SelectionCountry = ({ navigation, route }: any) => {
       {loadingCountries && !loadError && (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#FF7A00" />
-          <Text className="mt-4 text-gray-600">Loading countries...</Text>
+          <Text className="mt-4 text-gray-600">{t('selectCountry.loadingCountries')}</Text>
         </View>
       )}
 
@@ -271,14 +274,14 @@ export const SelectionCountry = ({ navigation, route }: any) => {
               }
             } catch (error) {
               console.error("Error updating country:", error);
-              Alert.alert("Error", "Failed to save country. Please try again.");
+              Alert.alert("Error", t('selectCountry.failedToSaveCountry'));
             } finally {
               setLoading(false);
             }
           }}
           disabled={!selected || loading}
         >
-          <Text className="text-white font-semibold text-lg">{loading ? "SAVING..." : (isFromEditProfile ? "ADD" : "NEXT")}</Text>
+          <Text className="text-white font-semibold text-lg">{loading ? t('selectCountry.saving') : (isFromEditProfile ? t('selectCountry.add') : t('selectCountry.next'))}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

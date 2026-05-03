@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { searchUsers } from "../../services/chat.service";
 import { sendInvitation } from "../../services/invite.service";
@@ -25,6 +26,7 @@ interface UserWithStatus {
 }
 
 export default function InviteFriend() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { user, token } = useAuth();
@@ -77,7 +79,7 @@ export default function InviteFriend() {
     }
 
     if (!eventId) {
-      Alert.alert("Error", "Event not found");
+      Alert.alert("Error", t('inviteFriend.errorEventNotFound'));
       return;
     }
 
@@ -87,13 +89,13 @@ export default function InviteFriend() {
         { userIds: selectedUsers, eventId },
         token!
       );
-      Alert.alert("Success", "Invitations sent successfully!");
+      Alert.alert("Success", t('inviteFriend.invitationsSentSuccessfully'));
       setSelectedUsers([]);
       setSearch("");
       navigation.goBack();
     } catch (error) {
       console.log("Send invitation error:", error);
-      Alert.alert("Error", "Failed to send invitations");
+      Alert.alert("Error", t('inviteFriend.failedToSendInvitations'));
     } finally {
       setIsSending(false);
     }
@@ -108,7 +110,7 @@ export default function InviteFriend() {
         </TouchableOpacity>
 
         <Text className="text-xl font-semibold text-gray-900">
-          Invite Friend
+          {t('inviteFriend.inviteFriend')}
         </Text>
 
         <View style={{ width: 26 }} />
@@ -130,7 +132,7 @@ export default function InviteFriend() {
       <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 h-12 mb-2">
         <Ionicons name="search" size={20} color="#9CA3AF" />
         <TextInput
-          placeholder="Search users..."
+          placeholder={t('inviteFriend.searchUsers')}
           placeholderTextColor="#9CA3AF"
           value={search}
           onChangeText={setSearch}
@@ -192,7 +194,7 @@ export default function InviteFriend() {
             {/* Show remaining users if there are more than 5 and search is active */}
             {search && users.length > 5 && (
               <Text className="text-gray-600 text-xs mt-2 mb-2">
-                More results below
+                {t('inviteFriend.moreResultsBelow')}
               </Text>
             )}
             {users.slice(search ? 5 : 0).map((u) => (
@@ -233,12 +235,12 @@ export default function InviteFriend() {
           </>
         ) : search ? (
           <View className="py-10 justify-center items-center">
-            <Text className="text-gray-500">No users found</Text>
+            <Text className="text-gray-500">{t('inviteFriend.noUsersFound')}</Text>
           </View>
         ) : (
           <View className="py-10 justify-center items-center">
             <Text className="text-gray-500">
-              Search for users to invite
+              {t('inviteFriend.searchForUsersToInvite')}
             </Text>
           </View>
         )}

@@ -1,5 +1,6 @@
 import { View, Text, Image } from "react-native";
 import { Button } from "react-native-paper";
+import { useLocalization } from "../../context/LocalizationContext";
 import { EventCardProps } from "../Interface/EventCardProps";
 import { useNavigation } from "@react-navigation/native";
 import { formatDate, formatDateTime } from "../../utils/utils";
@@ -8,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function EventPriceCard({ ...event }: EventCardProps) {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
+  const { t } = useLocalization();
 
   const isOwnEvent = user && event.organizer && event.organizer._id === user._id;
 
@@ -47,7 +49,7 @@ export default function EventPriceCard({ ...event }: EventCardProps) {
           labelStyle={{ fontWeight: "700" }}
           onPress={goToDetail}
         >
-          {isOwnEvent ? "CHECK" : "JOIN NOW"}
+          {isOwnEvent ? t('eventPriceCard.check') : t('eventPriceCard.joinNow')}
         </Button>
       </View>
     </View>

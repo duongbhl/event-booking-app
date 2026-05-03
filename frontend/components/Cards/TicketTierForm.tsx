@@ -9,6 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export interface ITicketTier {
   name: string;
@@ -26,6 +27,7 @@ export default function TicketTierForm({
   tiers,
   onTiersChange,
 }: TicketTierFormProps) {
+  const { t } = useLocalization();
   const [showModal, setShowModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [formData, setFormData] = useState<ITicketTier>({
@@ -47,17 +49,17 @@ export default function TicketTierForm({
 
   const handleSaveTier = () => {
     if (!formData.name.trim()) {
-      Alert.alert("Error", "Tier name is required");
+      Alert.alert(t('common.error'), t('ticketTierForm.tierNameRequired'));
       return;
     }
 
     if (formData.price < 0) {
-      Alert.alert("Error", "Price must be a positive number");
+      Alert.alert(t('common.error'), t('ticketTierForm.priceMustBePositive'));
       return;
     }
 
     if (formData.quota <= 0) {
-      Alert.alert("Error", "Quota must be greater than 0");
+      Alert.alert(t('common.error'), t('ticketTierForm.quotaMustBeGreater'));
       return;
     }
 
@@ -68,7 +70,7 @@ export default function TicketTierForm({
     } else {
       // Check for duplicate names
       if (newTiers.some((t) => t.name.toLowerCase() === formData.name.toLowerCase())) {
-        Alert.alert("Error", "Tier name already exists");
+        Alert.alert(t('common.error'), t('ticketTierForm.tierNameExists'));
         return;
       }
       newTiers.push(formData);
@@ -81,10 +83,10 @@ export default function TicketTierForm({
   };
 
   const handleDeleteTier = (index: number) => {
-    Alert.alert("Delete Tier", "Are you sure you want to delete this tier?", [
-      { text: "Cancel", onPress: () => {} },
+    Alert.alert(t('ticketTierForm.deleteTier'), t('ticketTierForm.confirmDeleteTier'), [
+      { text: t('common.cancel'), onPress: () => {} },
       {
-        text: "Delete",
+        text: t('common.delete'),
         onPress: () => {
           const newTiers = tiers.filter((_, i) => i !== index);
           onTiersChange(newTiers);
@@ -97,19 +99,19 @@ export default function TicketTierForm({
   return (
     <View className="mb-6">
       <View className="flex-row justify-between items-center mb-3">
-        <Text className="font-semibold text-lg">Ticket Tiers *</Text>
+        <Text className="font-semibold text-lg">{t('ticketTierForm.ticketTiers')} *</Text>
         <TouchableOpacity
           className="bg-orange-500 px-3 py-2 rounded-lg flex-row items-center"
           onPress={() => handleOpenForm()}
         >
           <Ionicons name="add" size={18} color="white" />
-          <Text className="text-white ml-1 font-semibold">Add Tier</Text>
+          <Text className="text-white ml-1 font-semibold">{t('ticketTierForm.addTier')}</Text>
         </TouchableOpacity>
       </View>
 
       {tiers.length === 0 && (
         <View className="bg-gray-100 p-4 rounded-xl items-center">
-          <Text className="text-gray-500">No tiers added yet</Text>
+          <Text className="text-gray-500">{t('ticketTierForm.noTiersAdded')}</Text>
         </View>
       )}
 
@@ -137,16 +139,16 @@ export default function TicketTierForm({
               </View>
 
               <View className="mb-2">
-                <Text className="text-gray-600 text-sm">Price</Text>
+                <Text className="text-gray-600 text-sm">{t('ticketTierForm.price')}</Text>
                 <Text className="text-lg font-semibold text-black">
                   ${tier.price.toFixed(2)}
                 </Text>
               </View>
 
               <View className="mb-3">
-                <Text className="text-gray-600 text-sm">Quota</Text>
+                <Text className="text-gray-600 text-sm">{t('ticketTierForm.quota')}</Text>
                 <Text className="text-lg font-semibold text-black">
-                  {tier.quota} tickets
+                  {tier.quota} {t('ticketTierForm.tickets')}
                 </Text>
               </View>
 
@@ -154,7 +156,7 @@ export default function TicketTierForm({
                 className="bg-blue-500 py-2 rounded-lg items-center"
                 onPress={() => handleOpenForm(index)}
               >
-                <Text className="text-white font-semibold">Edit</Text>
+                <Text className="text-white font-semibold">{t('ticketTierFormModal.editButton')}</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -172,7 +174,7 @@ export default function TicketTierForm({
           <View className="bg-white rounded-t-3xl p-5">
             <View className="flex-row justify-between items-center mb-5">
               <Text className="text-xl font-semibold">
-                {editIndex !== null ? "Edit Tier" : "Add Tier"}
+                {editIndex !== null ? t('ticketTierFormModal.editTier') : t('ticketTierFormModal.addTier')}
               </Text>
               <TouchableOpacity onPress={() => setShowModal(false)}>
                 <Ionicons name="close" size={24} />
@@ -180,10 +182,10 @@ export default function TicketTierForm({
             </View>
 
             {/* Tier Name */}
-            <Text className="font-medium mb-1">Tier Name *</Text>
+            <Text className="font-medium mb-1">{t('ticketTierFormModal.tierName')} *</Text>
             <TextInput
               className="border border-gray-300 rounded-xl p-3 mb-4"
-              placeholder="e.g., VIP, Standard, Economy"
+              placeholder={t('ticketTierFormModal.tierNamePlaceholder')}
               value={formData.name}
               onChangeText={(text) =>
                 setFormData({ ...formData, name: text })
@@ -191,10 +193,10 @@ export default function TicketTierForm({
             />
 
             {/* Price */}
-            <Text className="font-medium mb-1">Price ($) *</Text>
+            <Text className="font-medium mb-1">{t('ticketTierFormModal.price')} *</Text>
             <TextInput
               className="border border-gray-300 rounded-xl p-3 mb-4"
-              placeholder="0"
+              placeholder={t('ticketTierFormModal.pricePlaceholder')}
               keyboardType="decimal-pad"
               value={formData.price === 0 ? "" : String(formData.price)}
               onChangeText={(text) =>
@@ -206,10 +208,10 @@ export default function TicketTierForm({
             />
 
             {/* Quota */}
-            <Text className="font-medium mb-1">Quota (Number of Tickets) *</Text>
+            <Text className="font-medium mb-1">{t('ticketTierFormModal.quota')} *</Text>
             <TextInput
               className="border border-gray-300 rounded-xl p-3 mb-6"
-              placeholder="0"
+              placeholder={t('ticketTierFormModal.quotaPlaceholder')}
               keyboardType="numeric"
               value={formData.quota === 0 ? "" : String(formData.quota)}
               onChangeText={(text) =>
@@ -226,7 +228,7 @@ export default function TicketTierForm({
                 className="flex-1 border border-gray-300 py-3 rounded-xl items-center"
                 onPress={() => setShowModal(false)}
               >
-                <Text className="font-semibold">Cancel</Text>
+                <Text className="font-semibold">{t('common.cancel')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -234,7 +236,7 @@ export default function TicketTierForm({
                 onPress={handleSaveTier}
               >
                 <Text className="text-white font-semibold">
-                  {editIndex !== null ? "Update" : "Add"}
+                  {editIndex !== null ? t('common.edit') : t('ticketTierFormModal.addTier')}
                 </Text>
               </TouchableOpacity>
             </View>

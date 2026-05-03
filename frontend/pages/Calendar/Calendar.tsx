@@ -11,6 +11,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
 import { formatDate } from "../../utils/utils";
 import EventPriceCard from "../../components/Cards/EventPriceCard";
+import { useLocalization } from "../../context/LocalizationContext";
 
 const FILTER_TYPES = [
   { key: "design", label: "Design" },
@@ -22,6 +23,7 @@ const FILTER_TYPES = [
 ];
 
 export default function CalendarTable() {
+  const { t } = useLocalization();
   const [openCalendar, setOpenCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [filterModal, setFilterModal] = useState(false);
@@ -204,7 +206,7 @@ export default function CalendarTable() {
               resizeMode="contain"
             />
 
-            <Text className="text-xl font-semibold mt-4">Ups! There is no events available</Text>
+            <Text className="text-xl font-semibold mt-4">{t('calendar.noEventsAvailable')}</Text>
           </SafeAreaView>
         )}
       </ScrollView>
@@ -213,7 +215,7 @@ export default function CalendarTable() {
       <Modal transparent visible={filterModal} animationType="fade">
         <View className="flex-1 bg-black/40 justify-center items-center">
           <View className="bg-white w-80 rounded-xl p-4">
-            <Text className="text-lg font-semibold mb-2">Filter Events</Text>
+            <Text className="text-lg font-semibold mb-2">{t('calendar.filterEvents')}</Text>
 
             {FILTER_TYPES.map((item) => (
               <TouchableOpacity

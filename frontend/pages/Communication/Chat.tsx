@@ -13,10 +13,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { getMessages, sendMessage, markRoomAsRead } from "../../services/chat.service";
 
 export default function Chat() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { user, token } = useAuth();
@@ -230,7 +232,7 @@ export default function Chat() {
             <TextInput
               value={input}
               onChangeText={setInput}
-              placeholder="Write a reply..."
+              placeholder={t('chatPage.writeReply')}
               placeholderTextColor="#888"
               className="text-gray-800"
               editable={!sending}

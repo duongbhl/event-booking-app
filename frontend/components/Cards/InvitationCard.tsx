@@ -1,6 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Avatar, Text } from "react-native-paper";
+import { useLocalization } from "../../context/LocalizationContext";
 import { InvitationCardProps } from "../Interface/InvitationCardProps";
 
 
@@ -14,6 +15,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   onAccept,
   onReject,
 }) => {
+  const { t } = useLocalization();
   return (
     <View className="bg-white rounded-2xl p-4 mb-3 shadow-sm flex-row">
       {/* Avatar */}
@@ -32,14 +34,14 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               onPress={onReject}
               className="px-4 py-1 rounded-lg border border-gray-300 mr-2"
             >
-              <Text className="text-gray-600">Reject</Text>
+              <Text className="text-gray-600">{t('invitationCard.reject')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={onAccept}
               className="px-4 py-1 rounded-lg bg-orange-500"
             >
-              <Text className="text-white font-semibold">Accept</Text>
+              <Text className="text-white font-semibold">{t('invitationCard.accept')}</Text>
             </TouchableOpacity>
           </View>
         )}

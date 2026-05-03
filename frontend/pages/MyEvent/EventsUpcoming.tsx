@@ -1,6 +1,7 @@
 import React, { use, useEffect, useMemo, useState } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import EventCard from "../../components/Cards/EventCard";
 import { EventCardProps } from "../../components/Interface/EventCardProps";
 import { getEvents } from "../../services/event.service";
@@ -8,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 
 
 export default function UpcomingEvents() {
+  const { t } = useLocalization();
   const navigation = useNavigation();
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const isFocused = useIsFocused();
@@ -54,13 +56,13 @@ export default function UpcomingEvents() {
           style={{ width: 180, height: 180 }}
           resizeMode="contain"
         />
-        <Text className="text-xl font-semibold">No Upcoming Event</Text>
+        <Text className="text-xl font-semibold">{t('eventsUpcoming.noUpcomingEvent')}</Text>
         <Text className="text-gray-500 text-center mt-2">
-          You have no upcoming events at the moment.
+          {t('eventsUpcoming.noUpcomingEventDesc')}
         </Text>
 
         <TouchableOpacity className="bg-orange-500 px-8 py-3 rounded-2xl mt-6 mb-[20rem]" onPress={()=>navigation.navigate("CreateEditEvent" as never)}>
-          <Text className="text-white font-semibold">ADD EVENTS</Text>
+          <Text className="text-white font-semibold">{t('eventsUpcoming.addEvents')}</Text>
         </TouchableOpacity>
       </View>
     );

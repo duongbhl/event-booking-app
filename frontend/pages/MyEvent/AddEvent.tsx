@@ -17,6 +17,7 @@ import { createEvent, updateEvent } from "../../services/event.service";
 import { uploadImageToCloudinary } from "../../services/upload.service";
 import { CATEGORIES } from "../Home";
 import TicketTierForm, { ITicketTier } from "../../components/Cards/TicketTierForm";
+import { useLocalization } from "../../context/LocalizationContext";
 
 
 
@@ -35,6 +36,8 @@ export default function CreateEditEvent() {
 
   const isEdit = route.params?.isEdit ?? false;
   const editEvent = route.params?.event;
+  const { t } = useLocalization();
+  
 
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [eventName, setEventName] = useState("");
@@ -87,15 +90,15 @@ export default function CreateEditEvent() {
     const newErrors: Errors = {};
     const now = new Date();
 
-    if (!eventName.trim()) newErrors.eventName = "Event name is required";
-    if (!eventType) newErrors.eventType = "Event type is required";
-    if (!location.trim()) newErrors.location = "Location is required";
+    if (!eventName.trim()) newErrors.eventName = t('addEvent.eventName') + " " + t('common.error');
+    if (!eventType) newErrors.eventType = t('addEvent.eventType') + " " + t('common.error');
+    if (!location.trim()) newErrors.location = t('addEvent.location') + " " + t('common.error');
     if (!description.trim())
-      newErrors.description = "Description is required";
+      newErrors.description = t('addEvent.description') + " " + t('common.error');
     if (!date || date <= now)
-      newErrors.date = "Event date must be in the future";
+      newErrors.date = t('common.error');
     if (ticketTiers.length === 0)
-      newErrors.ticketTiers = "At least one ticket tier is required";
+      newErrors.ticketTiers = t('common.error');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -127,15 +130,15 @@ export default function CreateEditEvent() {
 
       if (isEdit) {
         await updateEvent(editEvent._id, payload);
-        Alert.alert("Success", "Event updated successfully");
+        Alert.alert(t('common.success'), t('events.eventUpdated'));
       } else {
         await createEvent(payload);
-        Alert.alert("Success", "Event created successfully");
+        Alert.alert(t('common.success'), t('events.eventCreated'));
       }
 
       navigation.goBack();
     } catch (err) {
-      Alert.alert("Error", "Submit failed");
+      Alert.alert(t('common.error'), "Submit failed");
       console.log(err);
     }
   };
@@ -172,7 +175,7 @@ export default function CreateEditEvent() {
         <View className="absolute inset-0 bg-black/40 justify-center items-center z-50">
           <View className="bg-white w-4/5 rounded-2xl p-4">
             <Text className="text-lg font-semibold mb-4">
-              Select Category
+              {t('addEvent.events')}
             </Text>
 
             {CATEGORIES.map(item => (
@@ -194,7 +197,7 @@ export default function CreateEditEvent() {
               onPress={() => setShowCategoryModal(false)}
             >
               <Text className="text-orange-500 font-semibold">
-                Cancel
+                {t('addEvent.cancel')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -209,7 +212,7 @@ export default function CreateEditEvent() {
             <Ionicons name="chevron-back" size={26} />
           </TouchableOpacity>
           <Text className="text-xl font-semibold">
-            {isEdit ? "Edit Event" : "Create New Event"}
+            {isEdit ? t('addEvent.editEvent') : t('addEvent.createEvent')}
           </Text>
           <View className="w-6" />
         </View>
@@ -228,20 +231,20 @@ export default function CreateEditEvent() {
             <View className="items-center">
               <Ionicons name="add" size={30} color="#FF7A00" />
               <Text className="text-gray-400 mt-1">
-                Add Cover Photos
+                {t('addEvent.addCoverImage')}
               </Text>
             </View>
           )}
         </TouchableOpacity>
 
         {/* Event Name */}
-        <Text className="font-medium mb-1">Event Name *</Text>
+        <Text className="font-medium mb-1">{t('addEvent.eventName')} *</Text>
         <TextInput
           className={`border rounded-xl p-3 mb-1 ${errors.eventName ? "border-red-500" : "border-gray-300"
             }`}
           value={eventName}
           onChangeText={setEventName}
-          placeholder="Type your event name"
+          placeholder={t('addEvent.typeEventName')}
         />
         {errors.eventName && (
           <Text className="text-red-500 text-xs mb-3">
@@ -250,7 +253,7 @@ export default function CreateEditEvent() {
         )}
 
         {/* Category */}
-        <Text className="font-medium mb-1">Event Type *</Text>
+        <Text className="font-medium mb-1">{t('addEvent.eventType')} *</Text>
         <TouchableOpacity
           className={`border rounded-xl p-3 mb-1 flex-row justify-between items-center ${errors.eventType ? "border-red-500" : "border-gray-300"
             }`}
@@ -259,7 +262,7 @@ export default function CreateEditEvent() {
           <Text className={eventType ? "text-black" : "text-gray-400"}>
             {eventType
               ? CATEGORIES.find(c => c.key === eventType)?.label
-              : "Choose event type"}
+              : t('addEvent.selectEventType')}
           </Text>
           <Ionicons name="chevron-down" size={20} />
         </TouchableOpacity>
@@ -270,7 +273,7 @@ export default function CreateEditEvent() {
         )}
 
         {/* Date */}
-        <Text className="font-medium mb-1">Select Date & Time *</Text>
+        <Text className="font-medium mb-1">{t('addEvent.selectDateTime')} *</Text>
         <TouchableOpacity
           onPress={() => setShowPicker(true)}
           className={`border rounded-xl p-3 mb-1 flex-row justify-between items-center ${errors.date ? "border-red-500" : "border-gray-300"
@@ -300,13 +303,13 @@ export default function CreateEditEvent() {
         
 
         {/* Location */}
-        <Text className="font-medium mb-1">Location *</Text>
+        <Text className="font-medium mb-1">{t('addEvent.location')} *</Text>
         <TextInput
           className={`border rounded-xl p-3 mb-1 ${errors.location ? "border-red-500" : "border-gray-300"
             }`}
           value={location}
           onChangeText={setLocation}
-          placeholder="Enter event location"
+          placeholder={t('addEvent.enterEventLocation')}
         />
         {errors.location && (
           <Text className="text-red-500 text-xs mb-3">
@@ -326,13 +329,13 @@ export default function CreateEditEvent() {
         )}
 
         {/* Description */}
-        <Text className="font-medium mb-1">Event Description *</Text>
+        <Text className="font-medium mb-1">{t('addEvent.description')} *</Text>
         <TextInput
           className={`border rounded-xl p-3 h-28 mb-1 ${errors.description ? "border-red-500" : "border-gray-300"
             }`}
           value={description}
           onChangeText={setDescription}
-          placeholder="Type your event description..."
+          placeholder={t('addEvent.typeDescription')}
           multiline
           textAlignVertical="top"
         />
@@ -350,7 +353,7 @@ export default function CreateEditEvent() {
           onPress={handleSubmit}
         >
           <Text className="text-white text-center font-semibold text-lg">
-            {isEdit ? "UPDATE EVENT" : "PUBLISH NOW"}
+            {isEdit ? t('addEvent.updateEvent') : t('addEvent.publishNow')}
           </Text>
         </TouchableOpacity>
       </ScrollView>

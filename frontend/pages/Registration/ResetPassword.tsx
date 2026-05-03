@@ -9,10 +9,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalization } from "../../context/LocalizationContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ResetPassword() {
+  const { t } = useLocalization();
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const navigation = useNavigation<any>();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -23,7 +27,7 @@ export default function ResetPassword() {
       >
         {/* Back + Spacer */}
         <View className="flex-row items-center justify-between mt-2">
-          <TouchableOpacity className="p-1">
+          <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={26} color="#111827" />
           </TouchableOpacity>
           <View style={{ width: 24 }} />
@@ -31,13 +35,12 @@ export default function ResetPassword() {
 
         {/* Title */}
         <Text className="text-3xl font-semibold text-center mt-4 text-gray-900">
-          Reset Password
+          {t('auth.resetPassword')}
         </Text>
 
         {/* Subtitle */}
         <Text className="text-center text-gray-500 mt-2 leading-5">
-          Please enter your email address to request a{"\n"}
-          password reset
+          {t('auth.resetPasswordSubtitle')}
         </Text>
 
         {/* Email */}
@@ -48,7 +51,7 @@ export default function ResetPassword() {
           >
             <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
             <TextInput
-              placeholder="Type your email"
+              placeholder={t('auth.typeYourEmail')}
               placeholderTextColor="#9CA3AF"
               autoCapitalize="none"
               keyboardType="email-address"
@@ -65,7 +68,7 @@ export default function ResetPassword() {
           >
             <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             <TextInput
-              placeholder="New password"
+              placeholder={t('auth.newPassword')}
               placeholderTextColor="#9CA3AF"
               secureTextEntry={!showNewPass}
               className="flex-1 ml-3 text-gray-900"
@@ -89,7 +92,7 @@ export default function ResetPassword() {
           >
             <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             <TextInput
-              placeholder="Confirm new password"
+              placeholder={t('auth.confirmNewPassword')}
               placeholderTextColor="#9CA3AF"
               secureTextEntry={!showConfirmPass}
               className="flex-1 ml-3 text-gray-900"
@@ -120,7 +123,7 @@ export default function ResetPassword() {
             }}
           >
             <Text className="text-white text-center mt-5 text-lg font-semibold tracking-wider">
-              SEND
+              {t('auth.send')}
             </Text>
           </LinearGradient>
         </TouchableOpacity>

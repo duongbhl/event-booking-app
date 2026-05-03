@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicat
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import ActionBar from "../../components/Bars/ActionBar";
 import { formatDateTime } from "../../utils/utils";
 import { getMyBookmarks, toggleBookmark } from "../../services/bookmark.service";
@@ -13,6 +14,7 @@ import { getEvents, approveEvent, rejectEvent } from "../../services/event.servi
 
 
 export default function EventDetails() {
+  const { t } = useLocalization();
   const { token, user } = useAuth();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
@@ -46,7 +48,7 @@ export default function EventDetails() {
           setFetchedEvent(data);
         } catch (error) {
           console.log("Fetch event error:", error);
-          Alert.alert("Error", "Failed to fetch event details");
+          Alert.alert(t('common.error'), t('eventDetails.failedFetchEventDetails'));
         } finally {
           setEventLoading(false);
         }
@@ -61,7 +63,7 @@ export default function EventDetails() {
     return (
       <SafeAreaView className="flex-1 bg-gray-100 justify-center items-center">
         <ActivityIndicator size="large" color="#FF7A00" />
-        <Text className="mt-2 text-gray-600">Loading event...</Text>
+        <Text className="mt-2 text-gray-600">{t('eventDetails.loadingEvent')}</Text>
       </SafeAreaView>
     );
   }
@@ -83,9 +85,9 @@ export default function EventDetails() {
     try {
       const updatedEvent = await approveEvent(displayEvent._id);
       setFetchedEvent(updatedEvent);
-      Alert.alert("Success", "Event approved successfully");
+      Alert.alert(t('common.success'), t('eventDetails.eventApprovedSuccess'));
     } catch (error) {
-      Alert.alert("Error", "Failed to approve event");
+      Alert.alert(t('common.error'), t('eventDetails.failedApproveEvent'));
       console.error(error);
     } finally {
       setApprovingOrRejecting(false);
@@ -94,20 +96,20 @@ export default function EventDetails() {
 
   const handleRejectEvent = async () => {
     Alert.alert(
-      "Reject Event",
-      "Are you sure you want to reject this event?",
+      t('eventDetails.rejectEventTitle'),
+      t('eventDetails.rejectEventMessage'),
       [
-        { text: "Cancel", onPress: () => {} },
+        { text: t('common.cancel'), onPress: () => {} },
         {
-          text: "Reject",
+          text: t('eventDetails.reject'),
           onPress: async () => {
             setApprovingOrRejecting(true);
             try {
               const updatedEvent = await rejectEvent(displayEvent._id);
               setFetchedEvent(updatedEvent);
-              Alert.alert("Success", "Event rejected successfully");
+              Alert.alert(t('common.success'), t('events.eventDeleted'));
             } catch (error) {
-              Alert.alert("Error", "Failed to reject event");
+              Alert.alert(t('common.error'), t('eventDetails.failedRejectEvent'));
               console.error(error);
             } finally {
               setApprovingOrRejecting(false);
@@ -136,7 +138,7 @@ export default function EventDetails() {
       navigation.navigate("Chat", { roomId: room._id, room });
     } catch (error) {
       console.log("Create chat room error:", error);
-      Alert.alert("Error", "Failed to create chat room");
+      Alert.alert(t('common.error'), t('eventDetails.failedCreateChatRoom'));
     }
   };
 
@@ -159,12 +161,12 @@ export default function EventDetails() {
     try {
       await toggleBookmark(displayEvent._id, token);
       Alert.alert(
-        "Success",
-        isBookmarked ? "Removed from favorites" : "Added to favorites"
+        t('common.success'),
+        isBookmarked ? t('bookmark.removedFromFavorites') : t('bookmark.addedToFavorites')
       );
     } catch (e) {
       setIsBookmarked(prev); // rollback
-      Alert.alert("Error", "Failed to update bookmark");
+      Alert.alert(t('common.error'), t('eventDetails.failedUpdateBookmark'));
     }
   };
 
@@ -262,7 +264,7 @@ export default function EventDetails() {
 
             {isBooked ? (
               <View className="bg-orange-500 px-4 py-1 rounded-full">
-                <Text className="text-white font-semibold">BOOKED</Text>
+                <Text className="text-white font-semibold">{t('eventDetails.booked')}</Text>
               </View>
             ) : (
               <View className="bg-orange-100 px-4 py-1 rounded-full">
@@ -293,10 +295,12 @@ export default function EventDetails() {
           </View>
 
           {/* Members */}
-          <View className="flex-row justify-between items-center mt-4">
-            <Text className="text-gray-700 font-medium">
-              {displayEvent.attendees || 0}+ Members are joined
-            </Text>
+          <View className="flex-row items-center gap-2">
+              <Ionicons name="people" size={18} color="#F97316" />
+              <Text className="text-gray-700 font-medium">
+                {displayEvent.attendees || 0}+ {t('eventDetails.membersJoined')}
+              </Text>
+            </View>
 
             <TouchableOpacity 
               onPress={() => navigation.navigate("InviteFriend" as never, {event: displayEvent} as never)}
@@ -304,7 +308,7 @@ export default function EventDetails() {
               style={{ opacity: isOwnEvent || isOutOfDate ? 0.5 : 1 }}
             >
               <Text className={`font-semibold ${isOwnEvent || isOutOfDate ? "text-gray-400" : "text-orange-500"}`}>
-                {isOutOfDate ? "EVENT ENDED" : "INVITE"}
+                {isOutOfDate ? t('eventDetails.eventEnded') : t('eventDetails.invite')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -325,7 +329,7 @@ export default function EventDetails() {
                   {displayEvent.organizer?.name || "Unknown Organizer"}
                 </Text>
                 <Text className="text-gray-500 text-sm">
-                  Event Organiser
+                  {t('eventDetails.eventOrganizer')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -340,16 +344,16 @@ export default function EventDetails() {
 
           {/* Description */}
           <View className="mt-6">
-            <Text className="font-semibold text-lg">Description</Text>
+            <Text className="font-semibold text-lg">{t('eventDetails.description')}</Text>
             <Text className="text-gray-600 mt-2 leading-6">
-              {displayEvent.description || "No description"}
+              {displayEvent.description || t('eventDetails.noDescription')}
             </Text>
           </View>
 
           {/* Ticket Tiers */}
           {displayEvent.ticketTiers && displayEvent.ticketTiers.length > 0 && (
             <View className="mt-6">
-              <Text className="font-semibold text-lg mb-3">Ticket Tiers</Text>
+              <Text className="font-semibold text-lg mb-3">{t('eventDetails.ticketTiers')}</Text>
               <View className="flex-row flex-wrap">
                 {displayEvent.ticketTiers.map(
                   (tier: any, index: number) => {
@@ -376,8 +380,8 @@ export default function EventDetails() {
                           }`}
                         >
                           {isSoldOut
-                            ? "Sold Out"
-                            : `${available}/${tier.quota} available`}
+                            ? t('eventDetails.soldOut')
+                            : `${available}/${tier.quota} ${t('eventDetails.available')}`}
                         </Text>
                       </View>
                     );
@@ -386,7 +390,7 @@ export default function EventDetails() {
               </View>
             </View>
           )}
-        </View>
+        {/* </View> */}
       </ScrollView>
 
       {/* 🔥 Bottom Button */}
@@ -405,7 +409,7 @@ export default function EventDetails() {
                 ) : (
                   <>
                     <Ionicons name="checkmark-circle" size={22} color="white" />
-                    <Text className="text-white text-lg font-semibold ml-2">Approve</Text>
+                    <Text className="text-white text-lg font-semibold ml-2">{t('eventDetails.approve')}</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -419,7 +423,7 @@ export default function EventDetails() {
                 ) : (
                   <>
                     <Ionicons name="close-circle" size={22} color="white" />
-                    <Text className="text-white text-lg font-semibold ml-2">Reject</Text>
+                    <Text className="text-white text-lg font-semibold ml-2">{t('eventDetails.reject')}</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -427,7 +431,7 @@ export default function EventDetails() {
           ) : (
             <TouchableOpacity className="bg-gray-400 rounded-2xl py-4 items-center" disabled>
               <Text className="text-white text-lg font-semibold">
-                {displayEvent.approvalStatus === "ACCEPTED" ? "✓ Approved" : "✗ Rejected"}
+                {displayEvent.approvalStatus === "ACCEPTED" ? t('eventDetails.approved') : t('eventDetails.rejected')}
               </Text>
             </TouchableOpacity>
           )
@@ -441,7 +445,7 @@ export default function EventDetails() {
           >
             <View className="flex-row items-center justify-center">
               <Ionicons name="qr-code" size={22} color="white" />
-              <Text className="text-white text-lg font-semibold ml-2">Check-in Tickets</Text>
+              <Text className="text-white text-lg font-semibold ml-2">{t('eventDetails.checkInTickets')}</Text>
             </View>
           </TouchableOpacity>
         ) : isBooked ? (
@@ -454,7 +458,7 @@ export default function EventDetails() {
           >
             <Ionicons name="add-circle-outline" size={22} color="white" />
             <Text className="text-white text-lg font-semibold ml-2">
-              {isOutOfDate ? "EVENT ENDED" : "Buy More"}
+              {isOutOfDate ? t('eventDetails.eventEnded') : t('eventDetails.buyMore')}
             </Text>
           </TouchableOpacity>
         ) : (
@@ -466,7 +470,7 @@ export default function EventDetails() {
           >
             <Ionicons name="ticket-outline" size={22} color="white" />
             <Text className="text-white text-lg font-semibold ml-2">
-              {isOutOfDate ? "EVENT ENDED" : "BUY TICKET"}
+              {isOutOfDate ? t('eventDetails.eventEnded') : t('eventDetails.buyTicket')}
             </Text>
           </TouchableOpacity>
         )}

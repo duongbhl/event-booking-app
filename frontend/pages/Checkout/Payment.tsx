@@ -9,6 +9,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalization } from "../../context/LocalizationContext";
 
 import { useAuth } from "../../context/AuthContext";
 import { bookTicket, confirmPayment, getMyTickets } from "../../services/ticket.service";
@@ -16,6 +17,7 @@ import { mapPaymentMethod } from "../../services/paymentMapper";
 import { getMyCards } from "../../services/card.service";
 
 export default function Payment() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { token } = useAuth();
@@ -34,9 +36,9 @@ export default function Payment() {
   const [loadingCards, setLoadingCards] = useState(false);
 
   const methods = [
-    { key: "wallet", label: "Wallet" },
-    { key: "paypal", label: "PayPal" },
-    { key: "card", label: "Credit / Debit Card" },
+    { key: "wallet", label: t('paymentCheckout.wallet') },
+    { key: "paypal", label: t('paymentCheckout.paypal') },
+    { key: "card", label: t('paymentCheckout.creditDebitCard') },
   ];
 
   /** 🔥 Load cards khi chọn CARD */
@@ -49,7 +51,7 @@ export default function Payment() {
         const data = await getMyCards(token);
         setCards(data);
       } catch (err) {
-        Alert.alert("Failed to load cards");
+        Alert.alert(t('common.error'), t('paymentCheckout.failedLoadCards'));
       } finally {
         setLoadingCards(false);
       }
@@ -60,12 +62,12 @@ export default function Payment() {
 
   const handleCheckout = async () => {
     if (!token) {
-      Alert.alert("Login required", "Please login to continue");
+      Alert.alert(t('paymentCheckout.loginRequired'), t('paymentCheckout.pleaseLoginToContinue'));
       return;
     }
 
     if (method === "card" && !selectedCard) {
-      Alert.alert("Select card", "Please select a card to continue");
+      Alert.alert(t('paymentCheckout.selectCard'), t('paymentCheckout.selectCardToContinue'));
       return;
     }
 
@@ -131,7 +133,7 @@ export default function Payment() {
       console.error("❌ Checkout error:", err);
       const errorMessage = err?.response?.data?.message || err?.message || "Something went wrong";
       Alert.alert(
-        "Payment failed",
+        t('payment.paymentFailed'),
         errorMessage
       );
     } finally {
@@ -147,12 +149,12 @@ export default function Payment() {
           <Ionicons name="chevron-back" size={26} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-xl font-semibold mr-6">
-          Payment
+          {t('payment.payment')}
         </Text>
       </View>
 
       {/* Payment Method */}
-      <Text className="text-lg font-semibold mb-3">Payment Method</Text>
+      <Text className="text-lg font-semibold mb-3">{t('payment.paymentMethod')}</Text>
 
       {methods.map((m) => (
         <TouchableOpacity
@@ -176,12 +178,12 @@ export default function Payment() {
       {/* 💳 CARD SECTION */}
       {method === "card" && (
         <View className="mt-4">
-          <Text className="font-semibold mb-2">Your Cards</Text>
+          <Text className="font-semibold mb-2">{t('payment.yourCards')}</Text>
 
           {loadingCards ? (
             <ActivityIndicator />
           ) : cards.length === 0 ? (
-            <Text className="text-gray-500">No cards added</Text>
+            <Text className="text-gray-500">{t('payment.noCardsAdded')}</Text>
           ) : (
             cards.map((card) => (
               <TouchableOpacity
@@ -209,7 +211,7 @@ export default function Payment() {
             onPress={() => navigation.navigate("AddCard")}
           >
             <Text className="text-orange-500 font-semibold text-center">
-              Add New Card
+              {t('payment.addNewCard')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -218,7 +220,7 @@ export default function Payment() {
       {/* Total */}
       <View className="mt-6">
         <Text className="text-xl font-bold">
-          Total: ${total} USD
+          {t('payment.total')}: ${total} USD
         </Text>
       </View>
 
@@ -234,7 +236,7 @@ export default function Payment() {
           <ActivityIndicator color="white" />
         ) : (
           <Text className="text-white font-semibold">
-            CHECKOUT
+            {t('payment.checkout').toUpperCase()}
           </Text>
         )}
       </TouchableOpacity>

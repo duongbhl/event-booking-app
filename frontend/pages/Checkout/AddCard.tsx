@@ -17,8 +17,10 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
 import { addCard } from "../../services/card.service";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export default function AddCard() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const { token } = useAuth();
 
@@ -48,12 +50,12 @@ export default function AddCard() {
         token
       );
 
-      Alert.alert("Success", "Card added successfully");
+      Alert.alert(t('common.success'), t('booking.cardAddedSuccess'));
       navigation.goBack();
     } catch (err: any) {
       Alert.alert(
-        "Error",
-        err?.response?.data?.message || "Failed to add card"
+        t('common.error'),
+        err?.response?.data?.message || t('booking.failedAddCard')
       );
     } finally {
       setLoading(false);
@@ -77,11 +79,11 @@ export default function AddCard() {
                 <Ionicons name="chevron-back" size={26} />
               </TouchableOpacity>
               <Text className="flex-1 text-center text-xl font-semibold mr-6">
-                Add New Card
+                {t('booking.addNewCard')}
               </Text>
             </View>
 
-            <Text className="text-gray-500 mb-1">Card Number</Text>
+            <Text className="text-gray-500 mb-1">{t('booking.cardNumber')}</Text>
             <TextInput
               value={cardNumber}
               onChangeText={setCardNumber}
@@ -93,7 +95,7 @@ export default function AddCard() {
 
             <View className="flex-row justify-between mb-4">
               <View className="w-[48%]">
-                <Text className="text-gray-500 mb-1">Exp Month</Text>
+                <Text className="text-gray-500 mb-1">{t('booking.expMonth')}</Text>
                 <TextInput
                   value={expMonth}
                   onChangeText={setExpMonth}
@@ -105,7 +107,7 @@ export default function AddCard() {
               </View>
 
               <View className="w-[48%]">
-                <Text className="text-gray-500 mb-1">Exp Year</Text>
+                <Text className="text-gray-500 mb-1">{t('booking.expYear')}</Text>
                 <TextInput
                   value={expYear}
                   onChangeText={setExpYear}
@@ -129,7 +131,7 @@ export default function AddCard() {
                 color="#FF7A00"
               />
               <Text className="ml-2 text-gray-800">
-                Save as primary card
+                {t('booking.saveAsPrimaryCard')}
               </Text>
             </TouchableOpacity>
 
@@ -143,7 +145,7 @@ export default function AddCard() {
                 <ActivityIndicator color="white" />
               ) : (
                 <Text className="text-white font-semibold">
-                  ADD CARD
+                  {t('booking.addCard')}
                 </Text>
               )}
             </TouchableOpacity>

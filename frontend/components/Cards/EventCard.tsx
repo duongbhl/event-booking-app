@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import { EventCardProps } from "../Interface/EventCardProps";
 import { useNavigation } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import { formatDateTime } from "../../utils/utils";
 import { deleteEvent } from "../../services/event.service";
 
@@ -14,13 +15,14 @@ interface EventCardProp extends EventCardProps {
 const EventCard: React.FC<EventCardProp> = (props) => {
   const { onDelete, ...event } = props;
   const navigation = useNavigation<any>();
+  const { t } = useLocalization();
 
   const handleEdit = () => {
     // Only allow editing PENDING events
     if (event.approvalStatus !== "PENDING") {
       Alert.alert(
-        "Cannot Edit",
-        `You can only edit PENDING events. This event is ${event.approvalStatus}.`
+        t('eventCard.cannotEdit'),
+        `${t('eventCard.onlyEditPending')} ${event.approvalStatus}.`
       );
       return;
     }
@@ -35,26 +37,26 @@ const EventCard: React.FC<EventCardProp> = (props) => {
     // Only allow deleting PENDING events
     if (event.approvalStatus !== "PENDING") {
       Alert.alert(
-        "Cannot Delete",
-        `You can only delete PENDING events. This event is ${event.approvalStatus}.`
+        t('eventCard.cannotDelete'),
+        `${t('eventCard.onlyDeletePending')} ${event.approvalStatus}.`
       );
       return;
     }
 
     Alert.alert(
-      "Delete Event",
-      "Are you sure you want to delete this event?",
+      t('eventCard.deleteEvent'),
+      t('eventCard.confirmDelete'),
       [
-        { text: "Cancel", onPress: () => {} },
+        { text: t('common.cancel'), onPress: () => {} },
         {
-          text: "Delete",
+          text: t('common.delete'),
           onPress: async () => {
             try {
               await deleteEvent(event._id);
               onDelete?.(event._id);
-              Alert.alert("Success", "Event deleted successfully");
+              Alert.alert(t('common.success'), t('eventCard.eventDeletedSuccess'));
             } catch (error) {
-              Alert.alert("Error", "Failed to delete event");
+              Alert.alert(t('common.error'), t('eventCard.failedDeleteEvent'));
               console.error("Delete event error:", error);
             }
           },
@@ -169,7 +171,7 @@ const EventCard: React.FC<EventCardProp> = (props) => {
 
         <View className="flex-row justify-between items-center mt-3">
           <Text className="text-gray-400">
-            {event.attendees || 0} joined
+            {event.attendees || 0} {t('eventCard.joined')}
           </Text>
 
           {/* Action Buttons */}

@@ -11,12 +11,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 
 import { useAuth } from "../../context/AuthContext";
 import { getMyBookmarks } from "../../services/bookmark.service";
 import { formatDateTime } from "../../utils/utils";
 
 export default function EventBookmark() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const { token } = useAuth();
 
@@ -109,7 +111,7 @@ export default function EventBookmark() {
         </TouchableOpacity>
 
         <Text className="text-lg font-semibold text-gray-900">
-          My Favorite Events
+          {t('eventBookmark.myFavoriteEvents')}
         </Text>
 
         {/* placeholder để title nằm giữa */}
@@ -122,7 +124,7 @@ export default function EventBookmark() {
           <Ionicons name="search" size={18} color="#9CA3AF" />
           <TextInput
             className="flex-1 ml-2 text-gray-900"
-            placeholder="Search by event name or location..."
+            placeholder={t('eventBookmark.searchByEventName')}
             placeholderTextColor="#9CA3AF"
             value={query}
             onChangeText={setQuery}
@@ -145,12 +147,12 @@ export default function EventBookmark() {
         <View className="flex-1 items-center justify-center px-6">
           <Ionicons name="heart-outline" size={56} color="#ccc" />
           <Text className="text-lg font-semibold mt-4">
-            {query.trim() ? "No results found" : "No favorite events yet"}
+            {query.trim() ? t('eventBookmark.noResultsFound') : t('eventBookmark.noFavoriteEvents')}
           </Text>
           <Text className="text-gray-500 text-center mt-2">
             {query.trim()
-              ? "Try a different keyword."
-              : "Tap the heart icon on an event to save it here."}
+              ? t('eventBookmark.tryDifferentKeyword')
+              : t('eventBookmark.tapHeartIcon')}
           </Text>
 
           {!query.trim() && (
@@ -158,7 +160,7 @@ export default function EventBookmark() {
               className="mt-5 bg-orange-500 px-5 py-3 rounded-2xl"
               onPress={() => navigation.navigate("Home")}
             >
-              <Text className="text-white font-semibold">Explore events</Text>
+              <Text className="text-white font-semibold">{t('eventBookmark.exploreEvents')}</Text>
             </TouchableOpacity>
           )}
         </View>

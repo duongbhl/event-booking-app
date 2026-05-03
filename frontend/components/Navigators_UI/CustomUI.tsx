@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/drawer";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { getUnreadNotificationCount } from "../../services/notification.service";
 import { getUnreadMessageCount } from "../../services/chat.service";
@@ -59,6 +60,7 @@ export function CustomTabBar({
 // CUSTOM DRAWER
 // =======================================================
 export function CustomDrawer(props: DrawerContentComponentProps) {
+  const { t } = useLocalization();
   const navigation = props.navigation;
   const { user, logout, token } = useAuth();
   const isFocused = useIsFocused();
@@ -107,7 +109,7 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
 
       {/* Drawer Items */}
       <DrawerItem
-        label="Notifications"
+        label={t('drawer.notifications')}
         badge={unreadNotifications}
         icon={
           <Ionicons name="notifications-outline" size={30} color="#FF7A00" />
@@ -116,19 +118,19 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       />
 
       <DrawerItem
-        label="Add Event"
+        label={t('drawer.addEvent')}
         icon={<Ionicons name="add-circle-outline" size={30} color="#FF7A00" />}
         onPress={() => navigation.navigate("CreateEditEvent")}
       />
 
       <DrawerItem
-        label="Bookmark"
+        label={t('drawer.bookmark')}
         icon={<Ionicons name="bookmark-outline" size={30} color="#FF7A00" />}
         onPress={() =>navigation.navigate("EventBookmark")}
       />
 
       <DrawerItem
-        label="Messages"
+        label={t('drawer.messages')}
         badge={unreadMessages}
         icon={
           <MaterialCommunityIcons
@@ -141,13 +143,13 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       />
 
       <DrawerItem
-        label="Settings"
+        label={t('drawer.settings')}
         icon={<Ionicons name="settings-outline" size={30} color="#FF7A00" />}
         onPress={() => navigation.navigate("Settings")}
       />
 
       <DrawerItem
-        label="Sign Out"
+        label={t('drawer.signOut')}
         icon={<Ionicons name="log-out-outline" size={30} color="#FF7A00" />}
         onPress={logout}
       />

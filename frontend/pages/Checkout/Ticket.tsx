@@ -12,10 +12,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
+import { useLocalization } from "../../context/LocalizationContext";
 import { formatDateTime } from "../../utils/utils";
 import api from "../../services/api";
 
 export default function Ticket() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const [loadingEvent, setLoadingEvent] = useState(false);
@@ -26,15 +28,15 @@ export default function Ticket() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-white">
         <Ionicons name="alert-circle" size={48} color="#FF7A00" />
-        <Text className="text-lg font-semibold mt-4">No Tickets</Text>
+        <Text className="text-lg font-semibold mt-4">{t('ticketView.noTickets')}</Text>
         <Text className="text-gray-500 text-center mt-2 px-6">
-          No ticket data received. Please try booking again.
+          {t('ticketView.noTicketDataReceived')}
         </Text>
         <TouchableOpacity
           className="bg-black px-6 py-3 rounded-xl mt-6"
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-white font-semibold">Go Back</Text>
+          <Text className="text-white font-semibold">{t('ticketView.goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -48,7 +50,7 @@ export default function Ticket() {
           <Ionicons name="chevron-back" size={26} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-xl font-semibold mr-6">
-          Tickets
+          {t('ticketView.tickets')}
         </Text>
       </View>
 
@@ -123,7 +125,7 @@ export default function Ticket() {
             // Fetch full event with organizer details
             const eventId = tickets[0]?.event?._id;
             if (!eventId) {
-              Alert.alert("Error", "No event ID found");
+              Alert.alert("Error", t('ticketView.noEventIdFound'));
               return;
             }
 
@@ -131,7 +133,7 @@ export default function Ticket() {
 
             Alert.alert(
               "Success",
-              "Tickets saved! You can view your tickets anytime in the app under 'My Tickets'.",
+              t('ticketView.ticketsSaved'),
               [
                 {
                   text: "OK",
@@ -145,7 +147,7 @@ export default function Ticket() {
             );
           } catch (error) {
             console.error("Fetch event error:", error);
-            Alert.alert("Error", "Failed to load event details");
+            Alert.alert("Error", t('ticketView.failedToLoadEventDetails'));
           } finally {
             setLoadingEvent(false);
           }
@@ -155,7 +157,7 @@ export default function Ticket() {
           <ActivityIndicator color="white" />
         ) : (
           <Text className="text-white text-center font-semibold">
-            DOWNLOAD ALL TICKETS
+            {t('ticketView.downloadAllTickets').toUpperCase()}
           </Text>
         )}
       </TouchableOpacity>

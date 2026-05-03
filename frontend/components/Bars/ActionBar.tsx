@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../../constants/colors";
 import { useAuth } from "../../context/AuthContext";
+import { useLocalization } from "../../context/LocalizationContext";
 import { getMyTickets } from "../../services/ticket.service";
 
 interface ActionBarProps {
@@ -13,11 +14,12 @@ interface ActionBarProps {
 export default function ActionBar({ eventId }: ActionBarProps) {
   const navigation = useNavigation<any>();
   const { token } = useAuth();
+  const { t } = useLocalization();
   const [loading, setLoading] = useState(false);
 
   const handleMyTicketPress = async () => {
     if (!token) {
-      Alert.alert("Login required", "Please login to view your tickets");
+      Alert.alert(t('actionBar.loginRequired'), t('actionBar.pleaseLogin'));
       return;
     }
 
@@ -38,7 +40,7 @@ export default function ActionBar({ eventId }: ActionBarProps) {
       }
 
       if (!filteredTickets || filteredTickets.length === 0) {
-        Alert.alert("No tickets", "You have not booked any tickets yet");
+        Alert.alert(t('actionBar.noTickets'), t('actionBar.noTicketsBooked'));
         return;
       }
 
@@ -46,7 +48,7 @@ export default function ActionBar({ eventId }: ActionBarProps) {
       navigation.navigate("Ticket", { tickets: filteredTickets });
     } catch (err) {
       console.log("Fetch tickets error", err);
-      Alert.alert("Error", "Failed to load tickets");
+      Alert.alert(t('common.error'), t('actionBar.failedLoadTickets'));
     } finally {
       setLoading(false);
     }
@@ -59,7 +61,7 @@ export default function ActionBar({ eventId }: ActionBarProps) {
         <View className="bg-orange-100 p-4 rounded-full">
           <MaterialIcons name="call" size={26} color={Colors.primary} />
         </View>
-        <Text className="text-xs mt-2 text-gray-700">Call</Text>
+        <Text className="text-xs mt-2 text-gray-700">{t('actionBar.call')}</Text>
       </TouchableOpacity>
 
 
@@ -77,7 +79,7 @@ export default function ActionBar({ eventId }: ActionBarProps) {
           />
         </View>
         <Text className="text-xs mt-2 text-gray-700">
-          {loading ? "Loading..." : "My Ticket"}
+          {loading ? t('common.loading') : t('actionBar.myTicket')}
         </Text>
       </TouchableOpacity>
     </View>

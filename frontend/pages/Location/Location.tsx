@@ -13,6 +13,7 @@ import MapView, { Camera, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Crypto from 'expo-crypto';
 import { reverseGeocode, calculateDistance } from '../../utils/geocoding';
+import { useLocalization } from '../../context/LocalizationContext';
 
 const GOOGLE_KEY = "YOUR_GOOGLE_API_KEY";
 
@@ -22,6 +23,7 @@ interface Suggestion {
 }
 
 const LocationScreen = () => {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const mapRef = useRef<MapView | null>(null);
@@ -164,7 +166,7 @@ const LocationScreen = () => {
   // Open directions in Google Maps
   const handleGetDirections = async () => {
     if (!myLocation || !eventCoordinates) {
-      Alert.alert("Error", "Location information not available");
+      Alert.alert(t('common.error'), t('location.locationNotAvailable'));
       return;
     }
 
@@ -185,7 +187,7 @@ const LocationScreen = () => {
         await Linking.openURL(webUrl);
       }
     } catch (error) {
-      Alert.alert("Error", "Could not open maps application");
+      Alert.alert(t('common.error'), t('location.couldNotOpenMaps'));
       console.log("Open maps error:", error);
     }
   };
@@ -249,7 +251,7 @@ const LocationScreen = () => {
         {myLocation && (
           <Marker
             coordinate={myLocation}
-            title="Your Location"
+            title={t('location.myLocation')}
             pinColor="#3b82f6"
           />
         )}
@@ -266,7 +268,7 @@ const LocationScreen = () => {
         {eventAddress && (
           <View className="bg-orange-50 rounded-xl p-4 mb-3">
             <Text className="text-sm font-semibold text-gray-600 mb-1">
-              📍 Event Location
+              📍 {t('location.event')} Location
             </Text>
             <Text className="text-gray-900 font-semibold text-sm">
               {eventAddress}
@@ -287,7 +289,7 @@ const LocationScreen = () => {
           >
             <Ionicons name="navigate" size={20} color="white" />
             <Text className="text-white text-base font-semibold ml-2">
-              Get Directions
+              {t('location.getDirections')}
             </Text>
           </TouchableOpacity>
         )}

@@ -16,8 +16,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { login } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export default function SignIn() {
+    const { t } = useLocalization();
     const navigation = useNavigation<any>();
 
     const [email, setEmail] = useState("");
@@ -109,19 +111,19 @@ export default function SignIn() {
 
                     {/* Title */}
                     <Text className="text-3xl font-semibold text-center mt-4 text-gray-900">
-                        Sign in
+                        {t('auth.signIn')}
                     </Text>
                     <Text className="text-center text-gray-500 mt-2">
-                        Give credential to sign in your account
+                        {t('auth.giveCredential')}
                     </Text>
 
                     {/* Email */}
                     <View className="mt-8">
-                        <Text className="text-gray-600 mb-2">Email</Text>
+                        <Text className="text-gray-600 mb-2">{t('auth.email')}</Text>
                         <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
                             <Ionicons name="mail-outline" size={20} color="#999" />
                             <TextInput
-                                placeholder="Type your email"
+                                placeholder={t('auth.typeYourEmail')}
                                 className="ml-3 flex-1"
                                 autoCapitalize="none"
                                 keyboardType="email-address"
@@ -133,11 +135,11 @@ export default function SignIn() {
 
                     {/* Password */}
                     <View className="mt-5">
-                        <Text className="text-gray-600 mb-2">Password</Text>
+                        <Text className="text-gray-600 mb-2">{t('auth.password')}</Text>
                         <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
                             <Ionicons name="lock-closed-outline" size={20} color="#999" />
                             <TextInput
-                                placeholder="Type your password"
+                                placeholder={t('auth.typeYourPassword')}
                                 className="ml-3 flex-1"
                                 secureTextEntry={!showPassword}
                                 value={password}
@@ -164,12 +166,12 @@ export default function SignIn() {
                                 thumbColor={remember ? "#f97316" : "#fff"}
                                 trackColor={{ true: "#fcae74", false: "#ccc" }}
                             />
-                            <Text className="ml-2 text-gray-600">Remember Me</Text>
+                            <Text className="ml-2 text-gray-600">{t('auth.rememberMe')}</Text>
                         </View>
 
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("ResetPassword")}>
                             <Text className="text-orange-500 font-medium">
-                                Forgot Password?
+                                {t('auth.forgotPassword')}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -188,7 +190,7 @@ export default function SignIn() {
                             style={{ height: 56, borderRadius: 28 }}
                         >
                             <Text className="text-white text-center mt-4 text-lg font-semibold tracking-wider">
-                                {loading ? "LOADING..." : "SIGN IN"}
+                                {loading ? t('auth.loading') : t('auth.signIn').toUpperCase()}
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
@@ -196,7 +198,7 @@ export default function SignIn() {
                     {/* Divider */}
                     <View className="flex-row items-center mt-10 mb-4">
                         <View className="flex-1 h-[1px] bg-gray-300" />
-                        <Text className="mx-3 text-gray-500">or continue with</Text>
+                        <Text className="mx-3 text-gray-500">{t('auth.orContinueWith')}</Text>
                         <View className="flex-1 h-[1px] bg-gray-300" />
                     </View>
 
@@ -215,12 +217,12 @@ export default function SignIn() {
 
                     {/* Footer */}
                     <View className="flex-row justify-center mt-10">
-                        <Text className="text-gray-500">Don't have an account? </Text>
+                        <Text className="text-gray-500">{t('auth.dontHaveAccount')} </Text>
                         <TouchableOpacity
                             onPress={() => navigation.navigate("SignUp")}
                         >
                             <Text className="text-orange-500 font-semibold">
-                                Sign Up
+                                {t('auth.signUp')}
                             </Text>
                         </TouchableOpacity>
                     </View>

@@ -12,9 +12,11 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { register } from "../../services/auth.service";
+import { useLocalization } from "../../context/LocalizationContext";
 
 
 export default function SignUp({ navigation }: any) {
+  const { t } = useLocalization();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -80,10 +82,10 @@ export default function SignUp({ navigation }: any) {
 
         {/* Title */}
         <Text className="text-3xl font-semibold text-center mt-4 text-gray-900">
-          Sign up
+          {t('auth.signUp')}
         </Text>
         <Text className="text-center text-gray-500 mt-2">
-          Create account and enjoy all services
+          {t('auth.createAccountSubtitle')}
         </Text>
 
         {/* Full Name */}
@@ -92,7 +94,7 @@ export default function SignUp({ navigation }: any) {
             <Ionicons name="person-outline" size={20} color="#9CA3AF" />
             <TextInput
               className="flex-1 ml-3 text-base text-gray-900"
-              placeholder="Type your full name"
+              placeholder={t('auth.typeYourFullName')}
               placeholderTextColor="#9CA3AF"
               value={name}
               onChangeText={setName}
@@ -106,7 +108,7 @@ export default function SignUp({ navigation }: any) {
             <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
             <TextInput
               className="flex-1 ml-3 text-base text-gray-900"
-              placeholder="Type your email"
+              placeholder={t('auth.typeYourEmail')}
               placeholderTextColor="#9CA3AF"
               autoCapitalize="none"
               keyboardType="email-address"
@@ -122,7 +124,7 @@ export default function SignUp({ navigation }: any) {
             <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             <TextInput
               className="flex-1 ml-3 text-base text-gray-900"
-              placeholder="Type your password"
+              placeholder={t('auth.typeYourPassword')}
               placeholderTextColor="#9CA3AF"
               secureTextEntry={!showPass1}
               value={password}
@@ -144,7 +146,7 @@ export default function SignUp({ navigation }: any) {
             <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             <TextInput
               className="flex-1 ml-3 text-base text-gray-900"
-              placeholder="Confirm your password"
+              placeholder={t('auth.confirmYourPassword')}
               placeholderTextColor="#9CA3AF"
               secureTextEntry={!showPass2}
               value={confirmPassword}
@@ -174,7 +176,7 @@ export default function SignUp({ navigation }: any) {
             style={{ height: 56, borderRadius: 28 }}
           >
             <Text className="text-white text-center mt-4 text-lg font-semibold tracking-wider">
-              {loading ? "LOADING..." : "SIGN UP"}
+              {loading ? t('auth.loading') : t('auth.signUp').toUpperCase()}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -182,7 +184,7 @@ export default function SignUp({ navigation }: any) {
         {/* Divider */}
         <View className="flex-row items-center mt-10 mb-4">
           <View className="flex-1 h-[1px] bg-gray-300" />
-          <Text className="mx-3 text-gray-500">or continue with</Text>
+          <Text className="mx-3 text-gray-500">{t('auth.orContinueWith')}</Text>
           <View className="flex-1 h-[1px] bg-gray-300" />
         </View>
 
@@ -201,9 +203,9 @@ export default function SignUp({ navigation }: any) {
 
         {/* Footer */}
         <View className="flex-row justify-center mt-10">
-          <Text className="text-gray-500">Already have an account? </Text>
+          <Text className="text-gray-500">{t('auth.alreadyHaveAccount')} </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-            <Text className="text-orange-500 font-semibold">Sign In</Text>
+            <Text className="text-orange-500 font-semibold">{t('auth.signIn')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

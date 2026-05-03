@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import EventPriceCard from "../../components/Cards/EventPriceCard";
 
 import { EventCardProps } from "../../components/Interface/EventCardProps";
@@ -9,6 +10,7 @@ import { getEvents } from "../../services/event.service";
 
 
 export default function PastEvents() {
+  const { t } = useLocalization();
   const navigation = useNavigation();
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const isFocused = useIsFocused();
@@ -50,9 +52,9 @@ export default function PastEvents() {
             style={{ width: 180, height: 180 }}
             resizeMode="contain"
           />
-          <Text className="text-xl font-semibold">No Pass Event</Text>
+          <Text className="text-xl font-semibold">{t('eventsPast.noPassEvent')}</Text>
           <Text className="text-gray-500 text-center mt-2 mb-[20rem]">
-            You have no past events at the moment.
+            {t('eventsPast.noPassEventDesc')}
           </Text>
         </View>
       );

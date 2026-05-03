@@ -5,11 +5,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfile } from "../../services/user.service";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export default function SelectInterest({ navigation }: any) {
     const { user, token, login } = useAuth();
     const [selected, setSelected] = useState<number[]>([]);
     const [loading, setLoading] = useState(false);
+    const { t } = useLocalization();
+    
 
     const toggleSelect = (id: number) => {
         if (selected.includes(id)) {
@@ -68,7 +71,7 @@ export default function SelectInterest({ navigation }: any) {
 
                 {/* Title */}
                 <Text className="text-xl font-semibold text-center mt-4 text-gray-900">
-                    Select Your 3 Interests
+                    {t('registration.selectYourInterest')}
                 </Text>
 
                 {/* Grid */}

@@ -11,11 +11,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { getNotifications, deleteNotification, markNotificationsAsRead } from "../../services/notification.service";
 import { InvitationCard } from "../../components/Cards/InvitationCard";
 
 export default function Notification() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const { token } = useAuth();
   const isFocused = useIsFocused();
@@ -104,7 +106,7 @@ export default function Notification() {
           <Ionicons name="arrow-back" size={24} color="#444" />
         </TouchableOpacity>
 
-        <Text className="text-xl font-semibold">Notification</Text>
+        <Text className="text-xl font-semibold">{t('notification.notification')}</Text>
 
         <TouchableOpacity>
           <Ionicons name="search" size={24} color="#444" />
@@ -124,12 +126,11 @@ export default function Notification() {
           />
 
           <Text className="text-xl font-semibold mt-4">
-            Ups! There is no notification
+            {t('notification.noNotification')}
           </Text>
 
           <Text className="text-gray-500 text-center mt-2 w-3/4">
-            You'll be notified about activity on events you're a collaborator
-            on.
+            {t('notification.notificationEmpty')}
           </Text>
         </SafeAreaView>
       ) : (
@@ -138,7 +139,7 @@ export default function Notification() {
           {unreadInvitations.length > 0 && (
             <>
               <Text className="text-gray-800 font-semibold mb-3">
-                Invitations ({unreadInvitations.length})
+                {t('notification.invitations')} ({unreadInvitations.length})
               </Text>
 
               {unreadInvitations.map((n) => (
@@ -160,7 +161,7 @@ export default function Notification() {
           {unreadOthers.length > 0 && (
             <>
               <Text className="text-gray-800 font-semibold mb-3 mt-4">
-                Unread ({unreadOthers.length})
+                {t('notification.unread')} ({unreadOthers.length})
               </Text>
 
               {unreadOthers.map((n) => (
@@ -189,7 +190,7 @@ export default function Notification() {
           {readNotifications.length > 0 && (
             <>
               <Text className="text-gray-800 font-semibold mb-3 mt-4">
-                Earlier ({readNotifications.length})
+                {t('notification.earlier')} ({readNotifications.length})
               </Text>
 
               {readNotifications.map((n) => (

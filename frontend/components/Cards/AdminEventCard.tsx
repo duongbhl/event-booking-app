@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalization } from "../../context/LocalizationContext";
 import { EventCardProps } from "../Interface/EventCardProps";
 import { approveEvent, rejectEvent } from "../../services/event.service";
 
@@ -33,16 +34,17 @@ export default function AdminEventCard({
   onRejected,
   onViewDetails,
 }: AdminEventCardProps) {
+  const { t } = useLocalization();
   const [loading, setLoading] = useState(false);
 
   const handleApprove = async () => {
     setLoading(true);
     try {
       const updatedEvent = await approveEvent(_id);
-      Alert.alert("Success", "Event approved successfully!");
+      Alert.alert(t('common.success'), t('adminEventCard.eventApprovedSuccess'));
       onApproved?.(updatedEvent);
     } catch (error) {
-      Alert.alert("Error", "Failed to approve event");
+      Alert.alert(t('common.error'), t('adminEventCard.failedApproveEvent'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -51,20 +53,20 @@ export default function AdminEventCard({
 
   const handleReject = async () => {
     Alert.alert(
-      "Confirm Rejection",
-      "Are you sure you want to reject this event?",
+      t('adminEventCard.confirmRejection'),
+      t('adminEventCard.confirmRejectEvent'),
       [
-        { text: "Cancel", onPress: () => {} },
+        { text: t('common.cancel'), onPress: () => {} },
         {
-          text: "Reject",
+          text: t('common.delete'),
           onPress: async () => {
             setLoading(true);
             try {
               const updatedEvent = await rejectEvent(_id);
-              Alert.alert("Success", "Event rejected successfully!");
+              Alert.alert(t('common.success'), t('adminEventCard.eventRejectedSuccess'));
               onRejected?.(updatedEvent);
             } catch (error) {
-              Alert.alert("Error", "Failed to reject event");
+              Alert.alert(t('common.error'), t('adminEventCard.failedRejectEvent'));
               console.error(error);
             } finally {
               setLoading(false);

@@ -3,8 +3,10 @@ import { View, Text, Image, TouchableOpacity} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export default function ScanCard() {
+  const { t } = useLocalization();
   const navigation = useNavigation();
 
   return (
@@ -14,11 +16,11 @@ export default function ScanCard() {
       </TouchableOpacity>
 
       <Text className="text-xl font-semibold text-center mt-4">
-        Scan Card
+        {t('booking.scanCard')}
       </Text>
 
       <Text className="text-center text-gray-500 mt-2 mb-6">
-        Please hold your card inside the frame
+        {t('booking.pleaseHoldCard')}
       </Text>
 
       <View className="items-center">
@@ -29,7 +31,7 @@ export default function ScanCard() {
       </View>
 
       <TouchableOpacity className="bg-black py-4 rounded-xl mt-10">
-        <Text className="text-white text-center">SCANNING...</Text>
+        <Text className="text-white text-center">{t('booking.scanning')}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

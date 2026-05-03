@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalization } from "../../context/LocalizationContext";
 
 interface ITicketTier {
   name: string;
@@ -12,6 +13,7 @@ interface ITicketTier {
 }
 
 export default function BuyTicket() {
+  const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
 
@@ -43,18 +45,18 @@ export default function BuyTicket() {
           <Ionicons name="chevron-back" size={26} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-xl font-semibold mr-6">
-          Ticket
+          {t('buyTicket.ticket')}
         </Text>
       </View>
 
       {!ticketTiers || ticketTiers.length === 0 ? (
         <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-500">No ticket tiers available</Text>
+          <Text className="text-gray-500">{t('buyTicket.noTicketTiersAvailable')}</Text>
         </View>
       ) : (
         <>
           {/* Ticket Type/Tier */}
-          <Text className="text-lg font-semibold mb-2">Ticket Type</Text>
+          <Text className="text-lg font-semibold mb-2">{t('buyTicket.ticketType')}</Text>
           <View className="flex-row mb-5 flex-wrap">
             {ticketTiers.map((tier) => {
               const active = selectedTier === tier.name;
@@ -93,7 +95,7 @@ export default function BuyTicket() {
                     }`}
                   >
                     ${tier.price}
-                    {isSoldOut && " - Sold Out"}
+                    {isSoldOut && ` - ${t('buyTicket.soldOut')}`}
                   </Text>
                 </TouchableOpacity>
               );
@@ -101,9 +103,9 @@ export default function BuyTicket() {
           </View>
 
           {/* Quantity */}
-          <Text className="text-lg font-semibold mb-2">Quantity</Text>
+          <Text className="text-lg font-semibold mb-2">{t('buyTicket.quantity')}</Text>
           <Text className="text-sm text-gray-600 mb-3">
-            Available: {availableQuota} tickets
+            {t('buyTicket.available')}: {availableQuota} {t('buyTicket.tickets')}
           </Text>
           <View className="flex-row items-center justify-between bg-gray-100 p-4 rounded-xl mb-6">
             <TouchableOpacity
@@ -126,10 +128,10 @@ export default function BuyTicket() {
           </View>
 
           {/* Price Summary */}
-          <Text className="text-lg font-semibold mb-2">Price Summary</Text>
+          <Text className="text-lg font-semibold mb-2">{t('buyTicket.priceSummary')}</Text>
 
           <View className="mb-3 flex-row justify-between">
-            <Text className="text-gray-700">{selectedTier} Ticket</Text>
+            <Text className="text-gray-700">{selectedTier} {t('buyTicket.ticket')}</Text>
             <Text>${unitPrice.toFixed(2)} USD</Text>
           </View>
 
@@ -142,7 +144,7 @@ export default function BuyTicket() {
 
           <View className="mt-5">
             <Text className="text-xl font-bold">
-              Total: ${total.toFixed(2)} USD
+              {t('buyTicket.total')}: ${total.toFixed(2)} USD
             </Text>
           </View>
 
@@ -164,7 +166,7 @@ export default function BuyTicket() {
             disabled={availableQuota === 0 || quantity > availableQuota}
           >
             <Text className="text-center text-white font-semibold">
-              {availableQuota === 0 ? "SOLD OUT" : "CONTINUE"}
+              {availableQuota === 0 ? t('buyTicket.soldOut').toUpperCase() : t('buyTicket.continue').toUpperCase()}
             </Text>
           </TouchableOpacity>
         </>

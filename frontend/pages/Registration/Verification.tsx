@@ -10,8 +10,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export default function Verification() {
+  const { t } = useLocalization();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputs = [
     useRef<TextInput | null>(null),
@@ -47,12 +49,12 @@ export default function Verification() {
 
         {/* Title */}
         <Text className="text-3xl font-semibold text-center mt-4 text-gray-900">
-          Verification
+          {t('auth.verification')}
         </Text>
 
         {/* Description */}
         <Text className="text-center text-gray-500 mt-3 leading-5">
-          We’ve send you the verification code on{"\n"}
+          {t('auth.verificationSubtitle')}{"\n"}
           <Text className="font-semibold text-gray-900">+1 6358 9248 5789</Text>
         </Text>
 
@@ -95,14 +97,14 @@ export default function Verification() {
             }}
           >
             <Text className="text-white text-center mt-5 text-lg font-semibold tracking-wider">
-              CONTINUE
+              {t('auth.continue')}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
 
         {/* Countdown */}
         <Text className="text-center text-gray-500 mt-6">
-          Re-send code in{" "}
+          {t('auth.resendCodeIn')}{" "}
           <Text className="text-orange-500 font-semibold">0:53</Text>
         </Text>
       </ScrollView>
