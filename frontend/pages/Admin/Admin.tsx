@@ -1,293 +1,482 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
   RefreshControl,
   Alert,
+  FlatList,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AdminEventCard from "../../components/Cards/AdminEventCard";
-import { getAllEventsForAdmin, autoRejectExpiredEvents } from "../../services/event.service";
+import {
+  getAllEventsForAdmin,
+  autoRejectExpiredEvents,
+} from "../../services/event.service";
 import { EventCardProps } from "../../components/Interface/EventCardProps";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
 
 type FilterType = "all" | "accepted" | "rejected" | "pending";
 
+const FILTER_TABS = [
+  { key: "pending", label: "Chờ duyệt" },
+  { key: "accepted", label: "Chấp nhận" },
+  { key: "rejected", label: "Từ chối" },
+  { key: "all", label: "Tất cả" },
+] as const;
+
 export default function AdminHomeScreen() {
   const navigation = useNavigation<any>();
   const isFocused = useIsFocused();
   const { logout } = useAuth();
+  const { width } = useWindowDimensions();
+
+  const isSmallDevice = width < 375;
+  const isTablet = width >= 768;
+
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
+
   const [filter, setFilter] = useState<FilterType>("pending");
   const [searchQuery, setSearchQuery] = useState("");
   const [events, setEvents] = useState<EventCardProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
-  const filterTabs = [
-    { key: "pending", label: "Chờ duyệt" },
-    { key: "accepted", label: "Chấp nhận" },
-    { key: "rejected", label: "Từ chối" },
-    { key: "all", label: "Tất cả" },
-  ] as const;
+  const fetchAllEvents = useCallback(
+    async (query?: string, options?: { silent?: boolean }) => {
+      const requestId = ++requestIdRef.current;
 
-  const fetchAllEvents = async (query?: string) => {
-    try {
-      setLoading(true);
-      const data = await getAllEventsForAdmin(query);
-      setEvents(data);
-      
-      // Auto reject expired pending events
       try {
-        const result = await autoRejectExpiredEvents();
-        if (result.modifiedCount > 0) {
-          // Refresh the list after auto-rejection
-          const updatedData = await getAllEventsForAdmin(query);
-          setEvents(updatedData);
+        if (options?.silent) {
+          setSearching(true);
+        } else {
+          setLoading(true);
+        }
+
+        const data = await getAllEventsForAdmin(query);
+
+        if (requestId !== requestIdRef.current) return;
+
+        setEvents(data);
+
+        if (!query) {
+          try {
+            const result = await autoRejectExpiredEvents();
+
+            if (result?.modifiedCount > 0) {
+              const updatedData = await getAllEventsForAdmin();
+              if (requestId === requestIdRef.current) {
+                setEvents(updatedData);
+              }
+            }
+          } catch (error) {
+            console.log("Auto reject error:", error);
+          }
         }
       } catch (error) {
-        console.log("Auto reject error:", error);
+        console.log("Fetch all events error:", error);
+        Alert.alert("Error", "Failed to fetch events");
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+          setSearching(false);
+        }
       }
-    } catch (error) {
-      console.log("Fetch all events error:", error);
-      Alert.alert("Error", "Failed to fetch events");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    []
+  );
 
   useEffect(() => {
     if (isFocused) {
       fetchAllEvents();
     }
-  }, [isFocused]);
 
-  const handleRefresh = async () => {
+    return () => {
+      if (searchTimerRef.current) {
+        clearTimeout(searchTimerRef.current);
+      }
+    };
+  }, [isFocused, fetchAllEvents]);
+
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchAllEvents(searchQuery);
+    await fetchAllEvents(searchQuery || undefined, { silent: true });
     setRefreshing(false);
-  };
+  }, [fetchAllEvents, searchQuery]);
 
-  const handleSearch = (text: string) => {
-    setSearchQuery(text);
-    if (text.trim()) {
-      fetchAllEvents(text);
-    } else {
-      fetchAllEvents();
+  const handleSearch = useCallback(
+    (text: string) => {
+      setSearchQuery(text);
+
+      if (searchTimerRef.current) {
+        clearTimeout(searchTimerRef.current);
+      }
+
+      searchTimerRef.current = setTimeout(() => {
+        fetchAllEvents(text.trim() || undefined, { silent: true });
+      }, 400);
+    },
+    [fetchAllEvents]
+  );
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery("");
+
+    if (searchTimerRef.current) {
+      clearTimeout(searchTimerRef.current);
     }
-  };
 
-  const handleEventApproved = (approvedEvent: EventCardProps) => {
+    fetchAllEvents(undefined, { silent: true });
+  }, [fetchAllEvents]);
+
+  const handleEventApproved = useCallback((approvedEvent: EventCardProps) => {
     setEvents((prevEvents) =>
       prevEvents.map((ev) =>
         ev._id === approvedEvent._id ? approvedEvent : ev
       )
     );
-  };
+  }, []);
 
-  const handleEventRejected = (rejectedEvent: EventCardProps) => {
+  const handleEventRejected = useCallback((rejectedEvent: EventCardProps) => {
     setEvents((prevEvents) =>
       prevEvents.map((ev) =>
         ev._id === rejectedEvent._id ? rejectedEvent : ev
       )
     );
-  };
+  }, []);
 
-  const handleViewDetails = (event: EventCardProps) => {
-    navigation.navigate("EventDetails", { event });
-  };
+  const handleViewDetails = useCallback(
+    (event: EventCardProps) => {
+      navigation.navigate("EventDetails", { event });
+    },
+    [navigation]
+  );
 
-  // Filter events based on approval status
-  const filteredEvents = events.filter((ev) => {
-    if (filter === "all") return true;
-    if (filter === "pending") return ev.approvalStatus === "PENDING";
-    if (filter === "accepted") return ev.approvalStatus === "ACCEPTED";
-    if (filter === "rejected") return ev.approvalStatus === "REJECTED";
-    return true;
-  });
+  const filteredEvents = useMemo(() => {
+    return events.filter((ev) => {
+      if (filter === "all") return true;
+      if (filter === "pending") return ev.approvalStatus === "PENDING";
+      if (filter === "accepted") return ev.approvalStatus === "ACCEPTED";
+      if (filter === "rejected") return ev.approvalStatus === "REJECTED";
+      return true;
+    });
+  }, [events, filter]);
 
-  const getStatistics = () => {
+  const stats = useMemo(() => {
     const pending = events.filter((e) => e.approvalStatus === "PENDING").length;
-    const accepted = events.filter((e) => e.approvalStatus === "ACCEPTED").length;
-    const rejected = events.filter((e) => e.approvalStatus === "REJECTED").length;
-    return { pending, accepted, rejected, total: events.length };
-  };
+    const accepted = events.filter(
+      (e) => e.approvalStatus === "ACCEPTED"
+    ).length;
+    const rejected = events.filter(
+      (e) => e.approvalStatus === "REJECTED"
+    ).length;
 
-  const stats = getStatistics();
+    return {
+      pending,
+      accepted,
+      rejected,
+      total: events.length,
+    };
+  }, [events]);
 
-  const handleSignOut = () => {
-    Alert.alert(
-      "Sign Out",
-      "Are you sure you want to sign out?",
-      [
-        { text: "Cancel", onPress: () => setShowMenu(false) },
-        {
-          text: "Sign Out",
-          onPress: async () => {
-            setShowMenu(false);
-            try {
-              await logout();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "SignIn" }],
-              });
-            } catch (error) {
-              Alert.alert("Error", "Failed to sign out");
-              console.error(error);
-            }
-          },
-          style: "destructive",
+  const handleSignOut = useCallback(() => {
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      {
+        text: "Cancel",
+        onPress: () => setShowMenu(false),
+      },
+      {
+        text: "Sign Out",
+        onPress: async () => {
+          setShowMenu(false);
+
+          try {
+            await logout();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "SignIn" }],
+            });
+          } catch (error) {
+            Alert.alert("Error", "Failed to sign out");
+            console.error(error);
+          }
         },
-      ]
+        style: "destructive",
+      },
+    ]);
+  }, [logout, navigation]);
+
+  const renderEvent = useCallback(
+    ({ item }: { item: EventCardProps }) => (
+      <AdminEventCard
+        {...item}
+        onApproved={handleEventApproved}
+        onRejected={handleEventRejected}
+        onViewDetails={() => handleViewDetails(item)}
+      />
+    ),
+    [handleEventApproved, handleEventRejected, handleViewDetails]
+  );
+
+  const renderEmpty = useCallback(() => {
+    if (loading) return null;
+
+    return (
+      <View className="items-center justify-center py-20 px-6">
+        <Ionicons name="folder-open" size={isSmallDevice ? 42 : 48} color="#D1D5DB" />
+        <Text className="mt-3 text-gray-500 font-semibold">
+          Không có sự kiện
+        </Text>
+        <Text className="text-gray-400 text-xs mt-1 text-center">
+          {searchQuery
+            ? "Không tìm thấy sự kiện phù hợp"
+            : "Chưa có sự kiện chờ duyệt"}
+        </Text>
+      </View>
     );
-  };
+  }, [loading, searchQuery, isSmallDevice]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-white px-4 pt-4 pb-3 border-b border-gray-200">
+      <View
+        className="bg-white border-b border-gray-200"
+        style={{
+          paddingHorizontal: isTablet ? 28 : isSmallDevice ? 12 : 16,
+          paddingTop: isTablet ? 18 : 14,
+          paddingBottom: isTablet ? 16 : 12,
+        }}
+      >
         <View className="flex-row items-center justify-between mb-4">
-          <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-            <Ionicons name="menu" size={28} color="#111827" />
+          <TouchableOpacity
+            onPress={() => setShowMenu((prev) => !prev)}
+            hitSlop={10}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="menu"
+              size={isTablet ? 32 : isSmallDevice ? 24 : 28}
+              color="#111827"
+            />
           </TouchableOpacity>
-          <Text className="text-xl font-bold text-gray-900">
+
+          <Text
+            numberOfLines={1}
+            className="font-bold text-gray-900 flex-1 text-center mx-3"
+            style={{
+              fontSize: isTablet ? 24 : isSmallDevice ? 17 : 20,
+            }}
+          >
             Admin Dashboard
           </Text>
-          <TouchableOpacity onPress={handleRefresh}>
-            <Ionicons name="refresh" size={24} color="#FF7A00" />
+
+          <TouchableOpacity
+            onPress={handleRefresh}
+            hitSlop={10}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="refresh"
+              size={isTablet ? 28 : isSmallDevice ? 22 : 24}
+              color="#FF7A00"
+            />
           </TouchableOpacity>
         </View>
 
-        {/* Admin Menu */}
         {showMenu && (
-          <View className="mb-3 bg-gray-50 rounded-lg border border-gray-200">
+          <View className="mb-3 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
             <TouchableOpacity
               onPress={() => {
                 setShowMenu(false);
                 navigation.navigate("AdminMessages");
               }}
               className="flex-row items-center px-4 py-3"
+              activeOpacity={0.7}
             >
               <Ionicons name="chatbubbles" size={20} color="#FF7A00" />
-              <Text className="ml-3 text-orange-600 font-semibold">Messages</Text>
+              <Text className="ml-3 text-orange-600 font-semibold">
+                Messages
+              </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               onPress={handleSignOut}
               className="flex-row items-center px-4 py-3 border-t border-gray-200"
+              activeOpacity={0.7}
             >
               <Ionicons name="log-out" size={20} color="#DC2626" />
-              <Text className="ml-3 text-red-600 font-semibold">Sign Out</Text>
+              <Text className="ml-3 text-red-600 font-semibold">
+                Sign Out
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Search bar */}
-        <View className="flex-row items-center bg-gray-100 rounded-xl px-4 h-10 mb-3">
+        <View
+          className="flex-row items-center bg-gray-100 rounded-xl px-4 mb-3"
+          style={{
+            height: isSmallDevice ? 40 : 44,
+          }}
+        >
           <Ionicons name="search" size={18} color="#9CA3AF" />
+
           <TextInput
             placeholder="Tìm kiếm sự kiện..."
             placeholderTextColor="#9CA3AF"
-            className="flex-1 ml-2 text-gray-900 text-sm"
+            className="flex-1 ml-2 text-gray-900"
+            style={{
+              fontSize: isSmallDevice ? 13 : 14,
+              paddingVertical: Platform.OS === "ios" ? 10 : 6,
+            }}
             value={searchQuery}
             onChangeText={handleSearch}
+            autoCorrect={false}
+            returnKeyType="search"
           />
-          {searchQuery ? (
-            <TouchableOpacity onPress={() => handleSearch("")}>
+
+          {searching ? (
+            <ActivityIndicator size="small" color="#FF7A00" />
+          ) : searchQuery ? (
+            <TouchableOpacity onPress={handleClearSearch} hitSlop={10}>
               <Ionicons name="close-circle" size={18} color="#9CA3AF" />
             </TouchableOpacity>
           ) : null}
         </View>
 
-        {/* Statistics */}
-        <View className="flex-row gap-2 mb-2">
+        <View className="flex-row mb-2" style={{ gap: isSmallDevice ? 6 : 8 }}>
           <View className="flex-1 bg-yellow-50 rounded-lg p-2">
-            <Text className="text-xs text-yellow-700">Chờ duyệt</Text>
-            <Text className="text-lg font-bold text-yellow-600">
+            <Text
+              numberOfLines={1}
+              className="text-yellow-700"
+              style={{ fontSize: isSmallDevice ? 10 : 12 }}
+            >
+              Chờ duyệt
+            </Text>
+            <Text
+              className="font-bold text-yellow-600"
+              style={{ fontSize: isSmallDevice ? 16 : 18 }}
+            >
               {stats.pending}
             </Text>
           </View>
+
           <View className="flex-1 bg-green-50 rounded-lg p-2">
-            <Text className="text-xs text-green-700">Chấp nhận</Text>
-            <Text className="text-lg font-bold text-green-600">
+            <Text
+              numberOfLines={1}
+              className="text-green-700"
+              style={{ fontSize: isSmallDevice ? 10 : 12 }}
+            >
+              Chấp nhận
+            </Text>
+            <Text
+              className="font-bold text-green-600"
+              style={{ fontSize: isSmallDevice ? 16 : 18 }}
+            >
               {stats.accepted}
             </Text>
           </View>
+
           <View className="flex-1 bg-red-50 rounded-lg p-2">
-            <Text className="text-xs text-red-700">Từ chối</Text>
-            <Text className="text-lg font-bold text-red-600">
+            <Text
+              numberOfLines={1}
+              className="text-red-700"
+              style={{ fontSize: isSmallDevice ? 10 : 12 }}
+            >
+              Từ chối
+            </Text>
+            <Text
+              className="font-bold text-red-600"
+              style={{ fontSize: isSmallDevice ? 16 : 18 }}
+            >
               {stats.rejected}
             </Text>
           </View>
         </View>
       </View>
 
-      {/* Filter Tabs */}
-      <View className="bg-white px-4 pt-3 pb-2 flex-row gap-2" style={{ gap: 8 }}>
-        {filterTabs.map((item) => (
-          <TouchableOpacity
-            key={item.key}
-            onPress={() => setFilter(item.key)}
-            className={`px-4 py-2 rounded-full ${
-              filter === item.key ? "bg-orange-500" : "bg-gray-200"
-            }`}
-          >
-            <Text
-              className={`text-xs font-semibold ${
-                filter === item.key ? "text-white" : "text-gray-700"
+      <View
+        className="bg-white pt-3 pb-2"
+        style={{
+          paddingHorizontal: isTablet ? 28 : isSmallDevice ? 12 : 16,
+        }}
+      >
+        <FlatList
+          horizontal
+          data={FILTER_TABS}
+          keyExtractor={(item) => item.key}
+          showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ gap: 8 }}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => setFilter(item.key)}
+              className={`rounded-full ${
+                filter === item.key ? "bg-orange-500" : "bg-gray-200"
               }`}
+              style={{
+                paddingHorizontal: isSmallDevice ? 12 : 16,
+                paddingVertical: isSmallDevice ? 7 : 8,
+              }}
+              activeOpacity={0.75}
             >
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                className={`font-semibold ${
+                  filter === item.key ? "text-white" : "text-gray-700"
+                }`}
+                style={{
+                  fontSize: isSmallDevice ? 11 : 12,
+                }}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
       </View>
 
-      {/* Events List */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        className="flex-1 px-4 pt-4"
-      >
-        {loading ? (
-          <View className="flex-1 items-center justify-center py-10">
-            <ActivityIndicator size="large" color="#FF7A00" />
-            <Text className="mt-2 text-gray-600">Đang tải sự kiện...</Text>
-          </View>
-        ) : filteredEvents.length > 0 ? (
-          <>
-            {filteredEvents.map((ev) => (
-              <AdminEventCard
-                key={ev._id}
-                {...ev}
-                onApproved={handleEventApproved}
-                onRejected={handleEventRejected}
-                onViewDetails={() => handleViewDetails(ev)}
-              />
-            ))}
-            <View className="h-4" />
-          </>
-        ) : (
-          <View className="flex-1 items-center justify-center py-20">
-            <Ionicons name="folder-open" size={48} color="#D1D5DB" />
-            <Text className="mt-3 text-gray-500 font-semibold">
-              Không có sự kiện
-            </Text>
-            <Text className="text-gray-400 text-xs mt-1">
-              {searchQuery
-                ? "Không tìm thấy sự kiện phù hợp"
-                : "Chưa có sự kiện chờ duyệt"}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+      {loading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#FF7A00" />
+          <Text className="mt-2 text-gray-600">Đang tải sự kiện...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredEvents}
+          keyExtractor={(item) => item._id}
+          renderItem={renderEvent}
+          ListEmptyComponent={renderEmpty}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          removeClippedSubviews={Platform.OS === "android"}
+          initialNumToRender={6}
+          maxToRenderPerBatch={6}
+          windowSize={8}
+          updateCellsBatchingPeriod={50}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+          contentContainerStyle={{
+            paddingHorizontal: isTablet ? 28 : isSmallDevice ? 12 : 16,
+            paddingTop: 16,
+            paddingBottom: 24,
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

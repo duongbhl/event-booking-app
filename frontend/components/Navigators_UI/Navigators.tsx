@@ -1,25 +1,18 @@
-// Navigators.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import {
   createBottomTabNavigator,
   BottomTabNavigationOptions,
 } from "@react-navigation/bottom-tabs";
-import {
-  createDrawerNavigator,
-  DrawerNavigationOptions,
-} from "@react-navigation/drawer";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useWindowDimensions } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-// Screens
 import Calendar from "../../pages/Calendar/Calendar";
-import SelectLocation from "../../pages/Registration/SelectLocation";
 import Profile from "../../pages/Profile/Profile";
-
-// UI
-
 import Home from "../../pages/Home";
-import { CustomDrawer, CustomTabBar } from "./CustomUI";
 import Location from "../../pages/Location/Location";
+
+import { CustomDrawer, CustomTabBar } from "./CustomUI";
 
 export type RootTabParamList = {
   Home: undefined;
@@ -35,8 +28,16 @@ export type RootDrawerParamList = {
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
-// ----------------------- BOTTOM TABS -----------------------
+const getIconSize = (width: number) => {
+  if (width >= 768) return 30;
+  if (width < 375) return 22;
+  return 26;
+};
+
 export function MainTabs() {
+  const { width } = useWindowDimensions();
+  const iconSize = useMemo(() => getIconSize(width), [width]);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -48,25 +49,25 @@ export function MainTabs() {
       <Tab.Screen
         name="Home"
         component={Home}
-        options={tabIcon("home", "home-outline")}
+        options={tabIcon("home", "home-outline", iconSize)}
       />
 
       <Tab.Screen
         name="Calendar"
         component={Calendar}
-        options={tabIcon("calendar", "calendar-outline")}
+        options={tabIcon("calendar", "calendar-outline", iconSize)}
       />
 
       <Tab.Screen
         name="Location"
         component={Location}
-        options={tabIcon("location", "location-outline")}
+        options={tabIcon("location", "location-outline", iconSize)}
       />
 
       <Tab.Screen
         name="Profile"
         component={Profile}
-        options={tabIcon("person", "person-outline")}
+        options={tabIcon("person", "person-outline", iconSize)}
       />
     </Tab.Navigator>
   );
@@ -74,27 +75,43 @@ export function MainTabs() {
 
 function tabIcon(
   focusedIcon: keyof typeof Ionicons.glyphMap,
-  defaultIcon: keyof typeof Ionicons.glyphMap
+  defaultIcon: keyof typeof Ionicons.glyphMap,
+  size: number
 ): BottomTabNavigationOptions {
   return {
     tabBarIcon: ({ focused }) => (
       <Ionicons
         name={focused ? focusedIcon : defaultIcon}
-        size={26}
+        size={size}
         color={focused ? "#FF7A00" : "#B7B7B7"}
       />
     ),
   };
 }
 
-// ----------------------- DRAWER -----------------------
 export default function DrawerNavigation() {
+  const { width } = useWindowDimensions();
+
+  const drawerWidth = useMemo(() => {
+    if (width >= 768) return 360;
+    return Math.min(width * 0.82, 340);
+  }, [width]);
+
+  const swipeEdgeWidth = useMemo(() => {
+    if (width >= 768) return 250;
+    if (width >= 430) return 220;
+    return 180;
+  }, [width]);
+
   return (
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
         drawerType: "front",
-        swipeEdgeWidth: 200,
+        swipeEdgeWidth,
+        drawerStyle: {
+          width: drawerWidth,
+        },
       }}
       drawerContent={(props) => <CustomDrawer {...props} />}
     >

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   Image,
   Alert,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useLocalization } from "../../context/LocalizationContext";
@@ -25,11 +28,19 @@ interface UserWithStatus {
   invited?: boolean;
 }
 
+const DEFAULT_AVATAR = "https://via.placeholder.com/48";
+
 export default function InviteFriend() {
   const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const { user, token } = useAuth();
+  const { token } = useAuth();
+  const { width } = useWindowDimensions();
+
+  const isSmallDevice = width < 375;
+  const isTablet = width >= 768;
+
+  const horizontalPadding = isTablet ? 28 : isSmallDevice ? 12 : 16;
 
   const event = route.params?.event;
   const eventId = event?._id || route.params?.eventId;
@@ -40,9 +51,8 @@ export default function InviteFriend() {
   const [isSearching, setIsSearching] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  // Search users
   useEffect(() => {
-    if (!search.trim()) {
+    if (!search.trim() || !token) {
       setUsers([]);
       return;
     }
@@ -50,225 +60,300 @@ export default function InviteFriend() {
     const delayTimer = setTimeout(async () => {
       try {
         setIsSearching(true);
-        const results = await searchUsers(search, token!);
-        setUsers(results);
+        const results = await searchUsers(search.trim(), token);
+        setUsers(results || []);
       } catch (error) {
         console.log("Search error:", error);
       } finally {
         setIsSearching(false);
       }
-    }, 300);
+    }, 350);
 
     return () => clearTimeout(delayTimer);
   }, [search, token]);
 
-  // Toggle user selection
-  const toggleUser = (userId: string) => {
+  const toggleUser = useCallback((userId: string) => {
     setSelectedUsers((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
         : [...prev, userId]
     );
-  };
+  }, []);
 
-  // Send invitations
-  const handleInvite = async () => {
+  const handleInvite = useCallback(async () => {
     if (selectedUsers.length === 0) {
       Alert.alert("Error", "Please select at least one user to invite");
       return;
     }
 
     if (!eventId) {
-      Alert.alert("Error", t('inviteFriend.errorEventNotFound'));
+      Alert.alert("Error", t("inviteFriend.errorEventNotFound"));
       return;
     }
 
+    if (!token || isSending) return;
+
     try {
       setIsSending(true);
+
       await sendInvitation(
-        { userIds: selectedUsers, eventId },
-        token!
+        {
+          userIds: selectedUsers,
+          eventId,
+        },
+        token
       );
-      Alert.alert("Success", t('inviteFriend.invitationsSentSuccessfully'));
+
+      Alert.alert("Success", t("inviteFriend.invitationsSentSuccessfully"));
       setSelectedUsers([]);
       setSearch("");
       navigation.goBack();
     } catch (error) {
       console.log("Send invitation error:", error);
-      Alert.alert("Error", t('inviteFriend.failedToSendInvitations'));
+      Alert.alert("Error", t("inviteFriend.failedToSendInvitations"));
     } finally {
       setIsSending(false);
     }
-  };
+  }, [selectedUsers, eventId, token, isSending, navigation, t]);
+
+  const data = useMemo(() => users, [users]);
+
+  const renderUser = useCallback(
+    ({ item }: { item: UserWithStatus }) => {
+      const selected = selectedUsers.includes(item._id);
+
+      return (
+        <TouchableOpacity
+          onPress={() => toggleUser(item._id)}
+          className="flex-row items-center justify-between bg-gray-50 rounded-xl mb-3"
+          style={{
+            padding: isSmallDevice ? 12 : 16,
+          }}
+          disabled={isSending}
+          activeOpacity={0.75}
+        >
+          <View className="flex-row items-center flex-1">
+            <Image
+              source={{
+                uri: item.avatar || DEFAULT_AVATAR,
+              }}
+              className="rounded-full bg-gray-200"
+              style={{
+                width: isSmallDevice ? 42 : 48,
+                height: isSmallDevice ? 42 : 48,
+                marginRight: 12,
+              }}
+            />
+
+            <View className="flex-1">
+              <Text
+                numberOfLines={1}
+                className="font-semibold text-gray-900"
+                style={{
+                  fontSize: isSmallDevice ? 14 : 16,
+                }}
+              >
+                {item.name}
+              </Text>
+
+              <Text numberOfLines={1} className="text-gray-500 text-xs mt-1">
+                {item.email}
+              </Text>
+            </View>
+          </View>
+
+          <Ionicons
+            name={selected ? "checkmark-circle" : "checkmark-circle-outline"}
+            size={24}
+            color={selected ? "#FF7A00" : "#CCC"}
+          />
+        </TouchableOpacity>
+      );
+    },
+    [selectedUsers, toggleUser, isSmallDevice, isSending]
+  );
+
+  const emptyComponent = useCallback(() => {
+    if (isSearching) return null;
+
+    return (
+      <View className="items-center justify-center py-16 px-6">
+        <Ionicons name="person-add-outline" size={52} color="#D1D5DB" />
+
+        <Text
+          className="text-gray-500 text-center mt-3"
+          style={{
+            fontSize: isSmallDevice ? 13 : 14,
+          }}
+        >
+          {search.trim()
+            ? t("inviteFriend.noUsersFound")
+            : t("inviteFriend.searchForUsersToInvite")}
+        </Text>
+      </View>
+    );
+  }, [isSearching, search, t, isSmallDevice]);
 
   return (
-    <View className="flex-1 bg-white pt-14 px-4">
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-6">
-        <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={26} color="#111827" />
-        </TouchableOpacity>
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
+      >
+        <View
+          className="flex-1"
+          style={{
+            paddingHorizontal: horizontalPadding,
+            paddingTop: isSmallDevice ? 8 : 12,
+          }}
+        >
+          <View className="flex-row items-center justify-between mb-5">
+            <TouchableOpacity
+              className="p-1"
+              onPress={() => navigation.goBack()}
+              hitSlop={10}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={isTablet ? 32 : 26}
+                color="#111827"
+              />
+            </TouchableOpacity>
 
-        <Text className="text-xl font-semibold text-gray-900">
-          {t('inviteFriend.inviteFriend')}
-        </Text>
-
-        <View style={{ width: 26 }} />
-      </View>
-
-      {/* Event info */}
-      {event && (
-        <View className="bg-orange-50 rounded-lg p-3 mb-4">
-          <Text className="text-sm font-semibold text-gray-900">
-            {event.title}
-          </Text>
-          <Text className="text-xs text-gray-600 mt-1">
-            {event.location}
-          </Text>
-        </View>
-      )}
-
-      {/* Search bar */}
-      <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 h-12 mb-2">
-        <Ionicons name="search" size={20} color="#9CA3AF" />
-        <TextInput
-          placeholder={t('inviteFriend.searchUsers')}
-          placeholderTextColor="#9CA3AF"
-          value={search}
-          onChangeText={setSearch}
-          className="flex-1 ml-2 text-gray-900"
-          editable={!isSending}
-        />
-        {search && (
-          <TouchableOpacity onPress={() => setSearch("")}>
-            <Ionicons name="close" size={18} color="#9CA3AF" />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Suggestions Dropdown */}
-      {search && users.length > 0 && (
-        <View className="mb-4 bg-gray-50 rounded-2xl overflow-hidden">
-          <FlatList
-            data={users.slice(0, 5)}
-            scrollEnabled={false}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item, index }) => (
-              <>
-                <TouchableOpacity
-                  onPress={() => toggleUser(item._id)}
-                  className="px-4 py-3 flex-row items-center justify-between"
-                >
-                  <View className="flex-row items-center flex-1">
-                    <Image
-                      source={{
-                        uri: item.avatar || "https://via.placeholder.com/40",
-                      }}
-                      className="w-8 h-8 rounded-full mr-2"
-                    />
-                    <Text className="text-gray-700 flex-1" numberOfLines={1}>
-                      {item.name}
-                    </Text>
-                  </View>
-                  {selectedUsers.includes(item._id) && (
-                    <Ionicons name="checkmark-circle" size={18} color="#FF7A00" />
-                  )}
-                </TouchableOpacity>
-                {index < Math.min(4, users.length - 1) && (
-                  <View className="h-px bg-gray-200 mx-4" />
-                )}
-              </>
-            )}
-          />
-        </View>
-      )}
-
-      {/* Users list */}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {isSearching ? (
-          <View className="py-10 justify-center items-center">
-            <ActivityIndicator size="large" color="#FF7A00" />
-          </View>
-        ) : users.length > 0 ? (
-          <>
-            {/* Show remaining users if there are more than 5 and search is active */}
-            {search && users.length > 5 && (
-              <Text className="text-gray-600 text-xs mt-2 mb-2">
-                {t('inviteFriend.moreResultsBelow')}
-              </Text>
-            )}
-            {users.slice(search ? 5 : 0).map((u) => (
-              <TouchableOpacity
-                key={u._id}
-                onPress={() => toggleUser(u._id)}
-                className="flex-row items-center justify-between bg-gray-50 rounded-lg p-4 mb-3"
-                disabled={isSending}
-              >
-                <View className="flex-row items-center flex-1">
-                  <Image
-                    source={{
-                      uri: u.avatar || "https://via.placeholder.com/48",
-                    }}
-                    className="w-12 h-12 rounded-full mr-3"
-                  />
-                  <View className="flex-1">
-                    <Text className="font-semibold text-gray-900">
-                      {u.name}
-                    </Text>
-                    <Text className="text-gray-500 text-xs">
-                      {u.email}
-                    </Text>
-                  </View>
-                </View>
-
-                {selectedUsers.includes(u._id) ? (
-                  <Ionicons name="checkmark-circle" size={24} color="#FF7A00" />
-                ) : (
-                  <Ionicons
-                    name="checkmark-circle-outline"
-                    size={24}
-                    color="#CCC"
-                  />
-                )}
-              </TouchableOpacity>
-            ))}
-          </>
-        ) : search ? (
-          <View className="py-10 justify-center items-center">
-            <Text className="text-gray-500">{t('inviteFriend.noUsersFound')}</Text>
-          </View>
-        ) : (
-          <View className="py-10 justify-center items-center">
-            <Text className="text-gray-500">
-              {t('inviteFriend.searchForUsersToInvite')}
+            <Text
+              numberOfLines={1}
+              className="font-semibold text-gray-900 flex-1 text-center mx-3"
+              style={{
+                fontSize: isTablet ? 24 : isSmallDevice ? 18 : 20,
+              }}
+            >
+              {t("inviteFriend.inviteFriend")}
             </Text>
+
+            <View style={{ width: isTablet ? 32 : 26 }} />
+          </View>
+
+          {event && (
+            <View className="bg-orange-50 rounded-xl p-3 mb-4">
+              <Text
+                numberOfLines={1}
+                className="font-semibold text-gray-900"
+                style={{
+                  fontSize: isSmallDevice ? 13 : 14,
+                }}
+              >
+                {event.title}
+              </Text>
+
+              <Text numberOfLines={1} className="text-xs text-gray-600 mt-1">
+                {event.location}
+              </Text>
+            </View>
+          )}
+
+          <View
+            className="flex-row items-center bg-gray-100 rounded-2xl px-4 mb-3"
+            style={{
+              height: isSmallDevice ? 44 : 48,
+            }}
+          >
+            <Ionicons name="search" size={20} color="#9CA3AF" />
+
+            <TextInput
+              placeholder={t("inviteFriend.searchUsers")}
+              placeholderTextColor="#9CA3AF"
+              value={search}
+              onChangeText={setSearch}
+              className="flex-1 ml-2 text-gray-900"
+              style={{
+                fontSize: isSmallDevice ? 14 : 15,
+                paddingVertical: Platform.OS === "ios" ? 10 : 6,
+              }}
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!isSending}
+            />
+
+            {search.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setSearch("")}
+                hitSlop={10}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={18} color="#9CA3AF" />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {selectedUsers.length > 0 && (
+            <Text
+              className="text-orange-500 font-semibold mb-3"
+              style={{
+                fontSize: isSmallDevice ? 12 : 13,
+              }}
+            >
+              {selectedUsers.length} selected
+            </Text>
+          )}
+
+          {isSearching ? (
+            <View className="items-center justify-center py-10">
+              <ActivityIndicator size="large" color="#FF7A00" />
+            </View>
+          ) : (
+            <FlatList
+              data={data}
+              keyExtractor={(item) => item._id}
+              renderItem={renderUser}
+              ListEmptyComponent={emptyComponent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              removeClippedSubviews={Platform.OS === "android"}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={8}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom:
+                  selectedUsers.length > 0
+                    ? Platform.OS === "ios"
+                      ? 130
+                      : 110
+                    : Platform.OS === "ios"
+                    ? 90
+                    : 70,
+              }}
+            />
+          )}
+        </View>
+
+        {selectedUsers.length > 0 && (
+          <View className="bg-white border-t border-gray-200 p-4">
+            <TouchableOpacity
+              onPress={handleInvite}
+              disabled={isSending}
+              className="rounded-xl items-center justify-center"
+              activeOpacity={0.85}
+              style={{
+                height: isSmallDevice ? 48 : 52,
+                backgroundColor: isSending ? "#9CA3AF" : "#FF7A00",
+              }}
+            >
+              {isSending ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-white font-semibold text-center">
+                  Invite {selectedUsers.length} User
+                  {selectedUsers.length !== 1 ? "s" : ""}
+                </Text>
+              )}
+            </TouchableOpacity>
           </View>
         )}
-
-        <View className="h-20" />
-      </ScrollView>
-
-      {/* Invite button */}
-      {selectedUsers.length > 0 && (
-        <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-          <TouchableOpacity
-            onPress={handleInvite}
-            disabled={isSending}
-            className={`rounded-lg py-4 ${
-              isSending ? "bg-gray-400" : "bg-orange-500"
-            }`}
-          >
-            {isSending ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white font-semibold text-center">
-                Invite {selectedUsers.length} User
-                {selectedUsers.length !== 1 ? "s" : ""}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

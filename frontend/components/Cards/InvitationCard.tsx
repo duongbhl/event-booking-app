@@ -1,10 +1,8 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Avatar, Text } from "react-native-paper";
 import { useLocalization } from "../../context/LocalizationContext";
 import { InvitationCardProps } from "../Interface/InvitationCardProps";
-
-
 
 export const InvitationCard: React.FC<InvitationCardProps> = ({
   avatar,
@@ -16,39 +14,34 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   onReject,
 }) => {
   const { t } = useLocalization();
-  return (
-    <View className="bg-white rounded-2xl p-4 mb-3 shadow-sm flex-row">
-      {/* Avatar */}
-      <Avatar.Image source={{ uri: avatar }} size={48} />
+  const { width } = useWindowDimensions();
+  const isSmall = width < 360;
 
-      {/* Content */}
-      <View className="flex-1 ml-3">
-        <Text className="font-semibold text-[14px]">{name}</Text>
-        <Text className="text-gray-600 text-[12px] mt-1" numberOfLines={2}>
+  return (
+    <View className="bg-white rounded-2xl mb-3 shadow-sm flex-row" style={{ padding: isSmall ? 12 : 16 }}>
+      <Avatar.Image source={{ uri: avatar }} size={isSmall ? 40 : 48} />
+
+      <View className="flex-1 ml-3 min-w-0">
+        <View className="flex-row justify-between gap-2">
+          <Text className="font-semibold flex-1" numberOfLines={1} style={{ fontSize: isSmall ? 13 : 14 }}>{name}</Text>
+          <Text className="text-gray-400 shrink-0" style={{ fontSize: isSmall ? 9 : 10 }}>{time}</Text>
+        </View>
+        <Text className="text-gray-600 mt-1" numberOfLines={2} style={{ fontSize: isSmall ? 11 : 12 }}>
           {message}
         </Text>
 
         {type === "invite" && (
-          <View className="flex-row mt-3 space-x-2">
-            <TouchableOpacity
-              onPress={onReject}
-              className="px-4 py-1 rounded-lg border border-gray-300 mr-2"
-            >
-              <Text className="text-gray-600">{t('invitationCard.reject')}</Text>
+          <View className="flex-row flex-wrap mt-3 gap-2">
+            <TouchableOpacity onPress={onReject} className="rounded-lg border border-gray-300" style={{ paddingHorizontal: isSmall ? 12 : 16, paddingVertical: 6 }} activeOpacity={0.85}>
+              <Text className="text-gray-600" style={{ fontSize: isSmall ? 12 : 14 }}>{t('invitationCard.reject')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={onAccept}
-              className="px-4 py-1 rounded-lg bg-orange-500"
-            >
-              <Text className="text-white font-semibold">{t('invitationCard.accept')}</Text>
+            <TouchableOpacity onPress={onAccept} className="rounded-lg bg-orange-500" style={{ paddingHorizontal: isSmall ? 12 : 16, paddingVertical: 6 }} activeOpacity={0.85}>
+              <Text className="text-white font-semibold" style={{ fontSize: isSmall ? 12 : 14 }}>{t('invitationCard.accept')}</Text>
             </TouchableOpacity>
           </View>
         )}
       </View>
-
-      {/* Time */}
-      <Text className="text-gray-400 text-[10px] ml-2">{time}</Text>
     </View>
   );
 };

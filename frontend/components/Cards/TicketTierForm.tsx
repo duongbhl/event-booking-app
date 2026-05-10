@@ -7,6 +7,9 @@ import {
   ScrollView,
   Alert,
   Modal,
+  useWindowDimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalization } from "../../context/LocalizationContext";
@@ -28,6 +31,9 @@ export default function TicketTierForm({
   onTiersChange,
 }: TicketTierFormProps) {
   const { t } = useLocalization();
+  const { width } = useWindowDimensions();
+  const isSmall = width < 360;
+  const tierCardWidth = Math.min(Math.max(width * 0.46, 156), 210);
   const [showModal, setShowModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [formData, setFormData] = useState<ITicketTier>({
@@ -98,14 +104,14 @@ export default function TicketTierForm({
 
   return (
     <View className="mb-6">
-      <View className="flex-row justify-between items-center mb-3">
-        <Text className="font-semibold text-lg">{t('ticketTierForm.ticketTiers')} *</Text>
+      <View className="flex-row justify-between items-center mb-3 gap-2">
+        <Text className="font-semibold flex-1" style={{ fontSize: isSmall ? 16 : 18 }}>{t('ticketTierForm.ticketTiers')} *</Text>
         <TouchableOpacity
-          className="bg-orange-500 px-3 py-2 rounded-lg flex-row items-center"
+          className="bg-orange-500 rounded-lg flex-row items-center" style={{ paddingHorizontal: isSmall ? 10 : 12, paddingVertical: 8 }}
           onPress={() => handleOpenForm()}
         >
           <Ionicons name="add" size={18} color="white" />
-          <Text className="text-white ml-1 font-semibold">{t('ticketTierForm.addTier')}</Text>
+          <Text className="text-white ml-1 font-semibold" style={{ fontSize: isSmall ? 12 : 14 }}>{t('ticketTierForm.addTier')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -124,10 +130,11 @@ export default function TicketTierForm({
           {tiers.map((tier, index) => (
             <View
               key={index}
-              className="bg-white border border-gray-300 rounded-xl p-3 mr-3 w-48"
+              className="bg-white border border-gray-300 rounded-xl p-3 mr-3"
+              style={{ width: tierCardWidth }}
             >
               <View className="flex-row justify-between items-start mb-2">
-                <Text className="font-semibold text-base flex-1">
+                <Text className="font-semibold flex-1" style={{ fontSize: isSmall ? 14 : 16 }} numberOfLines={1}>
                   {tier.name}
                 </Text>
                 <TouchableOpacity
@@ -140,14 +147,14 @@ export default function TicketTierForm({
 
               <View className="mb-2">
                 <Text className="text-gray-600 text-sm">{t('ticketTierForm.price')}</Text>
-                <Text className="text-lg font-semibold text-black">
+                <Text className="font-semibold text-black" style={{ fontSize: isSmall ? 16 : 18 }}>
                   ${tier.price.toFixed(2)}
                 </Text>
               </View>
 
               <View className="mb-3">
                 <Text className="text-gray-600 text-sm">{t('ticketTierForm.quota')}</Text>
-                <Text className="text-lg font-semibold text-black">
+                <Text className="font-semibold text-black" style={{ fontSize: isSmall ? 16 : 18 }}>
                   {tier.quota} {t('ticketTierForm.tickets')}
                 </Text>
               </View>
@@ -170,8 +177,11 @@ export default function TicketTierForm({
         transparent={true}
         onRequestClose={() => setShowModal(false)}
       >
-        <View className="flex-1 bg-black/40 justify-end">
-          <View className="bg-white rounded-t-3xl p-5">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          className="flex-1 bg-black/40 justify-end"
+        >
+          <View className="bg-white rounded-t-3xl" style={{ padding: isSmall ? 16 : 20, maxHeight: "90%" }}>
             <View className="flex-row justify-between items-center mb-5">
               <Text className="text-xl font-semibold">
                 {editIndex !== null ? t('ticketTierFormModal.editTier') : t('ticketTierFormModal.addTier')}
@@ -241,7 +251,7 @@ export default function TicketTierForm({
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

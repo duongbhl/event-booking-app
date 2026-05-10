@@ -1,213 +1,153 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { useLocalization } from "../../context/LocalizationContext";
-import ActionBar from "../../components/Bars/ActionBar";
 import { formatDateTime } from "../../utils/utils";
-import { getMyBookmarks, toggleBookmark } from "../../services/bookmark.service";
+import {
+  getMyBookmarks,
+  toggleBookmark,
+} from "../../services/bookmark.service";
 import { useAuth } from "../../context/AuthContext";
 import { getMyTickets } from "../../services/ticket.service";
 import { createRoom } from "../../services/chat.service";
-import { getEvents, approveEvent, rejectEvent } from "../../services/event.service";
+import {
+  getEvents,
+  approveEvent,
+  rejectEvent,
+} from "../../services/event.service";
+import ActionBar from "../../components/Bars/ActionBar";
 
+const DEFAULT_AVATAR =
+  "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg";
 
 export default function EventDetails() {
   const { t } = useLocalization();
   const { token, user } = useAuth();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const { width } = useWindowDimensions();
 
-  let event = route.params?.event;
+  const isSmallDevice = width < 375;
+  const isTablet = width >= 768;
+
+  const horizontalPadding = isTablet ? 28 : isSmallDevice ? 12 : 16;
+  const bannerHeight = isTablet ? 360 : isSmallDevice ? 230 : 280;
+  const bottomButtonHeight = isSmallDevice ? 50 : 56;
+
+  const routeEvent = route.params?.event;
   const eventId = route.params?.eventId;
+
   const [fetchedEvent, setFetchedEvent] = useState<any>(null);
-  const [eventLoading, setEventLoading] = useState(!!eventId);
-
-  const displayEvent = event || fetchedEvent;
-  const isAdmin = user?.role === "admin";
-
-  const isOwnEvent = user && displayEvent?.organizer && displayEvent.organizer._id === user._id;
-  const isOutOfDate = displayEvent && new Date(displayEvent.date) < new Date();
+  const [eventLoading, setEventLoading] = useState(!!eventId && !routeEvent);
 
   const [myTickets, setMyTickets] = useState<any[]>([]);
-  const isBooked = myTickets.length > 0;
   const [loadingTicket, setLoadingTicket] = useState(true);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [approvingOrRejecting, setApprovingOrRejecting] = useState(false);
 
-  // Fetch event by ID if eventId is provided (from admin)
-  useEffect(() => {
-    if (eventId && !event) {
-      const fetchEventData = async () => {
-        try {
-          const events = await getEvents();
-          const data = events.find((e: any) => e._id === eventId);
-          setFetchedEvent(data);
-        } catch (error) {
-          console.log("Fetch event error:", error);
-          Alert.alert(t('common.error'), t('eventDetails.failedFetchEventDetails'));
-        } finally {
-          setEventLoading(false);
-        }
-      };
-      fetchEventData();
-    }
-  }, [eventId]);
+  const displayEvent = routeEvent || fetchedEvent;
 
+  const isAdmin = user?.role === "admin";
 
-
-  if (eventLoading) {
+  const isOwnEvent = useMemo(() => {
     return (
-      <SafeAreaView className="flex-1 bg-gray-100 justify-center items-center">
-        <ActivityIndicator size="large" color="#FF7A00" />
-        <Text className="mt-2 text-gray-600">{t('eventDetails.loadingEvent')}</Text>
-      </SafeAreaView>
+      !!user?._id &&
+      !!displayEvent?.organizer?._id &&
+      displayEvent.organizer._id === user._id
     );
-  }
+  }, [user?._id, displayEvent?.organizer?._id]);
 
-  if (!displayEvent) return null;
+  const isOutOfDate = useMemo(() => {
+    if (!displayEvent?.date) return false;
+    return new Date(displayEvent.date) < new Date();
+  }, [displayEvent?.date]);
 
-
-
-
-  const handleBooked = () => {
-    navigation.navigate("BuyTicket", {
-      eventId: displayEvent._id,
-      ticketTiers: displayEvent.ticketTiers || [],
-    } as never);
-  };
-
-  const handleApproveEvent = async () => {
-    setApprovingOrRejecting(true);
-    try {
-      const updatedEvent = await approveEvent(displayEvent._id);
-      setFetchedEvent(updatedEvent);
-      Alert.alert(t('common.success'), t('eventDetails.eventApprovedSuccess'));
-    } catch (error) {
-      Alert.alert(t('common.error'), t('eventDetails.failedApproveEvent'));
-      console.error(error);
-    } finally {
-      setApprovingOrRejecting(false);
-    }
-  };
-
-  const handleRejectEvent = async () => {
-    Alert.alert(
-      t('eventDetails.rejectEventTitle'),
-      t('eventDetails.rejectEventMessage'),
-      [
-        { text: t('common.cancel'), onPress: () => {} },
-        {
-          text: t('eventDetails.reject'),
-          onPress: async () => {
-            setApprovingOrRejecting(true);
-            try {
-              const updatedEvent = await rejectEvent(displayEvent._id);
-              setFetchedEvent(updatedEvent);
-              Alert.alert(t('common.success'), t('events.eventDeleted'));
-            } catch (error) {
-              Alert.alert(t('common.error'), t('eventDetails.failedRejectEvent'));
-              console.error(error);
-            } finally {
-              setApprovingOrRejecting(false);
-            }
-          },
-          style: "destructive",
-        },
-      ]
-    );
-  };
-
-  const handleViewTicket = () => {
-    navigation.navigate("Ticket", {
-      tickets: myTickets,
-    } as never);
-  };
-
-  const handleChatWithOrganizer = async () => {
-    if (!token || !displayEvent.organizer?._id) return;
-
-    try {
-      const room = await createRoom(
-        { memberIds: [displayEvent.organizer._id], isGroup: false },
-        token
-      );
-      navigation.navigate("Chat", { roomId: room._id, room });
-    } catch (error) {
-      console.log("Create chat room error:", error);
-      Alert.alert(t('common.error'), t('eventDetails.failedCreateChatRoom'));
-    }
-  };
-
-  const handleViewLocation = () => {
-    navigation.navigate("Location", {
-      address: displayEvent.location,
-      title: displayEvent.title,
-      coordinates: displayEvent.coordinates || null, // Pass coordinates if available
-    });
-  };
-
-
-
-  const handleToggleBookmark = async () => {
-    if (!token) return alert("Vui lòng đăng nhập");
-
-    const prev = isBookmarked;
-    setIsBookmarked(!prev);
-
-    try {
-      await toggleBookmark(displayEvent._id, token);
-      Alert.alert(
-        t('common.success'),
-        isBookmarked ? t('bookmark.removedFromFavorites') : t('bookmark.addedToFavorites')
-      );
-    } catch (e) {
-      setIsBookmarked(prev); // rollback
-      Alert.alert(t('common.error'), t('eventDetails.failedUpdateBookmark'));
-    }
-  };
-
+  const isBooked = myTickets.length > 0;
 
   useEffect(() => {
-    if (!token || isAdmin) return;
+    if (!eventId || routeEvent) {
+      setEventLoading(false);
+      return;
+    }
+
+    const fetchEventData = async () => {
+      try {
+        setEventLoading(true);
+
+        const events = await getEvents();
+        const data = events.find((item: any) => item._id === eventId);
+
+        setFetchedEvent(data || null);
+      } catch (error) {
+        console.log("Fetch event error:", error);
+        Alert.alert(
+          t("common.error"),
+          t("eventDetails.failedFetchEventDetails")
+        );
+      } finally {
+        setEventLoading(false);
+      }
+    };
+
+    fetchEventData();
+  }, [eventId, routeEvent, t]);
+
+  useEffect(() => {
+    if (!token || !displayEvent?._id || isAdmin) return;
 
     const fetchBookmarkStatus = async () => {
       try {
         const bookmarks = await getMyBookmarks(token);
 
         const found = bookmarks.find(
-          (b: any) => b.event?._id === displayEvent._id
+          (bookmark: any) => bookmark.event?._id === displayEvent._id
         );
 
         setIsBookmarked(!!found);
-      } catch (err) {
-        console.log("Fetch bookmark status error", err);
+      } catch (error) {
+        console.log("Fetch bookmark status error:", error);
       }
     };
 
     fetchBookmarkStatus();
-  }, [token, isAdmin]);
-
+  }, [token, displayEvent?._id, isAdmin]);
 
   useEffect(() => {
-    if (!token || !displayEvent?._id || isAdmin) return;
+    if (!token || !displayEvent?._id || isAdmin) {
+      setLoadingTicket(false);
+      return;
+    }
 
     const fetchMyTickets = async () => {
       try {
+        setLoadingTicket(true);
+
         const tickets = await getMyTickets(token);
 
         const matched = tickets.filter(
-          (t: any) =>
-            t.event?._id === displayEvent._id &&
-            t.paymentStatus === "paid"
+          (ticket: any) =>
+            ticket.event?._id === displayEvent._id &&
+            ticket.paymentStatus === "paid"
         );
 
         setMyTickets(matched);
-      } catch (err) {
-        console.log("Fetch tickets error", err);
+      } catch (error) {
+        console.log("Fetch tickets error:", error);
       } finally {
         setLoadingTicket(false);
       }
@@ -216,266 +156,650 @@ export default function EventDetails() {
     fetchMyTickets();
   }, [token, displayEvent?._id, isAdmin]);
 
+  const handleBooked = useCallback(() => {
+    if (!displayEvent?._id) return;
+
+    navigation.navigate("BuyTicket", {
+      eventId: displayEvent._id,
+      ticketTiers: displayEvent.ticketTiers || [],
+    });
+  }, [displayEvent?._id, displayEvent?.ticketTiers, navigation]);
+
+  const handleApproveEvent = useCallback(async () => {
+    if (!displayEvent?._id || approvingOrRejecting) return;
+
+    try {
+      setApprovingOrRejecting(true);
+
+      const updatedEvent = await approveEvent(displayEvent._id);
+      setFetchedEvent(updatedEvent);
+
+      Alert.alert(
+        t("common.success"),
+        t("eventDetails.eventApprovedSuccess")
+      );
+    } catch (error) {
+      console.log("Approve event error:", error);
+      Alert.alert(t("common.error"), t("eventDetails.failedApproveEvent"));
+    } finally {
+      setApprovingOrRejecting(false);
+    }
+  }, [displayEvent?._id, approvingOrRejecting, t]);
+
+  const handleRejectEvent = useCallback(() => {
+    if (!displayEvent?._id || approvingOrRejecting) return;
+
+    Alert.alert(
+      t("eventDetails.rejectEventTitle"),
+      t("eventDetails.rejectEventMessage"),
+      [
+        {
+          text: t("common.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("eventDetails.reject"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setApprovingOrRejecting(true);
+
+              const updatedEvent = await rejectEvent(displayEvent._id);
+              setFetchedEvent(updatedEvent);
+
+              Alert.alert(t("common.success"), t("events.eventDeleted"));
+            } catch (error) {
+              console.log("Reject event error:", error);
+              Alert.alert(
+                t("common.error"),
+                t("eventDetails.failedRejectEvent")
+              );
+            } finally {
+              setApprovingOrRejecting(false);
+            }
+          },
+        },
+      ]
+    );
+  }, [displayEvent?._id, approvingOrRejecting, t]);
+
+  const handleViewTicket = useCallback(() => {
+    navigation.navigate("Ticket", {
+      tickets: myTickets,
+    });
+  }, [navigation, myTickets]);
+
+  const handleChatWithOrganizer = useCallback(async () => {
+    if (!token || !displayEvent?.organizer?._id) return;
+
+    try {
+      const room = await createRoom(
+        {
+          memberIds: [displayEvent.organizer._id],
+          isGroup: false,
+        },
+        token
+      );
+
+      navigation.navigate("Chat", {
+        roomId: room._id,
+        room,
+      });
+    } catch (error) {
+      console.log("Create chat room error:", error);
+      Alert.alert(t("common.error"), t("eventDetails.failedCreateChatRoom"));
+    }
+  }, [token, displayEvent?.organizer?._id, navigation, t]);
+
+  const handleViewLocation = useCallback(() => {
+    if (!displayEvent) return;
+
+    navigation.navigate("Location", {
+      address: displayEvent.location,
+      title: displayEvent.title,
+      coordinates: displayEvent.coordinates || null,
+    });
+  }, [navigation, displayEvent]);
+
+  const handleToggleBookmark = useCallback(async () => {
+    if (!token) {
+      Alert.alert(t("common.error"), "Vui lòng đăng nhập");
+      return;
+    }
+
+    if (!displayEvent?._id || bookmarkLoading) return;
+
+    const previousValue = isBookmarked;
+
+    try {
+      setBookmarkLoading(true);
+      setIsBookmarked(!previousValue);
+
+      await toggleBookmark(displayEvent._id, token);
+
+      Alert.alert(
+        t("common.success"),
+        previousValue
+          ? t("bookmark.removedFromFavorites")
+          : t("bookmark.addedToFavorites")
+      );
+    } catch (error) {
+      console.log("Toggle bookmark error:", error);
+      setIsBookmarked(previousValue);
+      Alert.alert(t("common.error"), t("eventDetails.failedUpdateBookmark"));
+    } finally {
+      setBookmarkLoading(false);
+    }
+  }, [
+    token,
+    displayEvent?._id,
+    bookmarkLoading,
+    isBookmarked,
+    t,
+  ]);
+
+  if (eventLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-100 justify-center items-center">
+        <ActivityIndicator size="large" color="#FF7A00" />
+
+        <Text className="mt-2 text-gray-600">
+          {t("eventDetails.loadingEvent")}
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!displayEvent) {
+    return (
+      <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
+        <Ionicons name="alert-circle-outline" size={56} color="#FF7A00" />
+
+        <Text className="text-gray-900 font-semibold mt-4 text-center">
+          {t("eventDetails.failedFetchEventDetails")}
+        </Text>
+
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="bg-black px-5 py-3 rounded-xl mt-6"
+          activeOpacity={0.85}
+        >
+          <Text className="text-white font-semibold">{t("common.cancel")}</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  const lowestPrice =
+    displayEvent.ticketTiers && displayEvent.ticketTiers.length > 0
+      ? Math.min(...displayEvent.ticketTiers.map((tier: any) => tier.price || 0))
+      : displayEvent.price || 0;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
-      <ScrollView showsVerticalScrollIndicator={false}>
-
-        {/* 🔥 BANNER */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          paddingBottom: Platform.OS === "ios" ? 120 : 100,
+        }}
+      >
         <View className="relative">
           <Image
             source={{ uri: displayEvent.images }}
-            className="w-full h-72"
+            className="w-full bg-gray-200"
+            style={{
+              height: bannerHeight,
+            }}
+            resizeMode="cover"
           />
 
           <TouchableOpacity
-            className="absolute top-12 left-4 bg-white/30 w-10 h-10 rounded-full items-center justify-center"
+            className="absolute bg-black/35 rounded-full items-center justify-center"
+            style={{
+              top: isSmallDevice ? 16 : 20,
+              left: horizontalPadding,
+              width: isSmallDevice ? 38 : 42,
+              height: isSmallDevice ? 38 : 42,
+            }}
             onPress={() => navigation.goBack()}
+            activeOpacity={0.75}
+            hitSlop={10}
           >
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            className="absolute top-12 right-4 bg-white/30 w-10 h-10 rounded-full items-center justify-center"
-            onPress={handleToggleBookmark}
-            disabled={loading}
-          >
-            <Ionicons
-              name={isBookmarked ? "heart" : "heart-outline"}
-              size={24}
-              color={isBookmarked ? "red" : "white"}
-            />
-          </TouchableOpacity>
-
-
+          {!isAdmin && !isOwnEvent && (
+            <TouchableOpacity
+              className="absolute bg-black/35 rounded-full items-center justify-center"
+              style={{
+                top: isSmallDevice ? 16 : 20,
+                right: horizontalPadding,
+                width: isSmallDevice ? 38 : 42,
+                height: isSmallDevice ? 38 : 42,
+                opacity: bookmarkLoading ? 0.6 : 1,
+              }}
+              onPress={handleToggleBookmark}
+              disabled={bookmarkLoading}
+              activeOpacity={0.75}
+              hitSlop={10}
+            >
+              {bookmarkLoading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Ionicons
+                  name={isBookmarked ? "heart" : "heart-outline"}
+                  size={24}
+                  color={isBookmarked ? "#EF4444" : "white"}
+                />
+              )}
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* 🔥 ActionBar */}
-        {isBooked && <ActionBar eventId={displayEvent._id} />}
+        {isBooked && !isAdmin && (
+          <View style={{ marginTop: 12 }}>
+            <ActionBar eventId={displayEvent._id} />
+          </View>
+        )}
 
-        {/* 🔥 EVENT CARD */}
-        <View className={`bg-white mx-4 ${isBooked ? "mt-4" : "-mt-10"} rounded-3xl p-5 shadow`}>
-
-          {/* Title + Price */}
+        <View
+          className="bg-white rounded-3xl shadow"
+          style={{
+            marginHorizontal: horizontalPadding,
+            marginTop: isBooked && !isAdmin ? 14 : -36,
+            padding: isSmallDevice ? 16 : 20,
+            shadowColor: "#000",
+            shadowOpacity: 0.08,
+            shadowRadius: 8,
+            elevation: 4,
+          }}
+        >
           <View className="flex-row justify-between items-start">
-            <Text className="text-2xl font-semibold text-gray-900">
+            <Text
+              numberOfLines={3}
+              className="font-semibold text-gray-900 flex-1 mr-3"
+              style={{
+                fontSize: isTablet ? 26 : isSmallDevice ? 20 : 24,
+                lineHeight: isTablet ? 34 : isSmallDevice ? 27 : 31,
+              }}
+            >
               {displayEvent.title}
             </Text>
 
             {isBooked ? (
-              <View className="bg-orange-500 px-4 py-1 rounded-full">
-                <Text className="text-white font-semibold">{t('eventDetails.booked')}</Text>
-              </View>
+              <TouchableOpacity
+                onPress={handleViewTicket}
+                activeOpacity={0.75}
+                className="bg-orange-500 rounded-full"
+                style={{
+                  paddingHorizontal: isSmallDevice ? 10 : 14,
+                  paddingVertical: 6,
+                }}
+              >
+                <Text
+                  className="text-white font-semibold"
+                  style={{
+                    fontSize: isSmallDevice ? 12 : 13,
+                  }}
+                >
+                  {t("eventDetails.booked")}
+                </Text>
+              </TouchableOpacity>
             ) : (
-              <View className="bg-orange-100 px-4 py-1 rounded-full">
-                <Text className="text-orange-500 font-semibold">
-                  ${displayEvent.price} USD
+              <View
+                className="bg-orange-100 rounded-full"
+                style={{
+                  paddingHorizontal: isSmallDevice ? 10 : 14,
+                  paddingVertical: 6,
+                }}
+              >
+                <Text
+                  className="text-orange-500 font-semibold"
+                  style={{
+                    fontSize: isSmallDevice ? 12 : 13,
+                  }}
+                >
+                  ${lowestPrice} USD
                 </Text>
               </View>
             )}
           </View>
 
-          {/* Location + Date */}
-          <View className="mt-3 gap-3">
-            <TouchableOpacity 
+          <View className="mt-4" style={{ gap: 12 }}>
+            <TouchableOpacity
               onPress={handleViewLocation}
-              className="flex-row items-center gap-2"
+              className="flex-row items-center"
+              activeOpacity={0.75}
             >
               <Ionicons name="location" size={18} color="#F97316" />
-              <Text className="text-orange-600 font-semibold underline flex-1">{displayEvent.location}</Text>
+
+              <Text
+                numberOfLines={2}
+                className="text-orange-600 font-semibold underline flex-1 ml-2"
+                style={{ fontSize: isSmallDevice ? 13 : 14 }}
+              >
+                {displayEvent.location}
+              </Text>
+
               <Ionicons name="chevron-forward" size={18} color="#F97316" />
             </TouchableOpacity>
 
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center">
               <Ionicons name="calendar" size={18} color="#F97316" />
-              <Text className="text-gray-600">
+
+              <Text
+                numberOfLines={2}
+                className="text-gray-600 ml-2 flex-1"
+                style={{ fontSize: isSmallDevice ? 13 : 14 }}
+              >
                 {formatDateTime(displayEvent.date)}
               </Text>
             </View>
-          </View>
 
-          {/* Members */}
-          <View className="flex-row items-center gap-2">
-              <Ionicons name="people" size={18} color="#F97316" />
-              <Text className="text-gray-700 font-medium">
-                {displayEvent.attendees || 0}+ {t('eventDetails.membersJoined')}
-              </Text>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center flex-1">
+                <Ionicons name="people" size={18} color="#F97316" />
+
+                <Text
+                  numberOfLines={1}
+                  className="text-gray-700 font-medium ml-2 flex-1"
+                  style={{ fontSize: isSmallDevice ? 13 : 14 }}
+                >
+                  {displayEvent.attendees || 0}+{" "}
+                  {t("eventDetails.membersJoined")}
+                </Text>
+              </View>
+
+              {!isOwnEvent && !isAdmin && (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("InviteFriend", {
+                      event: displayEvent,
+                    })
+                  }
+                  disabled={isOutOfDate}
+                  activeOpacity={0.75}
+                  style={{
+                    opacity: isOutOfDate ? 0.5 : 1,
+                  }}
+                >
+                  <Text
+                    className={`font-semibold ${
+                      isOutOfDate ? "text-gray-400" : "text-orange-500"
+                    }`}
+                    style={{ fontSize: isSmallDevice ? 13 : 14 }}
+                  >
+                    {isOutOfDate
+                      ? t("eventDetails.eventEnded")
+                      : t("eventDetails.invite")}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
-
-            <TouchableOpacity 
-              onPress={() => navigation.navigate("InviteFriend" as never, {event: displayEvent} as never)}
-              disabled={isOwnEvent || isOutOfDate}
-              style={{ opacity: isOwnEvent || isOutOfDate ? 0.5 : 1 }}
-            >
-              <Text className={`font-semibold ${isOwnEvent || isOutOfDate ? "text-gray-400" : "text-orange-500"}`}>
-                {isOutOfDate ? t('eventDetails.eventEnded') : t('eventDetails.invite')}
-              </Text>
-            </TouchableOpacity>
           </View>
 
-          {/* Organizer */}
           <View className="mt-6 flex-row items-center justify-between bg-orange-50 rounded-xl p-3">
-            <TouchableOpacity 
+            <TouchableOpacity
               className="flex-row items-center flex-1"
-              onPress={() => navigation.navigate("OrganizerProfile", { organizer: displayEvent.organizer })}
+              onPress={() =>
+                navigation.navigate("OrganizerProfile", {
+                  organizer: displayEvent.organizer,
+                })
+              }
+              activeOpacity={0.75}
             >
               <Image
-                source={{ uri: displayEvent.organizer?.avatar || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" }}
-                className="w-12 h-12 rounded-full"
-                defaultSource={{ uri: "https://i.pravatar.cc/100?img=12" }}
+                source={{
+                  uri: displayEvent.organizer?.avatar || DEFAULT_AVATAR,
+                }}
+                className="rounded-full bg-gray-200"
+                style={{
+                  width: isSmallDevice ? 44 : 50,
+                  height: isSmallDevice ? 44 : 50,
+                }}
               />
-              <View className="ml-3">
-                <Text className="font-semibold text-gray-800">
+
+              <View className="ml-3 flex-1">
+                <Text
+                  numberOfLines={1}
+                  className="font-semibold text-gray-800"
+                  style={{ fontSize: isSmallDevice ? 14 : 15 }}
+                >
                   {displayEvent.organizer?.name || "Unknown Organizer"}
                 </Text>
-                <Text className="text-gray-500 text-sm">
-                  {t('eventDetails.eventOrganizer')}
+
+                <Text
+                  numberOfLines={1}
+                  className="text-gray-500"
+                  style={{ fontSize: isSmallDevice ? 12 : 13 }}
+                >
+                  {t("eventDetails.eventOrganizer")}
                 </Text>
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              className="bg-white w-10 h-10 rounded-full items-center justify-center shadow"
-              onPress={handleChatWithOrganizer}
-            >
-              <Ionicons name="chatbubble-outline" size={22} color="#555" />
-            </TouchableOpacity>
+            {!isOwnEvent && !isAdmin && (
+              <TouchableOpacity
+                className="bg-white rounded-full items-center justify-center shadow"
+                style={{
+                  width: isSmallDevice ? 38 : 42,
+                  height: isSmallDevice ? 38 : 42,
+                }}
+                onPress={handleChatWithOrganizer}
+                activeOpacity={0.75}
+              >
+                <Ionicons name="chatbubble-outline" size={22} color="#555" />
+              </TouchableOpacity>
+            )}
           </View>
 
-          {/* Description */}
           <View className="mt-6">
-            <Text className="font-semibold text-lg">{t('eventDetails.description')}</Text>
-            <Text className="text-gray-600 mt-2 leading-6">
-              {displayEvent.description || t('eventDetails.noDescription')}
+            <Text
+              className="font-semibold text-gray-900"
+              style={{ fontSize: isSmallDevice ? 17 : 18 }}
+            >
+              {t("eventDetails.description")}
+            </Text>
+
+            <Text
+              className="text-gray-600 mt-2 leading-6"
+              style={{ fontSize: isSmallDevice ? 13 : 14 }}
+            >
+              {displayEvent.description || t("eventDetails.noDescription")}
             </Text>
           </View>
 
-          {/* Ticket Tiers */}
-          {displayEvent.ticketTiers && displayEvent.ticketTiers.length > 0 && (
-            <View className="mt-6">
-              <Text className="font-semibold text-lg mb-3">{t('eventDetails.ticketTiers')}</Text>
-              <View className="flex-row flex-wrap">
-                {displayEvent.ticketTiers.map(
-                  (tier: any, index: number) => {
-                    const available = tier.quota - tier.sold;
-                    const isSoldOut = available <= 0;
-                    return (
-                      <View
-                        key={index}
-                        className={`flex-1 min-w-48 mr-2 mb-2 p-3 rounded-xl border-2 ${
-                          isSoldOut
-                            ? "border-gray-300 bg-gray-100"
-                            : "border-orange-500 bg-orange-50"
-                        }`}
-                      >
-                        <Text className="font-semibold text-lg text-gray-900">
-                          {tier.name}
-                        </Text>
-                        <Text className="text-orange-600 font-bold mt-1">
-                          ${tier.price.toFixed(2)}
-                        </Text>
-                        <Text
-                          className={`text-sm mt-1 ${
-                            isSoldOut ? "text-red-600" : "text-gray-600"
+          {displayEvent.ticketTiers &&
+            displayEvent.ticketTiers.length > 0 && (
+              <View className="mt-6">
+                <Text
+                  className="font-semibold text-gray-900 mb-3"
+                  style={{ fontSize: isSmallDevice ? 17 : 18 }}
+                >
+                  {t("eventDetails.ticketTiers")}
+                </Text>
+
+                <View className="flex-row flex-wrap" style={{ gap: 10 }}>
+                  {displayEvent.ticketTiers.map(
+                    (tier: any, index: number) => {
+                      const available = Number(tier.quota || 0) - Number(tier.sold || 0);
+                      const isSoldOut = available <= 0;
+
+                      return (
+                        <View
+                          key={`${tier.name}-${index}`}
+                          className={`rounded-xl border-2 ${
+                            isSoldOut
+                              ? "border-gray-300 bg-gray-100"
+                              : "border-orange-500 bg-orange-50"
                           }`}
+                          style={{
+                            width: isTablet ? "31%" : "48%",
+                            padding: isSmallDevice ? 10 : 12,
+                          }}
                         >
-                          {isSoldOut
-                            ? t('eventDetails.soldOut')
-                            : `${available}/${tier.quota} ${t('eventDetails.available')}`}
-                        </Text>
-                      </View>
-                    );
-                  }
-                )}
+                          <Text
+                            numberOfLines={1}
+                            className="font-semibold text-gray-900"
+                            style={{ fontSize: isSmallDevice ? 14 : 16 }}
+                          >
+                            {tier.name}
+                          </Text>
+
+                          <Text
+                            className="text-orange-600 font-bold mt-1"
+                            style={{ fontSize: isSmallDevice ? 13 : 14 }}
+                          >
+                            ${Number(tier.price || 0).toFixed(2)}
+                          </Text>
+
+                          <Text
+                            className={`mt-1 ${
+                              isSoldOut ? "text-red-600" : "text-gray-600"
+                            }`}
+                            style={{ fontSize: isSmallDevice ? 11 : 12 }}
+                          >
+                            {isSoldOut
+                              ? t("eventDetails.soldOut")
+                              : `${available}/${tier.quota} ${t(
+                                  "eventDetails.available"
+                                )}`}
+                          </Text>
+                        </View>
+                      );
+                    }
+                  )}
+                </View>
               </View>
-            </View>
-          )}
-        {/* </View> */}
+            )}
+        </View>
       </ScrollView>
 
-      {/* 🔥 Bottom Button */}
-      <View className="px-6 pb-10">
+      <View
+        className="bg-white border-t border-gray-100"
+        style={{
+          paddingHorizontal: horizontalPadding,
+          paddingTop: 12,
+          paddingBottom: Platform.OS === "ios" ? 24 : 16,
+        }}
+      >
         {isAdmin ? (
-          // Admin approve/reject buttons
           displayEvent.approvalStatus === "PENDING" ? (
-            <View className="flex-row gap-3">
+            <View className="flex-row" style={{ gap: 10 }}>
               <TouchableOpacity
-                className="flex-1 bg-green-500 rounded-2xl py-4 flex-row items-center justify-center"
+                className="flex-1 bg-green-500 rounded-2xl flex-row items-center justify-center"
+                style={{ height: bottomButtonHeight }}
                 onPress={handleApproveEvent}
                 disabled={approvingOrRejecting}
+                activeOpacity={0.85}
               >
                 {approvingOrRejecting ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
                   <>
                     <Ionicons name="checkmark-circle" size={22} color="white" />
-                    <Text className="text-white text-lg font-semibold ml-2">{t('eventDetails.approve')}</Text>
+                    <Text className="text-white font-semibold ml-2">
+                      {t("eventDetails.approve")}
+                    </Text>
                   </>
                 )}
               </TouchableOpacity>
+
               <TouchableOpacity
-                className="flex-1 bg-red-500 rounded-2xl py-4 flex-row items-center justify-center"
+                className="flex-1 bg-red-500 rounded-2xl flex-row items-center justify-center"
+                style={{ height: bottomButtonHeight }}
                 onPress={handleRejectEvent}
                 disabled={approvingOrRejecting}
+                activeOpacity={0.85}
               >
                 {approvingOrRejecting ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
                   <>
                     <Ionicons name="close-circle" size={22} color="white" />
-                    <Text className="text-white text-lg font-semibold ml-2">{t('eventDetails.reject')}</Text>
+                    <Text className="text-white font-semibold ml-2">
+                      {t("eventDetails.reject")}
+                    </Text>
                   </>
                 )}
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity className="bg-gray-400 rounded-2xl py-4 items-center" disabled>
-              <Text className="text-white text-lg font-semibold">
-                {displayEvent.approvalStatus === "ACCEPTED" ? t('eventDetails.approved') : t('eventDetails.rejected')}
+            <TouchableOpacity
+              className="bg-gray-400 rounded-2xl items-center justify-center"
+              style={{ height: bottomButtonHeight }}
+              disabled
+            >
+              <Text className="text-white font-semibold">
+                {displayEvent.approvalStatus === "ACCEPTED"
+                  ? t("eventDetails.approved")
+                  : t("eventDetails.rejected")}
               </Text>
             </TouchableOpacity>
           )
         ) : isOwnEvent ? (
-          <TouchableOpacity 
-            className="bg-orange-500 rounded-2xl py-4 items-center"
-            onPress={() => navigation.navigate("CheckIn", {
-              eventId: displayEvent._id,
-              eventTitle: displayEvent.title
-            })}
+          <TouchableOpacity
+            className="bg-orange-500 rounded-2xl flex-row items-center justify-center"
+            style={{ height: bottomButtonHeight }}
+            onPress={() =>
+              navigation.navigate("CheckIn", {
+                eventId: displayEvent._id,
+                eventTitle: displayEvent.title,
+              })
+            }
+            activeOpacity={0.85}
           >
-            <View className="flex-row items-center justify-center">
-              <Ionicons name="qr-code" size={22} color="white" />
-              <Text className="text-white text-lg font-semibold ml-2">{t('eventDetails.checkInTickets')}</Text>
-            </View>
+            <Ionicons name="qr-code" size={22} color="white" />
+            <Text className="text-white font-semibold ml-2">
+              {t("eventDetails.checkInTickets")}
+            </Text>
           </TouchableOpacity>
+        ) : loadingTicket ? (
+          <View
+            className="bg-gray-300 rounded-2xl items-center justify-center"
+            style={{ height: bottomButtonHeight }}
+          >
+            <ActivityIndicator color="white" />
+          </View>
         ) : isBooked ? (
-          // Show Buy More button when already booked
-          <TouchableOpacity 
-            className="bg-black rounded-2xl py-4 flex-row items-center justify-center"
+          <TouchableOpacity
+            className="bg-black rounded-2xl flex-row items-center justify-center"
+            style={{
+              height: bottomButtonHeight,
+              opacity: isOutOfDate ? 0.5 : 1,
+            }}
             onPress={handleBooked}
             disabled={isOutOfDate}
-            style={{ opacity: isOutOfDate ? 0.5 : 1 }}
+            activeOpacity={0.85}
           >
             <Ionicons name="add-circle-outline" size={22} color="white" />
-            <Text className="text-white text-lg font-semibold ml-2">
-              {isOutOfDate ? t('eventDetails.eventEnded') : t('eventDetails.buyMore')}
+            <Text className="text-white font-semibold ml-2">
+              {isOutOfDate
+                ? t("eventDetails.eventEnded")
+                : t("eventDetails.buyMore")}
             </Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity 
-            className="bg-black rounded-2xl py-4 flex-row items-center justify-center" 
+          <TouchableOpacity
+            className="bg-black rounded-2xl flex-row items-center justify-center"
+            style={{
+              height: bottomButtonHeight,
+              opacity: isOutOfDate ? 0.5 : 1,
+            }}
             onPress={handleBooked}
             disabled={isOutOfDate}
-            style={{ opacity: isOutOfDate ? 0.5 : 1 }}
+            activeOpacity={0.85}
           >
             <Ionicons name="ticket-outline" size={22} color="white" />
-            <Text className="text-white text-lg font-semibold ml-2">
-              {isOutOfDate ? t('eventDetails.eventEnded') : t('eventDetails.buyTicket')}
+            <Text className="text-white font-semibold ml-2">
+              {isOutOfDate
+                ? t("eventDetails.eventEnded")
+                : t("eventDetails.buyTicket")}
             </Text>
           </TouchableOpacity>
         )}
       </View>
-
     </SafeAreaView>
   );
 }

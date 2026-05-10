@@ -1,253 +1,326 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Image,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  FlatList,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
-import { getMessages, sendMessage, markRoomAsRead } from "../../services/chat.service";
+import {
+  getMessages,
+  sendMessage,
+  markRoomAsRead,
+} from "../../services/chat.service";
+
+const DEFAULT_AVATAR = "https://via.placeholder.com/48";
 
 export default function Chat() {
   const { t } = useLocalization();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { user, token } = useAuth();
+  const { width } = useWindowDimensions();
+
+  const isSmallDevice = width < 375;
+  const isTablet = width >= 768;
 
   const roomId = route.params?.roomId;
   const initialRoom = route.params?.room;
+
+  const listRef = useRef<FlatList<any>>(null);
 
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const scrollViewRef = useRef<ScrollView>(null);
 
-  // Get other member from room
-  const otherMember = initialRoom?.members?.find((m: any) => m._id !== user?._id);
+  const otherMember = useMemo(() => {
+    return initialRoom?.members?.find((m: any) => m._id !== user?._id);
+  }, [initialRoom, user?._id]);
 
-  // Fetch messages
-  useEffect(() => {
+  const fetchMessages = useCallback(async () => {
     if (!roomId || !token) return;
 
-    const fetchMessages = async () => {
-      try {
-        setLoading(true);
-        const data = await getMessages(roomId, token);
-        // Sort messages chronologically (oldest first)
-        const sorted = data.sort(
-          (a: any, b: any) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        setMessages(sorted);
-        
-        // Mark room as read
-        await markRoomAsRead(roomId, token);
-      } catch (error) {
-        console.log("Fetch messages error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
 
-    fetchMessages();
+      const data = await getMessages(roomId, token);
+      const sorted = data.sort(
+        (a: any, b: any) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+
+      setMessages(sorted);
+      await markRoomAsRead(roomId, token);
+    } catch (error) {
+      console.log("Fetch messages error:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [roomId, token]);
 
-  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
+
   useEffect(() => {
     if (messages.length > 0) {
       setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+        listRef.current?.scrollToEnd({ animated: true });
+      }, 80);
     }
-  }, [messages]);
+  }, [messages.length]);
 
-  // Send message
-  const handleSendMessage = async () => {
-    if (!input.trim() || !roomId || !token) return;
+  const handleSendMessage = useCallback(async () => {
+    const content = input.trim();
+
+    if (!content || !roomId || !token || sending) return;
 
     try {
       setSending(true);
-      const messageText = input;
       setInput("");
 
       const newMessage = await sendMessage(
         roomId,
-        { content: messageText, type: "text" },
+        { content, type: "text" },
         token
       );
 
       setMessages((prev) => [...prev, newMessage]);
     } catch (error) {
       console.log("Send message error:", error);
-      setInput(input); // Restore input on error
+      setInput(content);
     } finally {
       setSending(false);
     }
-  };
+  }, [input, roomId, token, sending]);
+
+  const renderMessage = useCallback(
+    ({ item }: { item: any }) => {
+      const isOwnMessage = String(item.sender?._id) === user?._id;
+
+      const isSeen =
+        item.readBy &&
+        item.readBy.some((reader: any) => {
+          if (typeof reader === "string") {
+            return reader === otherMember?._id;
+          }
+
+          return String(reader._id) === otherMember?._id;
+        });
+
+      return (
+        <View style={{ marginBottom: 14 }}>
+          <Text
+            className={`text-xs text-gray-400 mb-1 ${
+              isOwnMessage ? "text-right" : "text-left"
+            }`}
+          >
+            {new Date(item.createdAt).toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Text>
+
+          <View
+            className={`flex-row items-end ${
+              isOwnMessage ? "self-end" : "self-start"
+            }`}
+          >
+            <View
+              className={`px-4 py-2 rounded-2xl ${
+                isOwnMessage
+                  ? "bg-orange-500 rounded-br-none"
+                  : "bg-gray-100 rounded-bl-none"
+              }`}
+              style={{
+                maxWidth: isTablet ? "65%" : "80%",
+              }}
+            >
+              <Text
+                className={isOwnMessage ? "text-white" : "text-gray-800"}
+                style={{
+                  fontSize: isSmallDevice ? 14 : 15,
+                  lineHeight: isSmallDevice ? 19 : 21,
+                }}
+              >
+                {item.content}
+              </Text>
+            </View>
+
+            {isOwnMessage && isSeen && otherMember && (
+              <View className="ml-2 flex-row items-center">
+                <Image
+                  source={{
+                    uri: otherMember.avatar || DEFAULT_AVATAR,
+                  }}
+                  className="rounded-full"
+                  style={{
+                    width: isSmallDevice ? 20 : 24,
+                    height: isSmallDevice ? 20 : 24,
+                  }}
+                />
+                <View className="w-3 h-3 rounded-full bg-green-500 -ml-1 -mb-1 border border-white" />
+              </View>
+            )}
+          </View>
+        </View>
+      );
+    },
+    [user?._id, otherMember, isSmallDevice, isTablet]
+  );
+
+  const emptyComponent = useCallback(() => {
+    return (
+      <View className="items-center justify-center py-20 px-6">
+        <Ionicons name="chatbubble-ellipses-outline" size={52} color="#D1D5DB" />
+        <Text className="text-center text-gray-400 text-sm mt-3">
+          No messages yet. Start the conversation!
+        </Text>
+      </View>
+    );
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* HEADER */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
-        <View className="flex-row items-center">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
-            <Ionicons name="chevron-back" size={28} color="#111" />
-          </TouchableOpacity>
-
-          {/* Avatar + Info */}
-          {otherMember && (
-            <>
-              <Image
-                source={{
-                  uri: otherMember.avatar || "https://via.placeholder.com/48",
-                }}
-                className="w-12 h-12 rounded-full"
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
+      >
+        <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
+          <View className="flex-row items-center flex-1">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="mr-3"
+              hitSlop={10}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={isTablet ? 32 : 28}
+                color="#111"
               />
+            </TouchableOpacity>
 
-              <View className="ml-3">
-                <Text className="font-semibold text-gray-800 text-[16px]">
-                  {otherMember.name}
-                </Text>
-                <Text className="text-gray-500 text-xs">
-                  {otherMember.email}
-                </Text>
-              </View>
-            </>
-          )}
-        </View>
+            {otherMember && (
+              <>
+                <Image
+                  source={{
+                    uri: otherMember.avatar || DEFAULT_AVATAR,
+                  }}
+                  className="rounded-full bg-gray-200"
+                  style={{
+                    width: isSmallDevice ? 40 : 48,
+                    height: isSmallDevice ? 40 : 48,
+                  }}
+                />
 
-        <TouchableOpacity>
-          <Ionicons name="search" size={22} color="#555" />
-        </TouchableOpacity>
-      </View>
-
-      {/* CHAT AREA */}
-      {loading ? (
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#FF7A00" />
-        </View>
-      ) : (
-        <ScrollView
-          ref={scrollViewRef}
-          className="flex-1 px-4 py-3"
-          scrollEnabled={true}
-          onContentSizeChange={() =>
-            scrollViewRef.current?.scrollToEnd({ animated: false })
-          }
-        >
-          {messages.length === 0 ? (
-            <View className="flex-1 justify-center items-center py-10">
-              <Text className="text-center text-gray-400 text-sm">
-                No messages yet. Start the conversation!
-              </Text>
-            </View>
-          ) : (
-            messages.map((msg) => {
-              // Check if message is from current user and has been seen by other member
-              const isOwnMessage = String(msg.sender?._id) === user?._id;
-              // readBy can be array of IDs (strings) or populated objects
-              const isSeen = msg.readBy && msg.readBy.some((reader: any) => {
-                if (typeof reader === 'string') {
-                  return reader === otherMember?._id;
-                } else {
-                  return String(reader._id) === otherMember?._id;
-                }
-              });
-
-              return (
-                <View key={msg._id} className="mb-4">
-                  {/* Time */}
+                <View className="ml-3 flex-1">
                   <Text
-                    className={`text-xs text-gray-400 mb-1 ${
-                      isOwnMessage ? "text-right" : "text-left"
-                    }`}
+                    numberOfLines={1}
+                    className="font-semibold text-gray-800"
+                    style={{
+                      fontSize: isSmallDevice ? 14 : 16,
+                    }}
                   >
-                    {new Date(msg.createdAt).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {otherMember.name}
                   </Text>
 
-                  {/* BUBBLE WITH SEEN INDICATOR */}
-                  <View
-                    className={`flex-row items-flex-end ${
-                      isOwnMessage ? "self-end" : "self-start"
-                    }`}
+                  <Text
+                    numberOfLines={1}
+                    className="text-gray-500 text-xs"
                   >
-                    <View
-                      className={`max-w-[80%] px-4 py-2 rounded-2xl ${
-                        isOwnMessage
-                          ? "bg-orange-500 rounded-br-none"
-                          : "bg-gray-100 rounded-bl-none"
-                      }`}
-                    >
-                      <Text
-                        className={`${
-                          isOwnMessage ? "text-white" : "text-gray-800"
-                        } text-[15px]`}
-                      >
-                        {msg.content}
-                      </Text>
-                    </View>
-
-                    {/* SEEN INDICATOR - Show avatar if own message and seen */}
-                    {isOwnMessage && isSeen && otherMember && (
-                      <View className="ml-2 flex-row items-center">
-                        <Image
-                          source={{
-                            uri: otherMember.avatar || "https://via.placeholder.com/24",
-                          }}
-                          className="w-6 h-6 rounded-full"
-                        />
-                        <View className="w-3 h-3 rounded-full bg-green-500 -ml-1 -mb-1 border border-white" />
-                      </View>
-                    )}
-                  </View>
+                    {otherMember.email}
+                  </Text>
                 </View>
-              );
-            })
-          )}
+              </>
+            )}
+          </View>
 
-          <View className="h-10" />
-        </ScrollView>
-      )}
+          <TouchableOpacity hitSlop={10} activeOpacity={0.7}>
+            <Ionicons name="search" size={22} color="#555" />
+          </TouchableOpacity>
+        </View>
 
-      {/* INPUT BAR */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={10}
-      >
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#FF7A00" />
+          </View>
+        ) : (
+          <FlatList
+            ref={listRef}
+            data={messages}
+            keyExtractor={(item) => item._id}
+            renderItem={renderMessage}
+            ListEmptyComponent={emptyComponent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            removeClippedSubviews={Platform.OS === "android"}
+            initialNumToRender={12}
+            maxToRenderPerBatch={12}
+            windowSize={10}
+            onContentSizeChange={() =>
+              listRef.current?.scrollToEnd({ animated: false })
+            }
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingHorizontal: isSmallDevice ? 12 : 16,
+              paddingTop: 12,
+              paddingBottom: 18,
+            }}
+          />
+        )}
+
         <View className="flex-row items-center bg-white px-4 py-3 border-t border-gray-200">
-          <View className="flex-1 bg-gray-100 rounded-2xl px-4 py-3">
+          <View className="flex-1 bg-gray-100 rounded-2xl px-4 justify-center">
             <TextInput
               value={input}
               onChangeText={setInput}
-              placeholder={t('chatPage.writeReply')}
+              placeholder={t("chatPage.writeReply")}
               placeholderTextColor="#888"
               className="text-gray-800"
+              style={{
+                minHeight: isSmallDevice ? 42 : 46,
+                maxHeight: 110,
+                fontSize: isSmallDevice ? 14 : 15,
+                paddingVertical: Platform.OS === "ios" ? 10 : 6,
+              }}
+              multiline
               editable={!sending}
+              returnKeyType="default"
             />
           </View>
 
-
-          <TouchableOpacity className="ml-3 mr-3" disabled={sending}>
+          <TouchableOpacity
+            className="ml-3"
+            disabled={sending}
+            hitSlop={10}
+            activeOpacity={0.7}
+          >
             <Ionicons name="attach-outline" size={26} color="#777" />
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleSendMessage}
             disabled={!input.trim() || sending}
-            className={input.trim() && !sending ? "" : "opacity-50"}
+            className="ml-3"
+            hitSlop={10}
+            activeOpacity={0.7}
+            style={{
+              opacity: input.trim() && !sending ? 1 : 0.45,
+            }}
           >
             {sending ? (
               <ActivityIndicator size="small" color="#FF6B00" />

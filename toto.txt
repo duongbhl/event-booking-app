@@ -3,6 +3,8 @@ gg-map removed
 
 //
 responsive(ipad, android)
+-registration: button middle
+
 settings(theme, account, privacy)
 
 

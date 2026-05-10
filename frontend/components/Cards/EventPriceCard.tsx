@@ -1,4 +1,5 @@
-import { View, Text, Image } from "react-native";
+import React from "react";
+import { View, Text, Image, useWindowDimensions } from "react-native";
 import { Button } from "react-native-paper";
 import { useLocalization } from "../../context/LocalizationContext";
 import { EventCardProps } from "../Interface/EventCardProps";
@@ -10,43 +11,47 @@ export default function EventPriceCard({ ...event }: EventCardProps) {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
   const { t } = useLocalization();
+  const { width } = useWindowDimensions();
+  const isSmall = width < 360;
 
   const isOwnEvent = user && event.organizer && event.organizer._id === user._id;
 
   const goToDetail = () => {
-    navigation.navigate("EventDetails", {
-      event, // 👈 TRUYỀN NGUYÊN OBJECT
-    });
+    navigation.navigate("EventDetails", { event });
   };
 
   return (
-    <View className="flex-row items-center bg-white rounded-2xl shadow-md p-3 w-[370px] ml-5">
+    <View
+      className="flex-row items-center bg-white rounded-2xl shadow-md w-full"
+      style={{ padding: isSmall ? 10 : 12, maxWidth: 430 }}
+    >
       <Image
         source={{ uri: event.images }}
-        className="w-16 h-16 rounded-lg mr-3"
+        className="rounded-lg bg-gray-200"
+        style={{ width: isSmall ? 54 : 64, height: isSmall ? 54 : 64, marginRight: isSmall ? 8 : 12 }}
         resizeMode="cover"
       />
 
-      <View className="flex-1">
-        <Text className="font-bold text-gray-900 text-[13px]">
+      <View className="flex-1 min-w-0">
+        <Text className="font-bold text-gray-900" style={{ fontSize: isSmall ? 12 : 13 }} numberOfLines={1}>
           {event.title}
         </Text>
 
-        <Text className="text-gray-500 text-[10px] mt-1">
-          {formatDateTime(event.date)} • {event.location} •{" "}
-          {formatDate(event.date)}
+        <Text className="text-gray-500 mt-1" style={{ fontSize: isSmall ? 9 : 10 }} numberOfLines={2}>
+          {formatDateTime(event.date)} • {event.location} • {formatDate(event.date)}
         </Text>
       </View>
 
-      <View className="items-center">
-        <Text className="text-xs text-orange-500 font-semibold">
+      <View className="items-center shrink-0 ml-2" style={{ maxWidth: isSmall ? 82 : 96 }}>
+        <Text className="text-orange-500 font-semibold" style={{ fontSize: isSmall ? 11 : 12 }} numberOfLines={1}>
           {"$" + event.price}
         </Text>
 
         <Button
           mode="text"
           compact
-          labelStyle={{ fontWeight: "700" }}
+          labelStyle={{ fontWeight: "700", fontSize: isSmall ? 10 : 12 }}
+          contentStyle={{ paddingHorizontal: 0 }}
           onPress={goToDetail}
         >
           {isOwnEvent ? t('eventPriceCard.check') : t('eventPriceCard.joinNow')}

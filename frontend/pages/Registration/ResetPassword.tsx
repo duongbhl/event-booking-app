@@ -5,6 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,120 +17,224 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function ResetPassword() {
   const { t } = useLocalization();
+  const navigation = useNavigation<any>();
+  const { width } = useWindowDimensions();
+
+  const isSmallDevice = width < 375;
+  const isTablet = width >= 768;
+
+  const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const navigation = useNavigation<any>();
+
+  const inputHeight = isSmallDevice ? 50 : 54;
+  const iconSize = isSmallDevice ? 19 : 21;
+
+  const isValid =
+    email.trim().length > 0 &&
+    newPassword.length > 0 &&
+    confirmPassword.length > 0;
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
       >
-        {/* Back + Spacer */}
-        <View className="flex-row items-center justify-between mt-2">
-          <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} color="#111827" />
-          </TouchableOpacity>
-          <View style={{ width: 24 }} />
-        </View>
-
-        {/* Title */}
-        <Text className="text-3xl font-semibold text-center mt-4 text-gray-900">
-          {t('auth.resetPassword')}
-        </Text>
-
-        {/* Subtitle */}
-        <Text className="text-center text-gray-500 mt-2 leading-5">
-          {t('auth.resetPasswordSubtitle')}
-        </Text>
-
-        {/* Email */}
-        <View className="mt-8">
-          <View
-            className="flex-row items-center bg-gray-100 rounded-xl px-4"
-            style={{ height: 52 }}
-          >
-            <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
-            <TextInput
-              placeholder={t('auth.typeYourEmail')}
-              placeholderTextColor="#9CA3AF"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              className="flex-1 ml-3 text-gray-900"
-            />
-          </View>
-        </View>
-
-        {/* New Password */}
-        <View className="mt-5">
-          <View
-            className="flex-row items-center bg-gray-100 rounded-xl px-4"
-            style={{ height: 52 }}
-          >
-            <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-            <TextInput
-              placeholder={t('auth.newPassword')}
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry={!showNewPass}
-              className="flex-1 ml-3 text-gray-900"
-            />
-
-            <TouchableOpacity onPress={() => setShowNewPass(!showNewPass)}>
-              <Ionicons
-                name={showNewPass ? "eye-off-outline" : "eye-outline"}
-                size={22}
-                color="#9CA3AF"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Confirm Password */}
-        <View className="mt-5">
-          <View
-            className="flex-row items-center bg-gray-100 rounded-xl px-4"
-            style={{ height: 52 }}
-          >
-            <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-            <TextInput
-              placeholder={t('auth.confirmNewPassword')}
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry={!showConfirmPass}
-              className="flex-1 ml-3 text-gray-900"
-            />
-
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: isTablet ? 40 : isSmallDevice ? 18 : 24,
+            paddingBottom: 40,
+          }}
+        >
+          <View className="flex-row items-center justify-between mt-4">
             <TouchableOpacity
-              onPress={() => setShowConfirmPass(!showConfirmPass)}
+              className="p-2"
+              hitSlop={10}
+              activeOpacity={0.7}
+              onPress={() => navigation.goBack()}
             >
               <Ionicons
-                name={showConfirmPass ? "eye-off-outline" : "eye-outline"}
-                size={22}
-                color="#9CA3AF"
+                name="chevron-back"
+                size={isTablet ? 32 : 26}
+                color="#111827"
               />
             </TouchableOpacity>
-          </View>
-        </View>
 
-        {/* SEND Button */}
-        <TouchableOpacity className="mt-8">
-          <LinearGradient
-            colors={["#383838", "#121212"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="justify-center items-center"
-            style={{
-              height: 56,
-              borderRadius: 28,
-            }}
-          >
-            <Text className="text-white text-center mt-5 text-lg font-semibold tracking-wider">
-              {t('auth.send')}
+            <View style={{ width: 40 }} />
+          </View>
+
+          <View className="flex-1 justify-center">
+            <Text
+              className="font-semibold text-center text-gray-900"
+              style={{
+                fontSize: isTablet ? 36 : isSmallDevice ? 26 : 30,
+                marginTop: isSmallDevice ? 8 : 16,
+              }}
+            >
+              {t("auth.resetPassword")}
             </Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </ScrollView>
+
+            <Text
+              className="text-center text-gray-500 leading-5"
+              style={{
+                marginTop: 10,
+                fontSize: isSmallDevice ? 13 : 14,
+              }}
+            >
+              {t("auth.resetPasswordSubtitle")}
+            </Text>
+
+            <View style={{ marginTop: isSmallDevice ? 28 : 34 }}>
+              <View
+                className="flex-row items-center bg-gray-100 rounded-xl px-4"
+                style={{ height: inputHeight }}
+              >
+                <Ionicons
+                  name="mail-outline"
+                  size={iconSize}
+                  color="#9CA3AF"
+                />
+
+                <TextInput
+                  placeholder={t("auth.typeYourEmail")}
+                  placeholderTextColor="#9CA3AF"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  returnKeyType="next"
+                  value={email}
+                  onChangeText={setEmail}
+                  className="flex-1 ml-3 text-gray-900"
+                  style={{
+                    fontSize: isSmallDevice ? 14 : 15,
+                    paddingVertical: Platform.OS === "ios" ? 10 : 6,
+                  }}
+                />
+              </View>
+            </View>
+
+            <View className="mt-5">
+              <View
+                className="flex-row items-center bg-gray-100 rounded-xl px-4"
+                style={{ height: inputHeight }}
+              >
+                <Ionicons
+                  name="lock-closed-outline"
+                  size={iconSize}
+                  color="#9CA3AF"
+                />
+
+                <TextInput
+                  placeholder={t("auth.newPassword")}
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showNewPass}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="next"
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  className="flex-1 ml-3 text-gray-900"
+                  style={{
+                    fontSize: isSmallDevice ? 14 : 15,
+                    paddingVertical: Platform.OS === "ios" ? 10 : 6,
+                  }}
+                />
+
+                <TouchableOpacity
+                  onPress={() => setShowNewPass((prev) => !prev)}
+                  hitSlop={10}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name={showNewPass ? "eye-off-outline" : "eye-outline"}
+                    size={22}
+                    color="#9CA3AF"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View className="mt-5">
+              <View
+                className="flex-row items-center bg-gray-100 rounded-xl px-4"
+                style={{ height: inputHeight }}
+              >
+                <Ionicons
+                  name="lock-closed-outline"
+                  size={iconSize}
+                  color="#9CA3AF"
+                />
+
+                <TextInput
+                  placeholder={t("auth.confirmNewPassword")}
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showConfirmPass}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  className="flex-1 ml-3 text-gray-900"
+                  style={{
+                    fontSize: isSmallDevice ? 14 : 15,
+                    paddingVertical: Platform.OS === "ios" ? 10 : 6,
+                  }}
+                />
+
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPass((prev) => !prev)}
+                  hitSlop={10}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name={showConfirmPass ? "eye-off-outline" : "eye-outline"}
+                    size={22}
+                    color="#9CA3AF"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              className="mt-8"
+              activeOpacity={0.8}
+              disabled={!isValid}
+            >
+              <LinearGradient
+                colors={["#383838", "#121212"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="justify-center items-center"
+                style={{
+                    height: isSmallDevice ? 52 : 56,
+                    borderRadius: 28,
+                    opacity: isValid ? 1 : 0.5,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+              >
+                <Text
+                  className="text-white text-center font-semibold tracking-wider"
+                  style={{
+                    fontSize: isSmallDevice ? 15 : 17,
+                  }}
+                >
+                  {t("auth.send")}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

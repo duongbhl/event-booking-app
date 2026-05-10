@@ -61,6 +61,8 @@ export const en = {
     startConversation: 'Start a conversation!',
     chooseByCategory: 'Choose By Category',
     findAmazingEvents: 'Find amazing events',
+    noEventsInCategory: 'No events in this category',
+
   },
 
   // Events
@@ -248,6 +250,7 @@ export const en = {
     enterEventLocation: 'Enter event location',
     selectEventType: 'Select event type',
     addCoverImage: 'Add cover image',
+    publishNow: 'PUBLISH NOW',
   },
 
   // MyEvent - Bookmark
@@ -509,6 +512,7 @@ export const en = {
     noTicketDataReceived: 'No ticket data received. Please try booking again.',
     ticket: 'Ticket',
     noEventIdFound: 'No event ID found',
+    ticketsSaved: 'Ticket saved! You can view your ticket anytime in the app under \'My Tickets\'.',
   },
 
   // Drawer Navigation

@@ -1,84 +1,154 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { useLocalization } from "../../context/LocalizationContext";
-import EventPriceCard from "../../components/Cards/EventPriceCard";
-
-import { EventCardProps } from "../../components/Interface/EventCardProps";
 import { useAuth } from "../../context/AuthContext";
-import { getEvents } from "../../services/event.service";
-
+import { getMyEvents } from "../../services/event.service";
+import EventCard from "../../components/Cards/EventCard";
+import { EventCardProps } from "../../components/Interface/EventCardProps";
 
 export default function PastEvents() {
   const { t } = useLocalization();
-  const navigation = useNavigation();
-  const [events, setEvents] = useState<EventCardProps[]>([]);
+  const { token } = useAuth();
   const isFocused = useIsFocused();
-  const { user } = useAuth();
+  const { width } = useWindowDimensions();
 
-  // Fetch events when the screen is focused
-  useEffect(() => {
-    const fetchEvents = async () => {
+  const isSmallDevice = width < 375;
+
+  const [events, setEvents] = useState<EventCardProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchEvents = useCallback(
+    async (silent?: boolean) => {
+      if (!token) return;
+
       try {
-        const data = await getEvents();
-        setEvents(data);
-      } catch (error) {
-        console.log("Fetch events error:", error);
-      }
-    };
+        if (!silent) {
+          setLoading(true);
+        }
 
+        const data = await getMyEvents(token);
+        setEvents(data || []);
+      } catch (error) {
+        console.log("Fetch past events error:", error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [token]
+  );
+
+  useEffect(() => {
     if (isFocused) {
       fetchEvents();
     }
-  }, [isFocused]);
+  }, [isFocused, fetchEvents]);
 
+  const pastEvents = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const passEvents = useMemo(() => {
-    if (!user || !user._id) return [];
-    const now = new Date();
+    return events
+      .filter((event) => {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
 
-    return events.filter(ev =>
-      ev.organizer && ev.organizer._id === user._id &&
-      new Date(ev.date) < now
-    );
-  }, [events, user]);
-
-
-  if (passEvents.length === 0)
-      return (
-        <View className="flex-1 justify-center items-center px-6">
-          <Image
-            source={{ uri: 'booking_event_app\frontend\assets\no-task.png' }} // sửa đường dẫn image
-            style={{ width: 180, height: 180 }}
-            resizeMode="contain"
-          />
-          <Text className="text-xl font-semibold">{t('eventsPast.noPassEvent')}</Text>
-          <Text className="text-gray-500 text-center mt-2 mb-[20rem]">
-            {t('eventsPast.noPassEventDesc')}
-          </Text>
-        </View>
+        return eventDate < today;
+      })
+      .sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
+  }, [events]);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchEvents(true);
+  }, [fetchEvents]);
+
+  const handleDelete = useCallback((eventId: string) => {
+    setEvents((prev) => prev.filter((event) => event._id !== eventId));
+  }, []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: EventCardProps }) => (
+      <View style={{ opacity: 0.82 }}>
+        <EventCard {...item} onDelete={handleDelete} />
+      </View>
+    ),
+    [handleDelete]
+  );
+
+  const emptyComponent = useCallback(() => {
+    if (loading) return null;
+
+    return (
+      <View className="items-center justify-center py-20 px-6">
+        <Ionicons
+          name="time-outline"
+          size={isSmallDevice ? 52 : 60}
+          color="#D1D5DB"
+        />
+
+        <Text
+          className="text-gray-500 text-center mt-4 font-semibold"
+          style={{
+            fontSize: isSmallDevice ? 14 : 16,
+          }}
+        >
+          {t("myEventList.noPastEvents") || "No past events"}
+        </Text>
+
+        <Text
+          className="text-gray-400 text-center mt-2"
+          style={{
+            fontSize: isSmallDevice ? 12 : 13,
+          }}
+        >
+          {t("myEventList.pastEventHint") ||
+            "Events that have ended will appear here."}
+        </Text>
+      </View>
+    );
+  }, [loading, isSmallDevice, t]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#FF7A00" />
+      </View>
+    );
+  }
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View className="mt-2">
-        {passEvents.map((ev) => (
-          <TouchableOpacity
-            key={ev._id}
-            onPress={() =>
-              navigation.navigate(
-                "CreateEditEvent" as never,
-              )
-            }
-          >
-            <View className="mb-4">
-              <EventPriceCard
-                {...ev}
-              />
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ScrollView>
+    <FlatList
+      data={pastEvents}
+      keyExtractor={(item) => item._id}
+      renderItem={renderItem}
+      ListEmptyComponent={emptyComponent}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      removeClippedSubviews={Platform.OS === "android"}
+      initialNumToRender={6}
+      maxToRenderPerBatch={6}
+      windowSize={8}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingBottom: Platform.OS === "ios" ? 110 : 90,
+      }}
+    />
   );
 }

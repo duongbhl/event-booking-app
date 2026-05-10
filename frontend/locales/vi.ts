@@ -63,6 +63,7 @@ export const vi = {
     startConversation: 'Bắt đầu cuộc trò chuyện!',
     chooseByCategory: 'Chọn theo danh mục',
     findAmazingEvents: 'Tìm những sự kiện tuyệt vời',
+    noEventsInCategory: 'Không có sự kiện nào trong danh mục này',
   },
 
   // Events
@@ -216,10 +217,13 @@ export const vi = {
 
   // Calendar
   calendar: {
+    title: 'Lịch',
     filterEvents: 'Lọc sự kiện',
     noEventsAvailable: 'Không có sự kiện nào khả dụng',
     ticket: 'vé',
     tickets: 'vé',
+    clear: 'Xóa',
+    apply: 'Áp dụng',
   },
 
   // Location
@@ -252,6 +256,7 @@ export const vi = {
     enterEventLocation: 'Nhập địa điểm sự kiện',
     selectEventType: 'Chọn loại sự kiện',
     addCoverImage: 'Thêm ảnh bìa',
+    publishNow: 'Đăng sự kiện',
 
   },
 
@@ -514,6 +519,7 @@ export const vi = {
     noTicketDataReceived: 'Chưa nhận được dữ liệu vé. Vui lòng thử đặt vé lại.',
     ticket: 'Vé',
     noEventIdFound: 'Không tìm thấy ID sự kiện',
+    ticketsSaved: 'Vé đã được lưu! Bạn có thể xem vé của mình bất kỳ lúc nào trong ứng dụng dưới phần \'Vé của tôi\'.',
   },
 
   // Drawer Navigation
@@ -653,7 +659,7 @@ export const vi = {
   // EventPriceCard
   eventPriceCard: {
     check: 'XEM',
-    joinNow: 'THAM GIA NGAY',
+    joinNow: 'THAM GIA',
   },
 
   // InvitationCard

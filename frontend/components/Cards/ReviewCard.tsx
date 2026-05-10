@@ -1,35 +1,37 @@
 import React from "react";
-import { View } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import { Card, Avatar, Text, IconButton } from "react-native-paper";
 import { ReviewCardProps } from "../Interface/ReviewCardProps";
 
+export const ReviewCard: React.FC<ReviewCardProps> = ({ name, date, rating, comment }) => {
+  const { width } = useWindowDimensions();
+  const isSmall = width < 360;
 
-export const ReviewCard: React.FC<ReviewCardProps> = ({
-  name,
-  date,
-  rating,
-  comment,
-}) => {
   return (
-    <Card className="m-3 rounded-2xl shadow-sm bg-white">
+    <Card className="rounded-2xl shadow-sm bg-white" style={{ margin: isSmall ? 8 : 12 }}>
       <Card.Title
         title={name}
         subtitle={date}
-        left={(props) => <Avatar.Text {...props} label={name.charAt(0)} />}
+        titleNumberOfLines={1}
+        subtitleNumberOfLines={1}
+        left={(props) => <Avatar.Text {...props} size={isSmall ? 38 : 44} label={name.charAt(0)} />}
+        titleStyle={{ fontSize: isSmall ? 14 : 16 }}
+        subtitleStyle={{ fontSize: isSmall ? 11 : 12 }}
       />
-      <View className="flex-row items-center mr-2">
-            {[...Array(5)].map((_, i) => (
-              <IconButton
-                key={i}
-                icon={i < rating ? "star" : "star-outline"}
-                size={20}
-                iconColor={i < rating ? "#FFD700" : "#BDBDBD"}
-              />
-            ))}
-          </View>
+      <View className="flex-row items-center flex-wrap" style={{ marginHorizontal: isSmall ? 4 : 8 }}>
+        {[...Array(5)].map((_, i) => (
+          <IconButton
+            key={i}
+            icon={i < rating ? "star" : "star-outline"}
+            size={isSmall ? 18 : 20}
+            iconColor={i < rating ? "#FFD700" : "#BDBDBD"}
+            style={{ margin: isSmall ? 0 : 2 }}
+          />
+        ))}
+      </View>
 
       <Card.Content>
-        <Text variant="bodyMedium" className="text-gray-600 mt-2">
+        <Text variant="bodyMedium" className="text-gray-600 mt-2" style={{ fontSize: isSmall ? 13 : 14 }}>
           {comment}
         </Text>
       </Card.Content>
