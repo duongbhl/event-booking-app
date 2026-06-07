@@ -3,6 +3,7 @@ import ChatRoom from '../models/chatroom.model';
 import Message from '../models/message.model';
 import User from '../models/user.model';
 import { sendPushNotification } from '../utils/pushNotification';
+import { emitChatMessage, emitRoomUpdate } from '../socket';
 
 
 export const searchUsers = async (req: any, res: Response) => {
@@ -87,16 +88,30 @@ export const sendMessage = async (req: any, res: Response) => {
         readBy: [] // Empty at first - will be filled when recipient opens chat
     });
     
-    // Update room's updatedAt
-    await ChatRoom.findByIdAndUpdate(roomId, { updatedAt: new Date() });
-    
     await message.populate('sender', 'name avatar');
-    
+
+    const room = await ChatRoom.findByIdAndUpdate(
+        roomId,
+        { updatedAt: new Date() },
+        { new: true }
+    ).populate('members', '_id name expoPushToken');
+
+    if (room) {
+        emitChatMessage(String(roomId), message);
+        emitRoomUpdate(
+            room.members.map((member: any) => String(member._id)),
+            {
+                roomId: String(roomId),
+                message,
+            }
+        );
+    }
+
     // Send push notification to other room members
     try {
-        const room = await ChatRoom.findById(roomId).populate('members', '_id name expoPushToken');
         if (room) {
             const senderInfo = await User.findById(req.user!._id).select('name');
+
             for (const member of room.members) {
                 // Don't send to sender
                 if (String(member._id) !== String(req.user!._id) && (member as any).expoPushToken) {

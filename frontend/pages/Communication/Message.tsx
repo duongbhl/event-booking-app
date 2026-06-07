@@ -22,6 +22,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
+import { getChatSocket } from "../../services/chatSocket";
 import {
   searchUsers,
   getMyRooms,
@@ -70,6 +71,26 @@ export default function Message() {
       fetchRooms();
     }
   }, [isFocused, token, fetchRooms]);
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    const socket = getChatSocket(token);
+
+    const handleRoomUpdated = () => {
+      if (isFocused) {
+        fetchRooms();
+      }
+    };
+
+    socket.on("chat:room_updated", handleRoomUpdated);
+
+    return () => {
+      socket.off("chat:room_updated", handleRoomUpdated);
+    };
+  }, [fetchRooms, isFocused, token]);
 
   useEffect(() => {
     const keyword = search.trim();

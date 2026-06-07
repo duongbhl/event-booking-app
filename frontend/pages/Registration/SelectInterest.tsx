@@ -71,7 +71,7 @@ export default function SelectInterest({ navigation }: any) {
 
                 {/* Title */}
                 <Text className="text-xl font-semibold text-center mt-4 text-gray-900">
-                    {t('registration.selectYourInterest')}
+                    {t('selectInterest.selectInterests')}
                 </Text>
 
                 {/* Grid */}
@@ -146,7 +146,7 @@ export default function SelectInterest({ navigation }: any) {
                         }}
                     >
                         <Text className="text-white text-center mt-5 text-lg font-semibold tracking-wider">
-                            {loading ? "SAVING..." : "FINISH"}
+                            {loading ? t('selectInterest.saving') : t('selectInterest.finish')}
                         </Text>
                     </LinearGradient>
                 </TouchableOpacity>

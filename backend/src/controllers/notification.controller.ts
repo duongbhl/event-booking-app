@@ -28,6 +28,30 @@ export const markRead = async (req: any, res: Response) => {
 };
 
 
+export const markSelectedRead = async (req: any, res: Response) => {
+    try {
+        const { notificationIds = [] } = req.body as { notificationIds: string[] };
+
+        if (!Array.isArray(notificationIds) || notificationIds.length === 0) {
+            return res.status(400).json({ message: 'notificationIds are required' });
+        }
+
+        await Notification.updateMany(
+            {
+                _id: { $in: notificationIds },
+                user: req.user!._id,
+            },
+            { isRead: true }
+        );
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Mark selected notifications read error:', error);
+        res.status(500).json({ message: 'Failed to mark selected notifications as read' });
+    }
+};
+
+
 export const deleteNotification = async (req: any, res: Response) => {
     const { notificationId } = req.params as { notificationId: string };
 

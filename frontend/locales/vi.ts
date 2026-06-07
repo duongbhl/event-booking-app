@@ -109,16 +109,6 @@ export const vi = {
     onlineNow: 'Đang hoạt động',
   },
 
-  // Notifications
-  notifications: {
-    notifications: 'Thông báo',
-    noNotifications: 'Không có thông báo nào',
-    markAsRead: 'Đánh dấu là đã đọc',
-    paymentSuccessful: 'Thanh toán thành công',
-    newInvitation: 'Lời mời mới',
-    eventReminder: 'Nhắc nhở sự kiện',
-    newMessage: 'Tin nhắn mới',
-  },
 
   // Profile
   profile: {
@@ -291,18 +281,21 @@ export const vi = {
     error: 'Lỗi',
     tryAgain: 'Thử lại',
     processing: 'Đang xử lý...',
+    checkInTitle: 'Điểm danh',
   },
 
   // Registration - SelectCountry
   selectCountry: {
-    countrySelection: 'Chọn Quốc gia',
-    findConversation: 'Tìm kiếm',
+    countrySelection: 'Chọn quốc gia',
+    findCountry: 'Tìm kiếm quốc gia',
     retry: 'Thử lại',
     loadingCountries: 'Đang tải quốc gia...',
     failedLoadCountries: 'Không thể tải quốc gia. Vui lòng kiểm tra kết nối internet và thử lại.',
     invalidResponse: 'Định dạng phản hồi không hợp lệ. Vui lòng thử lại.',
     next: 'TIẾP THEO',
     add: 'THÊM',
+    failedToSaveCountry: 'Không thể lưu quốc gia. Vui lòng thử lại.',
+    saving: 'Đang lưu...',
   },
 
   // Registration - SelectLocation
@@ -314,8 +307,9 @@ export const vi = {
 
   // Registration - SelectInterest
   selectInterest: {
-    selectInterests: 'Chọn 3 sở thích của bạn',
+    selectInterests: 'Chọn sở thích của bạn',
     finish: 'HOÀN THÀNH',
+    saving: 'Đang lưu...',
   },
 
   // Profile - EditProfile
@@ -351,6 +345,25 @@ export const vi = {
     invitations: 'Lời mời',
     unread: 'Chưa đọc',
     earlier: 'Trước đó',
+    deleteSelectedTitle: 'Xóa các mục đã chọn',
+    deleteSelectedMessage: 'Xóa {count} thông báo đã chọn{plural} không?',
+    cancel: 'Hủy',
+    delete: 'Xóa',
+    read: 'Đã đọc',
+    notificationFallbackTitle: 'Thông báo',
+    notificationFallbackMessage: 'Bạn có một thông báo mới',
+    noNotificationsYet: 'Chưa có thông báo nào',
+    failedDeleteNotification: 'Không thể xóa thông báo',
+    failedMarkSelectedAsRead: 'Không thể đánh dấu đã đọc các thông báo đã chọn',
+    failedAcceptInvitation: 'Không thể chấp nhận lời mời',
+    failedDeclineInvitation: 'Không thể từ chối lời mời',
+    selectedCount: '{count} mục đã chọn',
+    deleteAction: 'Xóa',
+    markAsRead: 'Đánh dấu là đã đọc',
+    paymentSuccessful: 'Thanh toán thành công',
+    newInvitation: 'Lời mời mới',
+    eventReminder: 'Nhắc nhở sự kiện',
+    newMessage: 'Tin nhắn mới',
   },
 
   // MyEvent - Events
@@ -453,15 +466,16 @@ export const vi = {
   },
 
   // Communication - InviteFriend
-  inviteFriendPage: {
+  inviteFriend: {
     inviteFriend: 'Mời bạn',
     searchUsers: 'Tìm kiếm người dùng...',
     searchForUsersToInvite: 'Tìm kiếm người dùng để mời',
     selectAtLeastOne: 'Vui lòng chọn ít nhất một người dùng để mời',
     eventNotFound: 'Không tìm thấy sự kiện',
-    invitationsSent: 'Gửi lời mời thành công!',
+    invitationsSentSuccessfully: 'Gửi lời mời thành công!',
     failedSendInvitations: 'Không thể gửi lời mời',
     moreResultsBelow: 'Kết quả tiếp theo bên dưới',
+    noUsersFound: 'Không tìm thấy người dùng',
   },
 
   // Checkout - BuyTicket
@@ -667,6 +681,7 @@ export const vi = {
     reject: 'Từ chối',
     accept: 'Chấp nhận',
   },
+
 
   // TicketTierForm
   ticketTierForm: {

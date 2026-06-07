@@ -1,6 +1,8 @@
+import { createServer } from "http";
 import { app } from "./app";
 import { connectDB } from "./config/db"
 import { startEventReminderScheduler } from "./utils/eventReminder";
+import { initializeChatSocket } from "./socket";
 
 
 const PORT = 5000
@@ -10,8 +12,11 @@ const test = async () =>{
     
     // Start event reminder scheduler
     startEventReminderScheduler();
+
+    const httpServer = createServer(app);
+    initializeChatSocket(httpServer);
     
-    app.listen(PORT,()=>{
+    httpServer.listen(PORT,()=>{
         console.log(`server is running on port http://localhost:${PORT}`);
     })
 }

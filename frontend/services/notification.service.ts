@@ -2,6 +2,8 @@ import api from "./api";
 import { authHeader } from "./auHeader";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 /**
  * Get all notifications for current user
@@ -17,6 +19,21 @@ export const getNotifications = async (token: string) => {
 export const markNotificationsAsRead = async (token: string) => {
   const res = await api.post("/notifications/read", {}, authHeader(token));
   return res.data;
+};
+
+/**
+ * Mark selected notifications as read
+ */
+export const markSelectedNotificationsAsRead = async (
+    token: string,
+    notificationIds: string[]
+) => {
+    const res = await api.post(
+        "/notifications/read-selected",
+        { notificationIds },
+        authHeader(token)
+    );
+    return res.data;
 };
 
 /**
@@ -83,8 +100,27 @@ export const requestNotificationPermission = async () => {
             return null;
         }
 
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF7A00',
+            });
+        }
+
+        const projectId =
+            Constants.expoConfig?.extra?.eas?.projectId ??
+            Constants.easConfig?.projectId ??
+            process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+
+        if (!projectId) {
+            console.log('Missing Expo projectId for push notifications');
+            return null;
+        }
+
         // Get Expo push token
-        const token = await Notifications.getExpoPushTokenAsync();
+        const token = await Notifications.getExpoPushTokenAsync({ projectId });
         return token.data;
     } catch (error) {
         console.error('Failed to get push token:', error);

@@ -109,14 +109,34 @@ export const en = {
   },
 
   // Notifications
-  notifications: {
-    notifications: 'Notifications',
+  notification: {
+    notification: 'Notifications',
     noNotifications: 'No notifications yet',
     markAsRead: 'Mark as read',
     paymentSuccessful: 'Payment Successful',
     newInvitation: 'New Invitation',
     eventReminder: 'Event Reminder',
     newMessage: 'New Message',
+    deleteSelectedTitle: 'Delete selected',
+    deleteSelectedMessage: 'Delete {count} selected notification{plural}?',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    read: 'Read',
+    invitations: 'Invitations',
+    unread: 'Unread',
+    earlier: 'Earlier',
+    notificationFallbackTitle: 'Notification',
+    notificationFallbackMessage: 'You have a new notification',
+    noNotificationsYet: 'No notifications yet',
+    failedDeleteNotification: 'Failed to delete notification',
+    failedMarkSelectedAsRead: 'Failed to mark selected notifications as read',
+    failedAcceptInvitation: 'Failed to accept invitation',
+    failedDeclineInvitation: 'Failed to decline invitation',
+    selectedCount: '{count} selected',
+    deleteAction: 'Delete',
+    noNotification: 'Ups! There is no notification',
+    notificationEmpty: 'You\'ll be notified about activity on events you\'re a collaborator on.',
+
   },
 
   // Profile
@@ -284,18 +304,21 @@ export const en = {
     error: 'Error',
     tryAgain: 'Try Again',
     processing: 'Processing...',
+    checkInTitle: 'Check-in',
   },
 
   // Registration - SelectCountry
   selectCountry: {
     countrySelection: 'Country Selection',
-    findConversation: 'Find Conversation',
+    findCountry: 'Find Country',
     retry: 'Retry',
     loadingCountries: 'Loading countries...',
     failedLoadCountries: 'Failed to load countries. Please check your internet connection and try again.',
     invalidResponse: 'Invalid response format. Please try again.',
     next: 'NEXT',
     add: 'ADD',
+    failedToSaveCountry: 'Failed to save country. Please try again.',
+    saving: 'Saving...',
   },
 
   // Registration - SelectLocation
@@ -307,8 +330,9 @@ export const en = {
 
   // Registration - SelectInterest
   selectInterest: {
-    selectInterests: 'Select Your 3 Interests',
-    finish: 'FINISH',
+    selectInterests: 'Select Your Interests',
+    finish: 'Finish',
+    saving: 'Saving...',
   },
 
   // Profile - EditProfile
@@ -336,15 +360,6 @@ export const en = {
     unknownOrganizer: 'Unknown Organizer',
   },
 
-  // Notification
-  notification: {
-    notification: 'Notification',
-    noNotification: 'Ups! There is no notification',
-    notificationEmpty: 'You\'ll be notified about activity on events you\'re a collaborator on.',
-    invitations: 'Invitations',
-    unread: 'Unread',
-    earlier: 'Earlier',
-  },
 
   // MyEvent - Events
   myEventList: {
@@ -452,9 +467,10 @@ export const en = {
     searchForUsersToInvite: 'Search for users to invite',
     selectAtLeastOne: 'Please select at least one user to invite',
     eventNotFound: 'Event not found',
-    invitationsSent: 'Invitations sent successfully!',
+    invitationsSentSuccessfully: 'Invitations sent successfully!',
     failedSendInvitations: 'Failed to send invitations',
     moreResultsBelow: 'More results below',
+    noUsersFound: 'No users found',
   },
 
   // Checkout - BuyTicket
@@ -525,79 +541,6 @@ export const en = {
     signOut: 'Sign Out',
   },
 
-  // Check-in
-  // checkIn: {
-  //   cameraPermissionRequired: 'Camera Permission Required',
-  //   needCameraAccess: 'We need access to your camera to scan ticket QR codes',
-  //   grantPermission: 'Grant Permission',
-  //   checkInTitle: 'Check-in',
-  //   alignQRCode: 'Align QR code within the frame',
-  //   manualInput: 'Manual Input',
-  //   exit: 'Exit',
-  //   checkInSuccess: 'Check-in Success',
-  //   passenger: 'Passenger',
-  //   event: 'Event',
-  //   ticketType: 'Ticket Type',
-  //   seat: 'Seat',
-  //   noSeatAssignment: 'No seat assignment',
-  //   restartingScanner: 'Restarting scanner...',
-  //   alreadyChecked: 'Already Checked',
-  //   ticketAlreadyChecked: 'This ticket has already been checked in',
-  //   wrongEvent: 'Wrong Event',
-  //   wrongEventMessage: 'This QR code does not belong to this event',
-  //   error: 'Error',
-  //   tryAgain: 'Try Again',
-  //   processing: 'Processing...',
-  //   enterQRCode: 'Enter QR Code',
-  //   pasteQRData: 'Paste the QR code data directly',
-  //   cancel: 'Cancel',
-  //   submit: 'Submit',
-  // },
-
-  // // Event Details
-  // eventDetails: {
-  //   loadingEvent: 'Loading event...',
-  //   booked: 'BOOKED',
-  //   membersJoined: 'Members are joined',
-  //   eventEnded: 'EVENT ENDED',
-  //   invite: 'INVITE',
-  //   eventOrganizer: 'Event Organiser',
-  //   noDescription: 'No description',
-  //   description: 'Description',
-  //   ticketTiers: 'Ticket Tiers',
-  //   soldOut: 'Sold Out',
-  //   available: 'available',
-  //   approve: 'Approve',
-  //   reject: 'Reject',
-  //   approved: '✓ Approved',
-  //   rejected: '✗ Rejected',
-  //   checkInTickets: 'Check-in Tickets',
-  //   buyMore: 'Buy More',
-  //   buyTicket: 'BUY TICKET',
-  //   rejectEventTitle: 'Reject Event',
-  //   rejectEventMessage: 'Are you sure you want to reject this event?',
-  // },
-
-  // // Add Event
-  // addEvent: {
-  //   events: 'Events',
-  //   cancel: 'Cancel',
-  //   editEvent: 'Edit Event',
-  //   createEvent: 'Create Event',
-  //   addCoverImage: 'Add cover image',
-  //   eventName: 'Event Name',
-  //   typeEventName: 'Type event name',
-  //   eventType: 'Event Type',
-  //   selectEventType: 'Select event type',
-  //   selectDateTime: 'Select Date & Time',
-  //   location: 'Location',
-  //   enterEventLocation: 'Enter event location',
-  //   description: 'Event Description',
-  //   typeDescription: 'Type your event description...',
-  //   updateEvent: 'UPDATE EVENT',
-  //   publishNow: 'PUBLISH NOW',
-  // },
-
   // Admin
   admin: {
     adminDashboard: 'Admin Dashboard',
@@ -660,6 +603,8 @@ export const en = {
     reject: 'Reject',
     accept: 'Accept',
   },
+
+  
 
   // TicketTierForm
   ticketTierForm: {

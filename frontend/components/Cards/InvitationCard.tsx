@@ -3,6 +3,7 @@ import { View, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Avatar, Text } from "react-native-paper";
 import { useLocalization } from "../../context/LocalizationContext";
 import { InvitationCardProps } from "../Interface/InvitationCardProps";
+import { formatRelativeTime } from "../../utils/utils";
 
 export const InvitationCard: React.FC<InvitationCardProps> = ({
   avatar,
@@ -16,15 +17,22 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   const { t } = useLocalization();
   const { width } = useWindowDimensions();
   const isSmall = width < 360;
+  const displayTime = formatRelativeTime(time, t);
+  const hasAvatar = Boolean(avatar && avatar.trim());
+  const avatarLabel = name?.trim()?.charAt(0)?.toUpperCase() || "?";
 
   return (
     <View className="bg-white rounded-2xl mb-3 shadow-sm flex-row" style={{ padding: isSmall ? 12 : 16 }}>
-      <Avatar.Image source={{ uri: avatar }} size={isSmall ? 40 : 48} />
+      {hasAvatar ? (
+        <Avatar.Image source={{ uri: avatar }} size={isSmall ? 40 : 48} />
+      ) : (
+        <Avatar.Text size={isSmall ? 40 : 48} label={avatarLabel} />
+      )}
 
       <View className="flex-1 ml-3 min-w-0">
         <View className="flex-row justify-between gap-2">
           <Text className="font-semibold flex-1" numberOfLines={1} style={{ fontSize: isSmall ? 13 : 14 }}>{name}</Text>
-          <Text className="text-gray-400 shrink-0" style={{ fontSize: isSmall ? 9 : 10 }}>{time}</Text>
+          <Text className="text-gray-400 shrink-0" style={{ fontSize: isSmall ? 9 : 10 }}>{displayTime}</Text>
         </View>
         <Text className="text-gray-600 mt-1" numberOfLines={2} style={{ fontSize: isSmall ? 11 : 12 }}>
           {message}

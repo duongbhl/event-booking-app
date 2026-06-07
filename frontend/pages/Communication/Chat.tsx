@@ -13,9 +13,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
+import { getChatSocket } from "../../services/chatSocket";
 import {
   getMessages,
   sendMessage,
@@ -29,6 +30,7 @@ export default function Chat() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { user, token } = useAuth();
+  const isFocused = useIsFocused();
   const { width } = useWindowDimensions();
 
   const isSmallDevice = width < 375;
@@ -38,6 +40,7 @@ export default function Chat() {
   const initialRoom = route.params?.room;
 
   const listRef = useRef<FlatList<any>>(null);
+  const requestIdRef = useRef(0);
 
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
@@ -48,30 +51,91 @@ export default function Chat() {
     return initialRoom?.members?.find((m: any) => m._id !== user?._id);
   }, [initialRoom, user?._id]);
 
-  const fetchMessages = useCallback(async () => {
-    if (!roomId || !token) return;
+  const appendMessage = useCallback((message: any) => {
+    setMessages((prev) => {
+      const exists = prev.some((item) => String(item._id) === String(message._id));
+      const next = exists
+        ? prev.map((item) =>
+            String(item._id) === String(message._id) ? message : item
+          )
+        : [...prev, message];
 
-    try {
-      setLoading(true);
-
-      const data = await getMessages(roomId, token);
-      const sorted = data.sort(
+      return next.sort(
         (a: any, b: any) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
+    });
+  }, []);
 
-      setMessages(sorted);
-      await markRoomAsRead(roomId, token);
-    } catch (error) {
-      console.log("Fetch messages error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [roomId, token]);
+  const fetchMessages = useCallback(
+    async (options?: { silent?: boolean }) => {
+      if (!roomId || !token) return;
+
+      const requestId = ++requestIdRef.current;
+
+      try {
+        if (!options?.silent) {
+          setLoading(true);
+        }
+
+        const data = await getMessages(roomId, token);
+        const sorted = data.sort(
+          (a: any, b: any) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
+        setMessages(sorted);
+        await markRoomAsRead(roomId, token);
+      } catch (error) {
+        console.log("Fetch messages error:", error);
+      } finally {
+        if (!options?.silent && requestId === requestIdRef.current) {
+          setLoading(false);
+        }
+      }
+    },
+    [roomId, token]
+  );
 
   useEffect(() => {
+    if (!isFocused) {
+      return;
+    }
+
+    if (!roomId || !token) {
+      return;
+    }
+
+    const socket = getChatSocket(token);
+
+    const handleNewMessage = ({ roomId: incomingRoomId, message }: any) => {
+      if (String(incomingRoomId) !== String(roomId) || !message) {
+        return;
+      }
+
+      appendMessage(message);
+
+      if (String(message.sender?._id) !== String(user?._id)) {
+        markRoomAsRead(roomId, token).catch((error) => {
+          console.log("Mark room as read error:", error);
+        });
+      }
+    };
+
+    socket.emit("chat:join_room", roomId);
+    socket.on("chat:new_message", handleNewMessage);
+
     fetchMessages();
-  }, [fetchMessages]);
+
+    return () => {
+      socket.off("chat:new_message", handleNewMessage);
+      socket.emit("chat:leave_room", roomId);
+    };
+  }, [appendMessage, fetchMessages, isFocused, roomId, token, user?._id]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -96,14 +160,14 @@ export default function Chat() {
         token
       );
 
-      setMessages((prev) => [...prev, newMessage]);
+      appendMessage(newMessage);
     } catch (error) {
       console.log("Send message error:", error);
       setInput(content);
     } finally {
       setSending(false);
     }
-  }, [input, roomId, token, sending]);
+  }, [appendMessage, input, roomId, token, sending]);
 
   const renderMessage = useCallback(
     ({ item }: { item: any }) => {

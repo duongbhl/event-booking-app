@@ -16,8 +16,6 @@ export const toggleBookmark = async (eventId: string, token: string) => {
   return res.data as { bookmarked: boolean };
 };
 
-
-
 export const getMyBookmarks = async (token: string) => {
   const res = await api.get(`/bookmarks/me`, {
     headers: {

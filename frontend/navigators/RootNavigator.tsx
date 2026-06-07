@@ -11,6 +11,7 @@ import ResetPassword from "../pages/Registration/ResetPassword";
 import SelectInterest from "../pages/Registration/SelectInterest";
 
 import { SelectionCountry } from "../pages/Registration/SelectCountry";
+import SelectLocation from "../pages/Registration/SelectLocation";
 
 // APP SCREENS
 import DrawerNavigation from "../components/Navigators_UI/Navigators";
@@ -53,12 +54,12 @@ export default function RootNavigator() {
   }
 
   // Check if user needs to complete profile
-  const needsCountry = !user?.country || user.country.trim() === "";
-  const needsInterests = !user?.interests || user.interests.length === 0;
-  const needsProfileSetup = user && (needsCountry || needsInterests);
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="SelectCountry" component={SelectionCountry} />
+      <Stack.Screen name="SelectLocation" component={SelectLocation} />
+      <Stack.Screen name="SelectInterest" component={SelectInterest} />
+
       {/* ---------- CHƯA LOGIN ---------- */}
       {!user ? (
         <>
@@ -84,10 +85,6 @@ export default function RootNavigator() {
           {/* USER NAVIGATION */}
           {user.role !== "admin" && (
             <>
-              {/* Show setup screens only if needed */}
-              {needsCountry && <Stack.Screen name="SelectCountry" component={SelectionCountry} />}
-              {needsInterests && <Stack.Screen name="SelectInterest" component={SelectInterest} />}
-
               <Stack.Screen name="Drawer" component={DrawerNavigation} />
 
               {/* GLOBAL SCREENS */}

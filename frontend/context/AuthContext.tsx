@@ -41,6 +41,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (storedToken && storedUser) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
+
+          try {
+            await initializePushNotifications(storedToken);
+          } catch (error) {
+            console.log("Initialize push notifications on restore error", error);
+          }
         }
       } catch (error) {
         console.log("Load auth error", error);

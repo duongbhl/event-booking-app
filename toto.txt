@@ -1,9 +1,9 @@
 //
 gg-map removed
+notificaitons
+payment, card scanning, wallet
 
-//
-responsive(ipad, android)
--registration: button middle
+
 
 settings(theme, account, privacy)
 

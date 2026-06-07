@@ -270,7 +270,7 @@ export const SelectionCountry = ({ navigation, route }: any) => {
                 });
               } else {
                 // Continue to SelectLocation (registration flow)
-                navigation.navigate("SelectLocation");
+                navigation.navigate("SelectInterest");
               }
             } catch (error) {
               console.error("Error updating country:", error);

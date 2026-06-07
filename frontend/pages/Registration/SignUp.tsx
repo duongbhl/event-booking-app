@@ -16,10 +16,12 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { register } from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
 import { useLocalization } from "../../context/LocalizationContext";
 
 export default function SignUp({ navigation }: any) {
   const { t } = useLocalization();
+  const { login: saveAuth } = useAuth();
   const { width } = useWindowDimensions();
 
   const isSmallDevice = width < 375;
@@ -70,9 +72,25 @@ export default function SignUp({ navigation }: any) {
         password,
       });
 
-      await AsyncStorage.setItem("token", data.token);
+      await saveAuth(
+        {
+          _id: data._id,
+          name: data.name,
+          email: data.email,
+          role: data.role,
+          avatar: data.avatar,
+          country: data.country,
+          interests: data.interests,
+          location: data.location,
+          description: data.description,
+        },
+        data.token
+      );
 
-      navigation.navigate("SelectCountry");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "SelectCountry" }],
+      });
     } catch (error: any) {
       console.log(error?.response?.data?.message || error.message);
 
