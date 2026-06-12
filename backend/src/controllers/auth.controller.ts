@@ -4,7 +4,18 @@ import User from '../models/user.model';
 import bcrypt from "bcryptjs";
 import { generateToken } from '../utils/generateToken';
 
-
+const authResponse = (user: any) => ({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    avatar: user.avatar,
+    country: user.country,
+    interests: user.interests,
+    location: user.location,
+    description: user.description,
+    token: generateToken(String(user._id)),
+});
 
 export const register = async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -13,13 +24,7 @@ export const register = async (req: Request, res: Response) => {
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: 'Email already used' });
     const user = await User.create({ name, email, password });
-    return res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(String(user._id)),
-    });
+    return res.status(201).json(authResponse(user));
 };
 
 
@@ -30,19 +35,12 @@ export const login = async (req: Request, res: Response) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-    res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(String(user._id)),
-    });
+    res.json(authResponse(user));
 };
 
 export const me = async (req: any, res: Response) => {
     res.json(req.user);
 };
-
 
 
 

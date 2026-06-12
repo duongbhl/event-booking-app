@@ -45,6 +45,7 @@ const Stack = createStackNavigator();
 export default function RootNavigator() {
   const { user, loading } = useAuth();
   const initialRouteName = getOnboardingRoute(user);
+  const navigationKey = user ? "authenticated" : "guest";
 
   // ⏳ Đang auto-login
   if (loading) {
@@ -58,13 +59,10 @@ export default function RootNavigator() {
   // Check if user needs to complete profile
   return (
     <Stack.Navigator
+      key={navigationKey}
       screenOptions={{ headerShown: false }}
       initialRouteName={initialRouteName}
     >
-      <Stack.Screen name="SelectCountry" component={SelectionCountry} />
-      <Stack.Screen name="SelectLocation" component={SelectLocation} />
-      <Stack.Screen name="SelectInterest" component={SelectInterest} />
-
       {/* ---------- CHƯA LOGIN ---------- */}
       {!user ? (
         <>
@@ -76,6 +74,9 @@ export default function RootNavigator() {
       ) : (
         <>
           {/* ---------- ĐÃ LOGIN ---------- */}
+          <Stack.Screen name="SelectCountry" component={SelectionCountry} />
+          <Stack.Screen name="SelectLocation" component={SelectLocation} />
+          <Stack.Screen name="SelectInterest" component={SelectInterest} />
 
           {/* ADMIN NAVIGATION */}
           {user.role === "admin" && (

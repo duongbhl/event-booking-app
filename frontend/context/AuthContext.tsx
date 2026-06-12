@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMyProfile } from "../services/user.service";
 import { initializePushNotifications } from "../services/notification.service";
 
-interface User {
+export interface User {
   _id: string;
   name: string;
   email: string;
@@ -19,7 +19,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (user: User, token: string) => Promise<void>;
+  login: (user: User, token: string) => Promise<User>;
   logout: () => Promise<void>;
   refreshUserProfile: () => Promise<void>;
 }
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadAuth();
   }, []);
 
-  const login = async (userData: User, jwt: string) => {
+  const login = async (userData: User, jwt: string): Promise<User> => {
     setUser(userData);
     setToken(jwt);
     await AsyncStorage.setItem("token", jwt);
@@ -76,8 +76,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const fullProfile = await getMyProfile(jwt);
       setUser(fullProfile as User);
       await AsyncStorage.setItem("user", JSON.stringify(fullProfile));
+      return fullProfile as User;
     } catch (error) {
       console.log("Fetch full profile after login error:", error);
+      return userData;
     }
   };
 
