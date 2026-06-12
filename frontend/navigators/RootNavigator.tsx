@@ -2,7 +2,6 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
-import { getOnboardingRoute } from "../utils/onboarding";
 
 // AUTH SCREENS
 import SignIn from "../pages/Registration/SignIn";
@@ -39,6 +38,7 @@ import Location from "../pages/Location/Location";
 import Home from "../pages/Home";
 import AdminHomeScreen from "../pages/Admin/Admin";
 import AdminMessages from "../pages/Admin/AdminMessages";
+import { getOnboardingRoute } from "../utils/onboarding";
 
 const Stack = createStackNavigator();
 

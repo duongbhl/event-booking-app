@@ -7,8 +7,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfile } from "../../services/user.service";
-import { getOnboardingRoute } from "../../utils/onboarding";
 import { useLocalization } from "../../context/LocalizationContext";
+import { getOnboardingRoute } from "../../utils/onboarding";
 
 
 const DEFAULT_COORDINATE = {

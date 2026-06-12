@@ -36,6 +36,8 @@
     "@types/mongoose": "^5.11.96",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.8.1",
+    "@types/nodemailer": "^8.0.1",
+    "@types/qrcode": "^1.5.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }

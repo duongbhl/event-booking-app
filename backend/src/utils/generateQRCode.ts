@@ -1,10 +1,9 @@
 import QRCode from 'qrcode';
-import crypto from 'crypto';
+import * as  crypto from 'crypto';
 
 /**
  * Generate raw QR data (text format) for a ticket
  * Returns: ticketId|eventId|uniqueToken
- * ⚠️ This is the data to encode into QR, NOT the QR image itself
  */
 export const generateQRData = (
     ticketId: string,
@@ -57,7 +56,6 @@ export const generateQRCodeImage = async (qrData: string): Promise<string> => {
 
 /**
  * Legacy function - kept for compatibility
- * Now returns QR data + image separately
  */
 export const generateTicketQRCode = async (
     ticketId: string,
