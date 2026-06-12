@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import { getOnboardingRoute } from "../utils/onboarding";
 
 // AUTH SCREENS
 import SignIn from "../pages/Registration/SignIn";
@@ -43,6 +44,7 @@ const Stack = createStackNavigator();
 
 export default function RootNavigator() {
   const { user, loading } = useAuth();
+  const initialRouteName = getOnboardingRoute(user);
 
   // ⏳ Đang auto-login
   if (loading) {
@@ -55,7 +57,10 @@ export default function RootNavigator() {
 
   // Check if user needs to complete profile
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={initialRouteName}
+    >
       <Stack.Screen name="SelectCountry" component={SelectionCountry} />
       <Stack.Screen name="SelectLocation" component={SelectLocation} />
       <Stack.Screen name="SelectInterest" component={SelectInterest} />

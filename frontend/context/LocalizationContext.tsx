@@ -9,7 +9,7 @@ interface LocalizationContextType {
   language: LanguageType;
   setLanguage: (lang: LanguageType) => Promise<void>;
   t: (key: string) => string;
-  translations: typeof en;
+  translations: typeof en | typeof vi;
 }
 
 const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);

@@ -247,7 +247,10 @@ export const vi = {
     selectEventType: 'Chọn loại sự kiện',
     addCoverImage: 'Thêm ảnh bìa',
     publishNow: 'Đăng sự kiện',
-
+    createNewEvent: 'Tạo sự kiện mới',
+    chooseEventType: 'Chọn loại sự kiện',
+    typeEventDescription: 'Nhập mô tả sự kiện...',
+    updateEvent: 'CẬP NHẬT SỰ KIỆN',
   },
 
   // MyEvent - Bookmark
@@ -303,6 +306,8 @@ export const vi = {
     searchNewAddress: 'Tìm kiếm địa chỉ mới...',
     next: 'TIẾP THEO',
     add: 'THÊM',
+    saving: 'Đang lưu...',
+    failedToSaveLocation: 'Không thể lưu vị trí. Vui lòng thử lại.',
   },
 
   // Registration - SelectInterest
@@ -373,26 +378,7 @@ export const vi = {
     pastEvents: 'SỰ KIỆN QUA',
   },
 
-  // MyEvent - AddEvent
-  addEventPage: {
-    createNewEvent: 'Tạo sự kiện mới',
-    editEvent: 'Chỉnh sửa sự kiện',
-    selectCategory: 'Chọn danh mục',
-    cancel: 'Hủy',
-    addCoverPhotos: 'Thêm ảnh bìa',
-    eventName: 'Tên sự kiện',
-    typeEventName: 'Nhập tên sự kiện',
-    eventType: 'Loại sự kiện',
-    chooseEventType: 'Chọn loại sự kiện',
-    selectDateTime: 'Chọn ngày & giờ',
-    location: 'Địa điểm',
-    enterEventLocation: 'Nhập địa điểm sự kiện',
-    eventDescription: 'Mô tả sự kiện',
-    typeEventDescription: 'Nhập mô tả sự kiện...',
-    updateEvent: 'CẬP NHẬT SỰ KIỆN',
-    publishNow: 'XUẤT BẢN NGAY',
-    required: '*',
-  },
+
 
   // MyEvent - EventsPass
   eventsPast: {
@@ -546,79 +532,6 @@ export const vi = {
     signOut: 'Đăng xuất',
   },
 
-  // Check-in
-  // checkIn: {
-  //   cameraPermissionRequired: 'Cần cấp quyền camera',
-  //   needCameraAccess: 'Chúng tôi cần truy cập camera của bạn để quét mã QR vé',
-  //   grantPermission: 'Cấp quyền',
-  //   checkInTitle: 'Điểm danh',
-  //   alignQRCode: 'Căn chỉnh mã QR trong khung hình',
-  //   manualInput: 'Nhập thủ công',
-  //   exit: 'Thoát',
-  //   checkInSuccess: 'Điểm danh thành công',
-  //   passenger: 'Hành khách',
-  //   event: 'Sự kiện',
-  //   ticketType: 'Loại vé',
-  //   seat: 'Chỗ ngồi',
-  //   noSeatAssignment: 'Không có chỗ ngồi được gán',
-  //   restartingScanner: 'Đang khởi động lại máy quét...',
-  //   alreadyChecked: 'Đã điểm danh',
-  //   ticketAlreadyChecked: 'Vé này đã được điểm danh rồi',
-  //   wrongEvent: 'Sự kiện sai',
-  //   wrongEventMessage: 'Mã QR này không thuộc về sự kiện này',
-  //   error: 'Lỗi',
-  //   tryAgain: 'Thử lại',
-  //   processing: 'Đang xử lý...',
-  //   enterQRCode: 'Nhập mã QR',
-  //   pasteQRData: 'Dán dữ liệu mã QR trực tiếp',
-  //   cancel: 'Hủy',
-  //   submit: 'Gửi',
-  // },
-
-  // // Event Details
-  // eventDetails: {
-  //   loadingEvent: 'Đang tải sự kiện...',
-  //   booked: 'ĐÃ ĐẶT',
-  //   membersJoined: 'Thành viên đã tham gia',
-  //   eventEnded: 'SỰ KIỆN ĐÃ KẾT THÚC',
-  //   invite: 'MỜI',
-  //   eventOrganizer: 'Tổ chức sự kiện',
-  //   noDescription: 'Không có mô tả',
-  //   description: 'Mô tả',
-  //   ticketTiers: 'Các loại vé',
-  //   soldOut: 'Hết vé',
-  //   available: 'còn lại',
-  //   approve: 'Phê duyệt',
-  //   reject: 'Từ chối',
-  //   approved: '✓ Đã phê duyệt',
-  //   rejected: '✗ Đã từ chối',
-  //   checkInTickets: 'Điểm danh vé',
-  //   buyMore: 'Mua thêm',
-  //   buyTicket: 'MUA VÉ',
-  //   rejectEventTitle: 'Từ chối sự kiện',
-  //   rejectEventMessage: 'Bạn có chắc muốn từ chối sự kiện này không?',
-  // },
-
-  // // Add Event
-  // addEvent: {
-  //   events: 'Sự kiện',
-  //   cancel: 'Hủy',
-  //   editEvent: 'Chỉnh sửa sự kiện',
-  //   createEvent: 'Tạo sự kiện',
-  //   addCoverImage: 'Thêm ảnh bìa',
-  //   eventName: 'Tên sự kiện',
-  //   typeEventName: 'Nhập tên sự kiện',
-  //   eventType: 'Loại sự kiện',
-  //   selectEventType: 'Chọn loại sự kiện',
-  //   selectDateTime: 'Chọn ngày & giờ',
-  //   location: 'Địa điểm',
-  //   enterEventLocation: 'Nhập địa điểm sự kiện',
-  //   description: 'Mô tả sự kiện',
-  //   typeDescription: 'Nhập mô tả sự kiện của bạn...',
-  //   updateEvent: 'CẬP NHẬT SỰ KIỆN',
-  //   publishNow: 'XUẤT BẢN NGAY',
-  // },
-
   // Admin
   admin: {
     adminDashboard: 'Bảng điều khiển quản trị',
@@ -743,5 +656,4 @@ export const vi = {
     tickets: 'vé',
   },
 };
-
 

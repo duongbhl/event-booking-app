@@ -1,40 +1,61 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, FlatList, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Camera } from "react-native-maps";
+import MapView, { Camera, UrlTile } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
-import * as Crypto from "expo-crypto";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfile } from "../../services/user.service";
+import { getOnboardingRoute } from "../../utils/onboarding";
+import { useLocalization } from "../../context/LocalizationContext";
 
 
+const DEFAULT_COORDINATE = {
+  latitude: 10.762622,
+  longitude: 106.660172,
+};
 
-const GOOGLE_KEY = "YOUR_GOOGLE_API_KEY";
+const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
+const NOMINATIM_HEADERS = {
+  "User-Agent": "EventBookingApp/1.0",
+  "Accept-Language": "vi",
+};
 
 interface Suggestion {
-  place_id: string;
-  description: string;
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
 }
 
 export default function SelectLocation({ navigation, route }: any) {
   const mapRef = useRef<MapView | null>(null);
-  const sessionToken = useRef(Crypto.randomUUID()).current;
   const isFromEditProfile = route?.params?.fromEditProfile || false;
+  const isFromAddEvent = route?.params?.fromAddEvent || false;
   const { user, token, login } = useAuth();
+  const { t } = useLocalization();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState("");
   const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState({
-    latitude: 10.762622,
-    longitude: 106.660172,
+    latitude: DEFAULT_COORDINATE.latitude,
+    longitude: DEFAULT_COORDINATE.longitude,
     latitudeDelta: 0.003,
     longitudeDelta: 0.003,
   });
 
   const [myLocation, setMyLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  useEffect(() => {
+    const initialLocation = route?.params?.selectedLocation;
+
+    if (initialLocation) {
+      setQuery(initialLocation);
+      setSelectedPlaceName(initialLocation);
+    }
+  }, [route?.params?.selectedLocation]);
 
   // ===============================
   // 📍 LẤY VỊ TRÍ CHÍNH XÁC NHẤT
@@ -75,41 +96,58 @@ export default function SelectLocation({ navigation, route }: any) {
     })();
   }, []);
 
+  const reverseGeocode = async (latitude: number, longitude: number) => {
+    const url =
+      `${NOMINATIM_BASE_URL}/reverse?format=json` +
+      `&lat=${latitude}` +
+      `&lon=${longitude}` +
+      `&zoom=18` +
+      `&addressdetails=1` +
+      `&accept-language=vi`;
+
+    try {
+      const res = await fetch(url, { headers: NOMINATIM_HEADERS });
+      const json = await res.json();
+
+      return json.display_name || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+    } catch (error) {
+      console.log("Reverse geocode error:", error);
+      return `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+    }
+  };
+
   // ===============================
   // 📍 GỢI Ý TÌM KIẾM ĐỊA CHỈ
   // ===============================
   const fetchSuggestions = async (text: string) => {
     setQuery(text);
+    setSelectedPlaceName("");
 
     if (text.length < 2) return setSuggestions([]);
 
     const encodedText = encodeURIComponent(text);
 
-    let currentPos = myLocation || { latitude: 10.7626, longitude: 106.6601 };
-
     const url =
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json` +
-      `?input=${encodedText}` +
-      `&key=${GOOGLE_KEY}` +
-      `&language=vi` +
-      `&components=country:vn` +
-      `&location=${currentPos.latitude},${currentPos.longitude}` +
-      `&radius=20000` + // 20 km
-      `&sessiontoken=${sessionToken}`;
+      `${NOMINATIM_BASE_URL}/search?format=json` +
+      `&q=${encodedText}` +
+      `&countrycodes=vn` +
+      `&limit=8` +
+      `&addressdetails=1` +
+      `&accept-language=vi`;
 
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { headers: NOMINATIM_HEADERS });
       const json = await res.json();
 
-      if (json.status !== "OK") {
-        console.log("AutoComplete Error:", json.status);
+      if (!Array.isArray(json)) {
+        console.log("Nominatim search error:", json);
         setSuggestions([]);
         return;
       }
 
-      setSuggestions(json.predictions || []);
+      setSuggestions(json);
     } catch (error) {
-      console.log("AutoComplete Error:", error);
+      console.log("Nominatim search error:", error);
     }
   };
 
@@ -117,45 +155,30 @@ export default function SelectLocation({ navigation, route }: any) {
   // ===============================
   // 📍 CHỌN 1 ĐỊA ĐIỂM TRONG GỢI Ý
   // ===============================
-  const selectPlace = async (placeId: string, placeName?: string) => {
-    const url =
-      `https://maps.googleapis.com/maps/api/place/details/json` +
-      `?place_id=${placeId}` +
-      `&fields=geometry,name,formatted_address` +
-      `&key=${GOOGLE_KEY}` +
-      `&sessiontoken=${sessionToken}`;
+  const selectPlace = async (place: Suggestion) => {
+    const lat = Number(place.lat);
+    const lng = Number(place.lon);
 
-    try {
-      const res = await fetch(url);
-      const json = await res.json();
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return;
 
-      if (!json.result || !json.result.geometry) return;
+    setRegion((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng,
+    }));
 
-      const { lat, lng } = json.result.geometry.location;
-      // Use formatted_address from Google Maps (already human-readable)
-      const locationName = json.result.formatted_address || placeName;
+    setSelectedPlaceName(place.display_name);
+    setQuery(place.display_name);
 
-      setRegion((prev) => ({
-        ...prev,
-        latitude: lat,
-        longitude: lng,
-      }));
+    mapRef.current?.animateCamera(
+      {
+        center: { latitude: lat, longitude: lng },
+        zoom: 17,
+      },
+      { duration: 800 }
+    );
 
-      // Store both the address text and coordinates for future use
-      setSelectedPlaceName(locationName);
-
-      mapRef.current?.animateCamera(
-        {
-          center: { latitude: lat, longitude: lng },
-          zoom: 17,
-        },
-        { duration: 800 }
-      );
-
-      setSuggestions([]);
-    } catch (error) {
-      console.log("Select place error:", error);
-    }
+    setSuggestions([]);
   };
 
 
@@ -187,14 +210,29 @@ export default function SelectLocation({ navigation, route }: any) {
 
       {/* SEARCH */}
       <View className="absolute z-50 w-full px-4 top-3 mt-10">
-        <View className="flex-row items-center bg-white rounded-xl h-12 px-4 shadow">
-          <Ionicons name="search" size={20} color="#9CA3AF" />
-          <TextInput
-            value={query}
-            onChangeText={fetchSuggestions}
-            placeholder="Search new address..."
-            className="ml-2 flex-1"
-          />
+        <View className="flex-row items-center">
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack?.()) {
+                navigation.goBack();
+              }
+            }}
+            className="bg-white rounded-xl h-12 w-12 shadow items-center justify-center"
+            activeOpacity={0.75}
+            hitSlop={8}
+          >
+            <Ionicons name="chevron-back" size={24} color="#111827" />
+          </TouchableOpacity>
+
+          <View className="flex-1 flex-row items-center bg-white rounded-xl h-12 px-4 ml-3 shadow">
+            <Ionicons name="search" size={20} color="#9CA3AF" />
+            <TextInput
+              value={query}
+              onChangeText={fetchSuggestions}
+              placeholder={t("selectLocation.searchNewAddress")}
+              className="ml-2 flex-1"
+            />
+          </View>
         </View>
 
         {/* LOCATE ME BUTTON */}
@@ -211,13 +249,13 @@ export default function SelectLocation({ navigation, route }: any) {
           <FlatList
             className="bg-white rounded-xl mt-2 shadow"
             data={suggestions}
-            keyExtractor={(item) => item.place_id}
+            keyExtractor={(item) => String(item.place_id)}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => selectPlace(item.place_id)}
+                onPress={() => selectPlace(item)}
                 className="p-3 border-b border-gray-200"
               >
-                <Text>{item.description}</Text>
+                <Text>{item.display_name}</Text>
               </TouchableOpacity>
             )}
           />
@@ -228,11 +266,21 @@ export default function SelectLocation({ navigation, route }: any) {
       <MapView
         ref={mapRef}
         style={{ width: "100%", height: "100%" }}
+        mapType="none"
         region={region}
-        onRegionChangeComplete={(r) => setRegion(r)}
+        onRegionChangeComplete={(r) => {
+          setRegion(r);
+          setSelectedPlaceName("");
+        }}
         showsUserLocation
         showsMyLocationButton={false}
-      />
+      >
+        <UrlTile
+          urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maximumZ={19}
+          flipY={false}
+        />
+      </MapView>
 
       {/* FIXED CENTER MARKER */}
       <View className="absolute top-[42%] left-[50%] -ml-4 -mt-8">
@@ -243,13 +291,22 @@ export default function SelectLocation({ navigation, route }: any) {
       <View className="absolute bottom-10 w-full px-6">
         <TouchableOpacity 
           onPress={async () => {
-            const locationName = selectedPlaceName || `${region.latitude.toFixed(4)}, ${region.longitude.toFixed(4)}`;
+            const locationName =
+              selectedPlaceName ||
+              (await reverseGeocode(region.latitude, region.longitude));
             
             if (isFromEditProfile) {
               // Return location to EditProfile and update it
-              navigation.goBack();
-              navigation.navigate("EditProfile", {
-                selectedLocation: locationName,
+              navigation.navigate({
+                name: "EditProfile",
+                params: { selectedLocation: locationName },
+                merge: true,
+              });
+            } else if (isFromAddEvent) {
+              navigation.navigate({
+                name: "CreateEditEvent",
+                params: { selectedLocation: locationName },
+                merge: true,
               });
             } else {
               // Save location to backend
@@ -264,11 +321,15 @@ export default function SelectLocation({ navigation, route }: any) {
                   await login({ ...user, location: locationName }, token);
                 }
                 
-                // Continue to SelectInterest (registration flow)
-                navigation.navigate("SelectInterest");
+                const nextRoute = getOnboardingRoute({
+                  ...user,
+                  location: locationName,
+                });
+
+                navigation.navigate(nextRoute as never);
               } catch (error) {
                 console.error("Error updating location:", error);
-                Alert.alert("Error", "Failed to save location. Please try again.");
+                Alert.alert(t("common.error"), t("selectLocation.failedToSaveLocation"));
               } finally {
                 setLoading(false);
               }
@@ -282,7 +343,9 @@ export default function SelectLocation({ navigation, route }: any) {
             style={{ height: 56, borderRadius: 28 }}
           >
             <Text className="text-white text-center mt-5 text-lg font-semibold">
-              {loading ? "SAVING..." : (isFromEditProfile ? "ADD" : "NEXT")}
+              {loading
+                ? t("selectLocation.saving")
+                : (isFromEditProfile || isFromAddEvent ? t("selectLocation.add") : t("selectLocation.next"))}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -291,4 +354,3 @@ export default function SelectLocation({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
-

@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { register } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
 import { useLocalization } from "../../context/LocalizationContext";
+import { getOnboardingRoute } from "../../utils/onboarding";
 
 export default function SignUp({ navigation }: any) {
   const { t } = useLocalization();
@@ -89,7 +90,7 @@ export default function SignUp({ navigation }: any) {
 
       navigation.reset({
         index: 0,
-        routes: [{ name: "SelectCountry" }],
+        routes: [{ name: getOnboardingRoute(data) }],
       });
     } catch (error: any) {
       console.log(error?.response?.data?.message || error.message);

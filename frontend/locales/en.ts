@@ -271,6 +271,12 @@ export const en = {
     selectEventType: 'Select event type',
     addCoverImage: 'Add cover image',
     publishNow: 'PUBLISH NOW',
+    createEvent: 'Create Event',
+    editEvent: 'Edit Event',
+    chooseEventType: 'Choose event type',
+    typeEventDescription: 'Type your event description...',
+    updateEvent: 'UPDATE EVENT',
+
   },
 
   // MyEvent - Bookmark
@@ -326,6 +332,8 @@ export const en = {
     searchNewAddress: 'Search new address...',
     next: 'NEXT',
     add: 'ADD',
+    saving: 'Saving...',
+    failedToSaveLocation: 'Failed to save location. Please try again.',
   },
 
   // Registration - SelectInterest
@@ -368,26 +376,6 @@ export const en = {
     pastEvents: 'PAST EVENTS',
   },
 
-  // MyEvent - AddEvent
-  addEventPage: {
-    createNewEvent: 'Create New Event',
-    editEvent: 'Edit Event',
-    selectCategory: 'Select Category',
-    cancel: 'Cancel',
-    addCoverPhotos: 'Add Cover Photos',
-    eventName: 'Event Name',
-    typeEventName: 'Type your event name',
-    eventType: 'Event Type',
-    chooseEventType: 'Choose event type',
-    selectDateTime: 'Select Date & Time',
-    location: 'Location',
-    enterEventLocation: 'Enter event location',
-    eventDescription: 'Event Description',
-    typeEventDescription: 'Type your event description...',
-    updateEvent: 'UPDATE EVENT',
-    publishNow: 'PUBLISH NOW',
-    required: '*',
-  },
 
   // MyEvent - EventsPass
   eventsPast: {
@@ -666,5 +654,4 @@ export const en = {
     tickets: 'tickets',
   },
 };
-
 

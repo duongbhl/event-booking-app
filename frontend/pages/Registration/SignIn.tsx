@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import { login } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
 import { useLocalization } from "../../context/LocalizationContext";
+import { getOnboardingRoute } from "../../utils/onboarding";
 
 export default function SignIn() {
   const { t } = useLocalization();
@@ -84,24 +85,10 @@ export default function SignIn() {
         return;
       }
 
-      const hasCountry = data.country && data.country.trim() !== "";
-      const hasInterests =
-        data.interests &&
-        Array.isArray(data.interests) &&
-        data.interests.length > 0;
-      const hasLocation = data.location && data.location.trim() !== "";
-
-      if (hasCountry && hasInterests && hasLocation) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Drawer" }],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "SelectCountry" }],
-        });
-      }
+      navigation.reset({
+        index: 0,
+        routes: [{ name: getOnboardingRoute(data) }],
+      });
     } catch (error: any) {
       console.log("LOGIN ERROR:", error?.response?.data);
 

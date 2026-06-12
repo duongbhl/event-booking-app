@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalization } from "../../context/LocalizationContext";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfile } from "../../services/user.service";
+import { getOnboardingRoute } from "../../utils/onboarding";
 
 // =============================
 // TYPES
@@ -269,8 +270,12 @@ export const SelectionCountry = ({ navigation, route }: any) => {
                   selectedCountry: selected,
                 });
               } else {
-                // Continue to SelectLocation (registration flow)
-                navigation.navigate("SelectInterest");
+                const nextRoute = getOnboardingRoute({
+                  ...user,
+                  country: selected,
+                });
+
+                navigation.navigate(nextRoute as never);
               }
             } catch (error) {
               console.error("Error updating country:", error);

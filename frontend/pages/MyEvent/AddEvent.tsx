@@ -106,6 +106,15 @@ export default function CreateEditEvent() {
     }
   }, [isEdit, editEvent]);
 
+  useEffect(() => {
+    const selectedLocation = route.params?.selectedLocation;
+
+    if (selectedLocation) {
+      setLocation(selectedLocation);
+      setErrors((prev) => ({ ...prev, location: undefined }));
+    }
+  }, [route.params?.selectedLocation]);
+
   const pickCoverImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -218,6 +227,15 @@ export default function CreateEditEvent() {
     setErrors((prev) => ({ ...prev, eventType: undefined }));
     setShowCategoryModal(false);
   }, []);
+
+  const openLocationPicker = useCallback(() => {
+    if (submitting) return;
+
+    navigation.navigate("SelectLocation", {
+      fromAddEvent: true,
+      selectedLocation: location,
+    });
+  }, [navigation, location, submitting]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -446,26 +464,27 @@ export default function CreateEditEvent() {
           )}
 
           <FieldLabel label={`${t("addEvent.location")} *`} />
-          <TextInput
-            className={`border rounded-xl px-4 mb-1 ${
+          <TouchableOpacity
+            className={`border rounded-xl px-4 mb-1 flex-row justify-between items-center ${
               errors.location ? "border-red-500" : "border-gray-300"
             }`}
+            activeOpacity={0.75}
             style={{
               height: inputHeight,
-              fontSize: isSmallDevice ? 14 : 15,
-              paddingVertical: Platform.OS === "ios" ? 10 : 6,
             }}
-            value={location}
-            onChangeText={(text) => {
-              setLocation(text);
-              if (errors.location) {
-                setErrors((prev) => ({ ...prev, location: undefined }));
-              }
-            }}
-            placeholder={t("addEvent.enterEventLocation")}
-            placeholderTextColor="#9CA3AF"
-            editable={!submitting}
-          />
+            onPress={openLocationPicker}
+            disabled={submitting}
+          >
+            <Text
+              numberOfLines={1}
+              className={location ? "text-gray-900 flex-1" : "text-gray-400 flex-1"}
+              style={{ fontSize: isSmallDevice ? 14 : 15 }}
+            >
+              {location || t("addEvent.enterEventLocation")}
+            </Text>
+
+            <Ionicons name="location-outline" size={20} color="#FF7A00" />
+          </TouchableOpacity>
           <ErrorText error={errors.location} />
 
           <TicketTierForm tiers={ticketTiers} onTiersChange={setTicketTiers} />
