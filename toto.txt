@@ -1,11 +1,10 @@
 //
-gg-map removed
-notificaitons
-payment, card scanning, wallet
-
-
-
-settings(theme, account, privacy)
-
+my location removed 
+check reminder in notification
+check auth:change password, forgot password
+agent AI in add event
+using in android
+testing data: wrong text, wrong image, wrong date, wrong time
+deployment
 
 
