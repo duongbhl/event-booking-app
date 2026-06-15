@@ -19,6 +19,8 @@ export interface IUser {
     role: 'user' | 'admin';
     verified: boolean;
     expoPushToken?: string; // For push notifications
+    passwordResetCode?: string | null;
+    passwordResetExpires?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -41,6 +43,8 @@ const schema = new mongoose.Schema<IUser>(
         role: { type: String, enum: ['user', 'admin'], default: 'user' },
         verified: { type: Boolean, default: false },
         expoPushToken: { type: String, default: null },
+        passwordResetCode: { type: String, default: null, select: false },
+        passwordResetExpires: { type: Date, default: null, select: false },
     },
     { timestamps: true }
 );

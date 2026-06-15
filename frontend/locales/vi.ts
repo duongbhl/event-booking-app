@@ -51,6 +51,11 @@ export const vi = {
     confirmNewPassword: 'Xác nhận mật khẩu mới',
     send: 'GỬI',
     loading: 'ĐANG TẢI...',
+    sendResetCode: 'Gửi mã xác thực',
+    sendingCode: 'Đang gửi mã...',
+    enterResetCode: 'Nhập mã xác thực',
+    enterEmailFirst: 'Vui lòng nhập email trước',
+    fillAllResetFields: 'Vui lòng nhập đầy đủ email, mã xác thực và mật khẩu mới',
   },
 
   // Home
@@ -656,4 +661,3 @@ export const vi = {
     tickets: 'vé',
   },
 };
-
