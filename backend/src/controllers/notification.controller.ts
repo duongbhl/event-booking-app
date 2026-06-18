@@ -101,7 +101,11 @@ export const sendInvitation = async (req: any, res: Response) => {
         );
 
         // Send push notifications to invited users
-        const invitedUsers = await User.find({ _id: { $in: userIds }, expoPushToken: { $exists: true, $ne: null } });
+        const invitedUsers = await User.find({
+            _id: { $in: userIds },
+            notificationsEnabled: true,
+            expoPushToken: { $exists: true, $ne: null }
+        });
         for (const user of invitedUsers) {
             if (user.expoPushToken) {
                 await sendPushNotification({

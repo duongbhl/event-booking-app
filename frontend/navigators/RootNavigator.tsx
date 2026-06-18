@@ -34,7 +34,6 @@ import ScanCard from "../pages/Checkout/ScanCard";
 import EditProfile from "../pages/Profile/EditProfile";
 import Settings from "../pages/Profile/Settings";
 import EventBookmark from "../pages/MyEvent/EventBookmark";
-import Location from "../pages/Location/Location";
 import Home from "../pages/Home";
 import AdminHomeScreen from "../pages/Admin/Admin";
 import AdminMessages from "../pages/Admin/AdminMessages";
@@ -113,7 +112,6 @@ export default function RootNavigator() {
               <Stack.Screen name="AddCard" component={AddCard} />
               <Stack.Screen name="ScanCard" component={ScanCard} />
               <Stack.Screen name="Ticket" component={Ticket} />
-              <Stack.Screen name="Location" component={Location} />
               <Stack.Screen name="CheckIn" component={CheckIn} />
             </>
           )}

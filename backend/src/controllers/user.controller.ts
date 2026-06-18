@@ -25,6 +25,10 @@ export const registerPushToken = async (req: any, res: Response) => {
         if (!token) {
             return res.status(400).json({ message: 'Push token is required' });
         }
+
+        if (!req.user?.notificationsEnabled) {
+            return res.status(400).json({ message: 'Notifications are disabled for this user' });
+        }
         
         const user = await User.findByIdAndUpdate(
             req.user!._id, 
@@ -36,5 +40,37 @@ export const registerPushToken = async (req: any, res: Response) => {
     } catch (error) {
         console.error('Register push token error:', error);
         res.status(500).json({ message: 'Failed to register push token' });
+    }
+};
+
+export const updateNotificationPreference = async (req: any, res: Response) => {
+    try {
+        const { notificationsEnabled } = req.body as { notificationsEnabled?: boolean };
+
+        if (typeof notificationsEnabled !== 'boolean') {
+            return res.status(400).json({ message: 'notificationsEnabled must be a boolean' });
+        }
+
+        const updatePayload: {
+            notificationsEnabled: boolean;
+            expoPushToken?: string | null;
+        } = {
+            notificationsEnabled,
+        };
+
+        if (!notificationsEnabled) {
+            updatePayload.expoPushToken = null;
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user!._id,
+            updatePayload,
+            { new: true }
+        ).select('-password');
+
+        res.json(user);
+    } catch (error) {
+        console.error('Update notification preference error:', error);
+        res.status(500).json({ message: 'Failed to update notification preference' });
     }
 };

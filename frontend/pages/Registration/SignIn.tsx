@@ -75,7 +75,7 @@ export default function SignIn() {
         description: data.description,
       };
 
-      await saveAuth(authUser, data.token);
+      await saveAuth(authUser, data.token, remember);
 
       if (data.role === "admin") {
         navigation.reset({
@@ -99,7 +99,7 @@ export default function SignIn() {
     } finally {
       setLoading(false);
     }
-  }, [email, password, loading, saveAuth, navigation]);
+  }, [email, password, loading, saveAuth, navigation, remember]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -118,7 +118,7 @@ export default function SignIn() {
             paddingBottom: 40,
           }}
         >
-          
+
 
           <View className="flex-1 justify-center">
             <Text
@@ -234,8 +234,8 @@ export default function SignIn() {
                 <Switch
                   value={remember}
                   onValueChange={setRemember}
-                  thumbColor={remember ? "#f97316" : "#fff"}
-                  trackColor={{ true: "#fcae74", false: "#ccc" }}
+                  trackColor={{ false: '#767577', true: '#FF7A00' }}
+                  thumbColor="#FFFFFF"
                   disabled={loading}
                 />
 

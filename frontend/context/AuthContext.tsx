@@ -19,12 +19,16 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (user: User, token: string) => Promise<User>;
+  login: (user: User, token: string, remember?: boolean) => Promise<User>;
   logout: () => Promise<void>;
   refreshUserProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+
+const TOKEN_STORAGE_KEY = "token";
+const USER_STORAGE_KEY = "user";
+const REMEMBER_ME_STORAGE_KEY = "remember-me";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -35,10 +39,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const loadAuth = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem("token");
-        const storedUser = await AsyncStorage.getItem("user");
+        const [storedToken, storedUser, shouldRemember] = await AsyncStorage.multiGet([
+          TOKEN_STORAGE_KEY,
+          USER_STORAGE_KEY,
+          REMEMBER_ME_STORAGE_KEY,
+        ]).then((entries) => entries.map((entry) => entry[1]));
 
-        if (storedToken && storedUser) {
+        if (shouldRemember === "true" && storedToken && storedUser) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
 
@@ -58,11 +65,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadAuth();
   }, []);
 
-  const login = async (userData: User, jwt: string): Promise<User> => {
+  const login = async (
+    userData: User,
+    jwt: string,
+    remember = false
+  ): Promise<User> => {
     setUser(userData);
     setToken(jwt);
-    await AsyncStorage.setItem("token", jwt);
-    await AsyncStorage.setItem("user", JSON.stringify(userData));
+
+    if (remember) {
+      await AsyncStorage.multiSet([
+        [TOKEN_STORAGE_KEY, jwt],
+        [USER_STORAGE_KEY, JSON.stringify(userData)],
+        [REMEMBER_ME_STORAGE_KEY, "true"],
+      ]);
+    } else {
+      await AsyncStorage.multiRemove([
+        TOKEN_STORAGE_KEY,
+        USER_STORAGE_KEY,
+        REMEMBER_ME_STORAGE_KEY,
+      ]);
+    }
     
     // Initialize push notifications after login
     try {
@@ -75,7 +98,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const fullProfile = await getMyProfile(jwt);
       setUser(fullProfile as User);
-      await AsyncStorage.setItem("user", JSON.stringify(fullProfile));
+      if (remember) {
+        await AsyncStorage.setItem(
+          USER_STORAGE_KEY,
+          JSON.stringify(fullProfile)
+        );
+      }
       return fullProfile as User;
     } catch (error) {
       console.log("Fetch full profile after login error:", error);
@@ -86,7 +114,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     setUser(null);
     setToken(null);
-    await AsyncStorage.multiRemove(["token", "user"]);
+    await AsyncStorage.multiRemove([
+      TOKEN_STORAGE_KEY,
+      USER_STORAGE_KEY,
+      REMEMBER_ME_STORAGE_KEY,
+    ]);
   };
 
   const refreshUserProfile = async () => {
@@ -94,7 +126,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!token) return;
       const updatedUser = await getMyProfile(token);
       setUser(updatedUser as User);
-      await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+
+      const shouldRemember = await AsyncStorage.getItem(REMEMBER_ME_STORAGE_KEY);
+      if (shouldRemember === "true") {
+        await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      }
     } catch (error) {
       console.log("Refresh user profile error:", error);
     }

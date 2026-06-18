@@ -16,6 +16,7 @@ const authResponse = (user: any) => ({
     interests: user.interests,
     location: user.location,
     description: user.description,
+    notificationsEnabled: user.notificationsEnabled,
     token: generateToken(String(user._id)),
 });
 

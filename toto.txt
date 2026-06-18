@@ -1,7 +1,5 @@
 //
-my location removed 
-check reminder in notification
-
 agent AI in add event
 testing data: wrong text, wrong image, wrong date, wrong time
 deployment(ios+android)
+
