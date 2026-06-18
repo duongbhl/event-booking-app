@@ -108,7 +108,7 @@ export default function Settings() {
             value={notificationsEnabled}
             onValueChange={setNotificationsEnabled}
             trackColor={{ false: '#767577', true: '#FF7A00' }}
-            thumbColor={notificationsEnabled ? '#FF7A00' : '#f4f3f4'}
+            thumbColor="#FFFFFF"
           />
         </View>
         <Text className="text-sm text-gray-500 mt-2">

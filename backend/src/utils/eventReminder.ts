@@ -1,6 +1,7 @@
 import Event from '../models/event.model';
 import User from '../models/user.model';
 import Notification from '../models/notification.model';
+import Ticket from '../models/ticket.model';
 import { sendPushNotifications } from './pushNotification';
 
 interface ScheduledNotification {
@@ -10,6 +11,25 @@ interface ScheduledNotification {
 }
 
 const sentNotifications = new Map<string, Date>(); // Track sent notifications to avoid duplicates
+
+const getEventStartDateTime = (event: { date: Date; time?: string }) => {
+  const eventStart = new Date(event.date);
+
+  if (event.time) {
+    const timeParts = event.time.split(':').map((part) => Number(part));
+    const [hours = 0, minutes = 0, seconds = 0] = timeParts;
+
+    if (
+      Number.isFinite(hours) &&
+      Number.isFinite(minutes) &&
+      Number.isFinite(seconds)
+    ) {
+      eventStart.setHours(hours, minutes, seconds, 0);
+    }
+  }
+
+  return eventStart;
+};
 
 /**
  * Send event reminders for upcoming events
@@ -28,16 +48,22 @@ export const scheduleEventReminders = async () => {
       const startTime = new Date(now.getTime() + minutes * 60 * 1000);
       const endTime = new Date(now.getTime() + minutes * 60 * 1000 + 5 * 60 * 1000); // 5 minute window
       
-      // Find events in this time window
+      // Query a wider date window first, then compare against the actual start datetime.
       const events = await Event.find({
         date: {
-          $gte: startTime,
-          $lt: endTime
+          $gte: new Date(startTime.getTime() - 24 * 60 * 60 * 1000),
+          $lt: new Date(endTime.getTime() + 24 * 60 * 60 * 1000)
         },
         approvalStatus: 'ACCEPTED'
-      }).populate('member', 'expoPushToken name');
+      });
       
       for (const event of events) {
+        const eventStart = getEventStartDateTime(event);
+
+        if (eventStart < startTime || eventStart >= endTime) {
+          continue;
+        }
+
         const notificationKey = `${event._id}-${minutes}`;
         
         // Skip if already sent in this window
@@ -49,44 +75,73 @@ export const scheduleEventReminders = async () => {
         const timeLabel = minutes === 1440 ? '1 day' : '1 hour';
         const title = `Upcoming Event: ${event.title}`;
         const body = `Event starts in ${timeLabel}! Don't miss it.`;
-        
-        // Get all members' push tokens
-        const members = await User.find({
-          $or: [
-            { _id: event.organizer },
-            // Members who bought tickets
-            { _id: { $in: event.member || [] } }
-          ],
-          expoPushToken: { $exists: true, $ne: null }
-        }).select('_id expoPushToken');
-        
-        const tokens = members
-          .map(m => (m as any).expoPushToken)
-          .filter(t => t);
-        
-        if (tokens.length > 0) {
-          // Send push notifications
-          await sendPushNotifications(
-            tokens,
-            title,
-            body,
-            { eventId: String(event._id), reminderType: `${minutes}min` }
-          );
-          
-          // Create in-app notifications for all relevant users
-          const users = members.map(m => m._id);
-          const notifications = users.map(userId => ({
-            user: userId,
-            event: event._id,
-            title,
-            message: body,
-            type: 'reminder',
-            isRead: false
-          }));
-          
-          if (notifications.length > 0) {
-            await Notification.insertMany(notifications);
+
+        const paidTicketUserIds = await Ticket.distinct('user', {
+          event: event._id,
+          paymentStatus: 'paid'
+        });
+
+        const recipientIds = Array.from(
+          new Set([
+            String(event.organizer),
+            ...paidTicketUserIds.map((userId) => String(userId))
+          ])
+        );
+
+        if (recipientIds.length === 0) {
+          sentNotifications.set(notificationKey, now);
+          continue;
+        }
+
+        // Check DB to avoid sending duplicates across scheduler restarts.
+        const existingNotifications = await Notification.find({
+          user: { $in: recipientIds },
+          event: event._id,
+          type: 'reminder',
+          title,
+          message: body,
+        }).select('user');
+
+        const notifiedUserIds = new Set(
+          existingNotifications.map((notification) => String(notification.user))
+        );
+
+        const pendingRecipientIds = recipientIds.filter(
+          (userId) => !notifiedUserIds.has(userId)
+        );
+
+        if (pendingRecipientIds.length > 0) {
+          const users = await User.find({
+            _id: { $in: pendingRecipientIds }
+          }).select('_id expoPushToken');
+
+          const tokens = users
+            .map((user) => user.expoPushToken)
+            .filter((token): token is string => Boolean(token));
+
+          if (tokens.length > 0) {
+            await sendPushNotifications(
+              tokens,
+              title,
+              body,
+              {
+                eventId: String(event._id),
+                notificationType: 'reminder',
+                reminderType: `${minutes}min`
+              }
+            );
           }
+
+          await Notification.insertMany(
+            pendingRecipientIds.map((userId) => ({
+              user: userId,
+              event: event._id,
+              title,
+              message: body,
+              type: 'reminder',
+              isRead: false
+            }))
+          );
         }
         
         // Mark as sent

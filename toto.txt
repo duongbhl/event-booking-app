@@ -1,10 +1,5 @@
 //
-my location removed 
-check reminder in notification
-check auth:change password, forgot password
 agent AI in add event
-using in android
 testing data: wrong text, wrong image, wrong date, wrong time
-deployment
-
+deployment(ios+android)
 

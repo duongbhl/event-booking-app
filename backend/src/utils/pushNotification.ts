@@ -9,13 +9,18 @@ interface PushNotificationPayload {
     data?: Record<string, any>;
 }
 
+const isValidExpoPushToken = (token?: string | null) => {
+    if (!token) return false;
+    return token.startsWith('ExponentPushToken') || token.startsWith('ExpoPushToken');
+};
+
 /**
  * Send push notification using Expo Push Notification Service
  */
 export const sendPushNotification = async (payload: PushNotificationPayload) => {
     try {
         // Don't send if token is not available
-        if (!payload.to || !payload.to.startsWith('ExponentPushToken')) {
+        if (!isValidExpoPushToken(payload.to)) {
             console.log('Invalid push token:', payload.to);
             return false;
         }
@@ -47,7 +52,7 @@ export const sendPushNotifications = async (
     data?: Record<string, any>
 ) => {
     try {
-        const validTokens = tokens.filter(t => t && t.startsWith('ExponentPushToken'));
+        const validTokens = tokens.filter(isValidExpoPushToken);
         
         if (validTokens.length === 0) {
             console.log('No valid push tokens');

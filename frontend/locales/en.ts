@@ -49,6 +49,11 @@ export const en = {
     confirmNewPassword: 'Confirm new password',
     send: 'SEND',
     loading: 'LOADING...',
+    sendResetCode: 'Send reset code',
+    sendingCode: 'Sending code...',
+    enterResetCode: 'Enter reset code',
+    enterEmailFirst: 'Please enter your email first',
+    fillAllResetFields: 'Please fill in email, reset code and new password',
   },
 
   // Home
@@ -654,4 +659,3 @@ export const en = {
     tickets: 'tickets',
   },
 };
-

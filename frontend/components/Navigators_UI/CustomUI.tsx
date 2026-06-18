@@ -199,20 +199,6 @@ export function CustomDrawer(props: DrawerContentComponentProps) {
       />
 
       <DrawerItem
-        label={t("drawer.addEvent")}
-        isSmallDevice={isSmallDevice}
-        isTablet={isTablet}
-        icon={
-          <Ionicons
-            name="add-circle-outline"
-            size={drawerIconSize}
-            color="#FF7A00"
-          />
-        }
-        onPress={() => navigation.navigate("CreateEditEvent")}
-      />
-
-      <DrawerItem
         label={t("drawer.bookmark")}
         isSmallDevice={isSmallDevice}
         isTablet={isTablet}

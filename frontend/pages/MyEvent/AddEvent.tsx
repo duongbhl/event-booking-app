@@ -41,9 +41,12 @@ export default function CreateEditEvent() {
   const route = useRoute<any>();
   const { t } = useLocalization();
   const { width } = useWindowDimensions();
+  const routeName = route.name as string;
 
   const isEdit = route.params?.isEdit ?? false;
   const editEvent = route.params?.event;
+  const isTabCreateMode = routeName === "AddEvent" && !isEdit;
+  const showBackButton = !isTabCreateMode;
 
   const isSmallDevice = width < 375;
   const isTablet = width >= 768;
@@ -194,12 +197,26 @@ export default function CreateEditEvent() {
       if (isEdit) {
         await updateEvent(editEvent._id, payload);
         Alert.alert(t("common.success"), t("events.eventUpdated"));
+        navigation.goBack();
       } else {
         await createEvent(payload);
         Alert.alert(t("common.success"), t("events.eventCreated"));
-      }
 
-      navigation.goBack();
+        setCoverImage(null);
+        setEventName("");
+        setEventType("");
+        setLocation("");
+        setDescription("");
+        setDate(new Date());
+        setTicketTiers([]);
+        setErrors({});
+
+        if (routeName === "AddEvent") {
+          navigation.navigate("Home");
+        } else {
+          navigation.goBack();
+        }
+      }
     } catch (error) {
       console.log(error);
       Alert.alert(t("common.error"), "Submit failed");
@@ -220,6 +237,7 @@ export default function CreateEditEvent() {
     editEvent?._id,
     t,
     navigation,
+    routeName,
   ]);
 
   const selectCategory = useCallback((key: string) => {
@@ -233,9 +251,10 @@ export default function CreateEditEvent() {
 
     navigation.navigate("SelectLocation", {
       fromAddEvent: true,
+      returnToRoute: routeName,
       selectedLocation: location,
     });
-  }, [navigation, location, submitting]);
+  }, [navigation, location, routeName, submitting]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -321,14 +340,18 @@ export default function CreateEditEvent() {
           }}
         >
           <View className="flex-row justify-between items-center mb-6">
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={10}
-              activeOpacity={0.7}
-              className="p-1"
-            >
-              <Ionicons name="chevron-back" size={isTablet ? 32 : 26} />
-            </TouchableOpacity>
+            {showBackButton ? (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                hitSlop={10}
+                activeOpacity={0.7}
+                className="p-1"
+              >
+                <Ionicons name="chevron-back" size={isTablet ? 32 : 26} />
+              </TouchableOpacity>
+            ) : (
+              <View style={{ width: isTablet ? 32 : 26 }} />
+            )}
 
             <Text
               numberOfLines={1}

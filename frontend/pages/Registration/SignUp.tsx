@@ -14,7 +14,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { register } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
 import { useLocalization } from "../../context/LocalizationContext";
@@ -73,24 +72,23 @@ export default function SignUp({ navigation }: any) {
         password,
       });
 
-      await saveAuth(
-        {
-          _id: data._id,
-          name: data.name,
-          email: data.email,
-          role: data.role,
-          avatar: data.avatar,
-          country: data.country,
-          interests: data.interests,
-          location: data.location,
-          description: data.description,
-        },
-        data.token
-      );
+      const authUser = {
+        _id: data._id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar,
+        country: data.country,
+        interests: data.interests,
+        location: data.location,
+        description: data.description,
+      };
+
+      await saveAuth(authUser, data.token);
 
       navigation.reset({
         index: 0,
-        routes: [{ name: getOnboardingRoute(data) }],
+        routes: [{ name: getOnboardingRoute(authUser) }],
       });
     } catch (error: any) {
       console.log(error?.response?.data?.message || error.message);
@@ -102,7 +100,7 @@ export default function SignUp({ navigation }: any) {
     } finally {
       setLoading(false);
     }
-  }, [name, email, password, confirmPassword, loading, navigation]);
+  }, [name, email, password, confirmPassword, loading, saveAuth, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">

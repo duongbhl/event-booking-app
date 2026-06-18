@@ -63,19 +63,19 @@ export default function SignIn() {
         password,
       });
 
-      await saveAuth(
-        {
-          _id: data._id,
-          name: data.name,
-          email: data.email,
-          role: data.role,
-          country: data.country,
-          interests: data.interests,
-          location: data.location,
-          avatar: data.avatar,
-        },
-        data.token
-      );
+      const authUser = {
+        _id: data._id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        country: data.country,
+        interests: data.interests,
+        location: data.location,
+        avatar: data.avatar,
+        description: data.description,
+      };
+
+      await saveAuth(authUser, data.token, remember);
 
       if (data.role === "admin") {
         navigation.reset({
@@ -87,7 +87,7 @@ export default function SignIn() {
 
       navigation.reset({
         index: 0,
-        routes: [{ name: getOnboardingRoute(data) }],
+        routes: [{ name: getOnboardingRoute(authUser) }],
       });
     } catch (error: any) {
       console.log("LOGIN ERROR:", error?.response?.data);
@@ -99,7 +99,7 @@ export default function SignIn() {
     } finally {
       setLoading(false);
     }
-  }, [email, password, loading, saveAuth, navigation]);
+  }, [email, password, loading, saveAuth, navigation, remember]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -118,22 +118,7 @@ export default function SignIn() {
             paddingBottom: 40,
           }}
         >
-          <View className="flex-row items-center justify-between mt-4">
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={10}
-              activeOpacity={0.7}
-              className="p-2"
-            >
-              <Ionicons
-                name="chevron-back"
-                size={isTablet ? 32 : 26}
-                color="#111827"
-              />
-            </TouchableOpacity>
 
-            <View style={{ width: 40 }} />
-          </View>
 
           <View className="flex-1 justify-center">
             <Text
@@ -249,8 +234,8 @@ export default function SignIn() {
                 <Switch
                   value={remember}
                   onValueChange={setRemember}
-                  thumbColor={remember ? "#f97316" : "#fff"}
-                  trackColor={{ true: "#fcae74", false: "#ccc" }}
+                  trackColor={{ false: '#767577', true: '#FF7A00' }}
+                  thumbColor="#FFFFFF"
                   disabled={loading}
                 />
 

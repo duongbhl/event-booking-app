@@ -12,12 +12,20 @@ export const navigationRef = createNavigationContainerRef<any>();
 const navigateFromNotification = (notification?: Notifications.Notification | null) => {
   const data = notification?.request?.content?.data as Record<string, any> | undefined;
   const roomId = data?.roomId;
+  const eventId = data?.eventId;
 
-  if (!roomId || !navigationRef.isReady()) {
+  if (!navigationRef.isReady()) {
     return;
   }
 
-  navigationRef.navigate("Chat", { roomId });
+  if (roomId) {
+    navigationRef.navigate("Chat", { roomId });
+    return;
+  }
+
+  if (eventId) {
+    navigationRef.navigate("EventDetails", { eventId });
+  }
 };
 
 function AppContent() {
@@ -28,8 +36,9 @@ function AppContent() {
   const handleNotificationNavigation = (notification?: Notifications.Notification | null) => {
     const data = notification?.request?.content?.data as Record<string, any> | undefined;
     const roomId = data?.roomId;
+    const eventId = data?.eventId;
 
-    if (!roomId) {
+    if (!roomId && !eventId) {
       return;
     }
 
@@ -40,7 +49,7 @@ function AppContent() {
       return;
     }
 
-    navigationRef.navigate("Chat", { roomId });
+    navigateFromNotification(notification);
   };
 
   useEffect(() => {
@@ -103,7 +112,6 @@ export default function App() {
     </AuthProvider>
   )
 }
-
 
 
 

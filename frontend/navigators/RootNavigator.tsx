@@ -34,7 +34,6 @@ import ScanCard from "../pages/Checkout/ScanCard";
 import EditProfile from "../pages/Profile/EditProfile";
 import Settings from "../pages/Profile/Settings";
 import EventBookmark from "../pages/MyEvent/EventBookmark";
-import Location from "../pages/Location/Location";
 import Home from "../pages/Home";
 import AdminHomeScreen from "../pages/Admin/Admin";
 import AdminMessages from "../pages/Admin/AdminMessages";
@@ -45,6 +44,7 @@ const Stack = createStackNavigator();
 export default function RootNavigator() {
   const { user, loading } = useAuth();
   const initialRouteName = getOnboardingRoute(user);
+  const navigationKey = user ? "authenticated" : "guest";
 
   // ⏳ Đang auto-login
   if (loading) {
@@ -58,13 +58,10 @@ export default function RootNavigator() {
   // Check if user needs to complete profile
   return (
     <Stack.Navigator
+      key={navigationKey}
       screenOptions={{ headerShown: false }}
       initialRouteName={initialRouteName}
     >
-      <Stack.Screen name="SelectCountry" component={SelectionCountry} />
-      <Stack.Screen name="SelectLocation" component={SelectLocation} />
-      <Stack.Screen name="SelectInterest" component={SelectInterest} />
-
       {/* ---------- CHƯA LOGIN ---------- */}
       {!user ? (
         <>
@@ -76,6 +73,9 @@ export default function RootNavigator() {
       ) : (
         <>
           {/* ---------- ĐÃ LOGIN ---------- */}
+          <Stack.Screen name="SelectCountry" component={SelectionCountry} />
+          <Stack.Screen name="SelectLocation" component={SelectLocation} />
+          <Stack.Screen name="SelectInterest" component={SelectInterest} />
 
           {/* ADMIN NAVIGATION */}
           {user.role === "admin" && (
@@ -112,7 +112,6 @@ export default function RootNavigator() {
               <Stack.Screen name="AddCard" component={AddCard} />
               <Stack.Screen name="ScanCard" component={ScanCard} />
               <Stack.Screen name="Ticket" component={Ticket} />
-              <Stack.Screen name="Location" component={Location} />
               <Stack.Screen name="CheckIn" component={CheckIn} />
             </>
           )}

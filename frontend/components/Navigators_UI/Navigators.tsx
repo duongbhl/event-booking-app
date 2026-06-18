@@ -10,14 +10,14 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Calendar from "../../pages/Calendar/Calendar";
 import Profile from "../../pages/Profile/Profile";
 import Home from "../../pages/Home";
-import Location from "../../pages/Location/Location";
+import CreateEditEvent from "../../pages/MyEvent/AddEvent";
 
 import { CustomDrawer, CustomTabBar } from "./CustomUI";
 
 export type RootTabParamList = {
   Home: undefined;
   Calendar: undefined;
-  Location: undefined;
+  AddEvent: undefined;
   Profile: undefined;
 };
 
@@ -59,9 +59,9 @@ export function MainTabs() {
       />
 
       <Tab.Screen
-        name="Location"
-        component={Location}
-        options={tabIcon("location", "location-outline", iconSize)}
+        name="AddEvent"
+        component={CreateEditEvent}
+        options={tabIcon("add-circle", "add-circle-outline", iconSize)}
       />
 
       <Tab.Screen
