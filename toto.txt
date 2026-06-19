@@ -1,5 +1,3 @@
-//
-agent AI in add event
 testing data: wrong text, wrong image, wrong date, wrong time
 deployment(ios+android)
 

@@ -19,7 +19,11 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { createEvent, updateEvent } from "../../services/event.service";
+import {
+  createEvent,
+  generateEventContent,
+  updateEvent,
+} from "../../services/event.service";
 import { uploadImageToCloudinary } from "../../services/upload.service";
 import { CATEGORIES } from "../Home";
 import TicketTierForm, {
@@ -39,7 +43,7 @@ type Errors = {
 export default function CreateEditEvent() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const { t } = useLocalization();
+  const { t, language } = useLocalization();
   const { width } = useWindowDimensions();
   const routeName = route.name as string;
 
@@ -61,12 +65,14 @@ export default function CreateEditEvent() {
   const [eventType, setEventType] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [aiPrompt, setAiPrompt] = useState("");
   const [date, setDate] = useState<Date>(new Date());
   const [ticketTiers, setTicketTiers] = useState<ITicketTier[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [generatingContent, setGeneratingContent] = useState(false);
 
   const formatDateTime = useCallback((d: Date) => {
     const datePart = d.toLocaleDateString("en-GB", {
@@ -108,15 +114,6 @@ export default function CreateEditEvent() {
       }
     }
   }, [isEdit, editEvent]);
-
-  useEffect(() => {
-    const selectedLocation = route.params?.selectedLocation;
-
-    if (selectedLocation) {
-      setLocation(selectedLocation);
-      setErrors((prev) => ({ ...prev, location: undefined }));
-    }
-  }, [route.params?.selectedLocation]);
 
   const pickCoverImage = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -171,6 +168,50 @@ export default function CreateEditEvent() {
     return Object.keys(newErrors).length === 0;
   }, [eventName, eventType, location, description, date, ticketTiers, t]);
 
+  const handleGenerateWithAI = useCallback(async () => {
+    if (!eventType) {
+      setErrors((prev) => ({ ...prev, eventType: t("common.error") }));
+      Alert.alert(t("common.error"), t("addEvent.aiCategoryRequired"));
+      return;
+    }
+
+    try {
+      setGeneratingContent(true);
+
+      const suggestion = await generateEventContent({
+        category: eventType,
+        location: location.trim() || undefined,
+        date: date.toISOString(),
+        title: eventName.trim() || undefined,
+        description: description.trim() || undefined,
+        prompt: aiPrompt.trim() || undefined,
+        language,
+      });
+
+      setEventName(suggestion.title);
+      setDescription(suggestion.description);
+      setTicketTiers(
+        suggestion.ticketTiers.map((tier) => ({
+          ...tier,
+          sold: 0,
+        }))
+      );
+      setErrors((prev) => ({
+        ...prev,
+        eventName: undefined,
+        description: undefined,
+        ticketTiers: undefined,
+      }));
+
+      Alert.alert(t("common.success"), t("addEvent.aiGeneratedSuccess"));
+    } catch (error) {
+      console.log("Generate event content error:", error);
+      Alert.alert(t("common.error"), t("addEvent.aiGeneratedFailed"));
+    } finally {
+      setGeneratingContent(false);
+    }
+  }, [aiPrompt, date, description, eventName, eventType, language, location, t]);
+
   const handleSubmit = useCallback(async () => {
     if (!validateForm() || submitting) return;
 
@@ -207,6 +248,7 @@ export default function CreateEditEvent() {
         setEventType("");
         setLocation("");
         setDescription("");
+        setAiPrompt("");
         setDate(new Date());
         setTicketTiers([]);
         setErrors({});
@@ -253,6 +295,10 @@ export default function CreateEditEvent() {
       fromAddEvent: true,
       returnToRoute: routeName,
       selectedLocation: location,
+      onSelectLocation: (value: string) => {
+        setLocation(value);
+        setErrors((prev) => ({ ...prev, location: undefined }));
+      },
     });
   }, [navigation, location, routeName, submitting]);
 
@@ -414,6 +460,44 @@ export default function CreateEditEvent() {
           />
           <ErrorText error={errors.eventName} />
 
+          <FieldLabel label={t("addEvent.aiBriefLabel")} />
+          <TextInput
+            className="border border-gray-300 rounded-xl px-4 py-3 mb-4"
+            style={{
+              minHeight: isSmallDevice ? 84 : 96,
+              fontSize: isSmallDevice ? 14 : 15,
+            }}
+            value={aiPrompt}
+            onChangeText={setAiPrompt}
+            placeholder={t("addEvent.aiBriefPlaceholder")}
+            placeholderTextColor="#9CA3AF"
+            multiline
+            textAlignVertical="top"
+            editable={!submitting && !generatingContent}
+          />
+
+          <TouchableOpacity
+            disabled={submitting || generatingContent}
+            className="rounded-xl items-center justify-center mb-5 border border-orange-400 bg-orange-50"
+            activeOpacity={0.85}
+            style={{
+              height: isSmallDevice ? 46 : 50,
+              opacity: submitting ? 0.65 : 1,
+            }}
+            onPress={handleGenerateWithAI}
+          >
+            {generatingContent ? (
+              <ActivityIndicator color="#FF7A00" />
+            ) : (
+              <Text
+                className="text-orange-500 font-semibold"
+                style={{ fontSize: isSmallDevice ? 14 : 15 }}
+              >
+                {t("addEvent.generateWithAI")}
+              </Text>
+            )}
+          </TouchableOpacity>
+
           <FieldLabel label={`${t("addEvent.eventType")} *`} />
           <TouchableOpacity
             className={`border rounded-xl px-4 mb-1 flex-row justify-between items-center ${
@@ -538,12 +622,15 @@ export default function CreateEditEvent() {
           <ErrorText error={errors.description} />
 
           <TouchableOpacity
-            disabled={!isFormValid || submitting}
+            disabled={!isFormValid || submitting || generatingContent}
             className="mt-8 rounded-xl items-center justify-center"
             activeOpacity={0.85}
             style={{
               height: isSmallDevice ? 50 : 54,
-              backgroundColor: isFormValid && !submitting ? "#000" : "#D1D5DB",
+              backgroundColor:
+                isFormValid && !submitting && !generatingContent
+                  ? "#000"
+                  : "#D1D5DB",
             }}
             onPress={handleSubmit}
           >

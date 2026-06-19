@@ -34,6 +34,9 @@ export default function SelectLocation({ navigation, route }: any) {
   const isFromEditProfile = route?.params?.fromEditProfile || false;
   const isFromAddEvent = route?.params?.fromAddEvent || false;
   const returnToRoute = route?.params?.returnToRoute || "CreateEditEvent";
+  const onSelectLocation = route?.params?.onSelectLocation as
+    | ((value: string) => void)
+    | undefined;
   const { user, token, login } = useAuth();
   const { t } = useLocalization();
   const [query, setQuery] = useState("");
@@ -304,20 +307,10 @@ export default function SelectLocation({ navigation, route }: any) {
                 merge: true,
               });
             } else if (isFromAddEvent) {
-              if (returnToRoute === "AddEvent") {
-                navigation.navigate("Drawer", {
-                  screen: "MainTabs",
-                  params: {
-                    screen: "AddEvent",
-                    params: { selectedLocation: locationName },
-                  },
-                });
-              } else {
-                navigation.navigate({
-                  name: returnToRoute,
-                  params: { selectedLocation: locationName },
-                  merge: true,
-                });
+              onSelectLocation?.(locationName);
+
+              if (navigation.canGoBack?.()) {
+                navigation.goBack();
               }
             } else {
               // Save location to backend

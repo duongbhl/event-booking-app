@@ -12,6 +12,32 @@ export interface CreateEventPayload {
   time: string;
   location: string;
   images?: string;
+  ticketTiers?: {
+    name: string;
+    price: number;
+    quota: number;
+    sold?: number;
+  }[];
+}
+
+export interface GenerateEventContentPayload {
+  category: string;
+  location?: string;
+  date?: string;
+  title?: string;
+  description?: string;
+  prompt?: string;
+  language?: "en" | "vi";
+}
+
+export interface GeneratedEventContent {
+  title: string;
+  description: string;
+  ticketTiers: {
+    name: string;
+    price: number;
+    quota: number;
+  }[];
 }
 
 export const getEvents = async () => {
@@ -60,6 +86,21 @@ export const createEvent = async (payload: CreateEventPayload) => {
   });
 
   return res.data;
+};
+
+export const generateEventContent = async (
+  payload: GenerateEventContentPayload
+) => {
+  const token = await AsyncStorage.getItem("token");
+
+  const res = await api.post("/events/generate-content", payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return res.data as GeneratedEventContent;
 };
 
 export const updateEvent = async (
