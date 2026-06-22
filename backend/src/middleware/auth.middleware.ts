@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-dotenv.config()
+import "../config/env";
 import User from "../models/user.model"
 import { decode } from "punycode"
 
@@ -64,7 +63,6 @@ export const errorHandler = (err: any, _req: Request, res: Response, next: NextF
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
     });
 }
-
 
 
 

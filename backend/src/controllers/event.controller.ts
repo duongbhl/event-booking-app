@@ -4,6 +4,7 @@ import Ticket from '../models/ticket.model';
 import User from '../models/user.model';
 import Notification from '../models/notification.model';
 import { sendPushNotification, sendPushNotifications } from '../utils/pushNotification';
+import { generateEventContentSuggestion } from '../services/openaiEventSuggestion.service';
 
 
 // List Events with filtering and pagination
@@ -177,6 +178,50 @@ export const createEvent = async (req: any, res: Response) => {
   res.status(201).json(event);
 };
 
+export const suggestEventContent = async (req: any, res: Response) => {
+  try {
+    const {
+      category,
+      location,
+      date,
+      title,
+      description,
+      prompt,
+      language,
+    } = req.body;
+
+    if (!category) {
+      return res.status(400).json({
+        message: "Category is required to generate event content",
+      });
+    }
+
+    const suggestion = await generateEventContentSuggestion({
+      category,
+      location,
+      date,
+      existingTitle: title,
+      existingDescription: description,
+      userPrompt: prompt,
+      language,
+    });
+
+    res.json(suggestion);
+  } catch (error: any) {
+    console.error("Suggest event content error:", error?.response?.data || error);
+
+    if (error.message === "OPENAI_API_KEY is missing") {
+      return res.status(500).json({
+        message: "OPENAI_API_KEY is not configured on the server",
+      });
+    }
+
+    res.status(500).json({
+      message: "Failed to generate event content",
+    });
+  }
+};
+
 
 /**
  * Update event
@@ -309,4 +354,3 @@ export const autoRejectExpiredEvents = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to auto reject expired events" });
   }
 };
-

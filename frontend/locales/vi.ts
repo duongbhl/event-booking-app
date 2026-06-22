@@ -256,6 +256,12 @@ export const vi = {
     chooseEventType: 'Chọn loại sự kiện',
     typeEventDescription: 'Nhập mô tả sự kiện...',
     updateEvent: 'CẬP NHẬT SỰ KIỆN',
+    aiBriefLabel: 'Mô tả nhanh cho AI',
+    aiBriefPlaceholder: 'Ví dụ: workshop cho người mới bắt đầu, phong cách trẻ trung, khoảng 100 khách, muốn có vé VIP và vé thường',
+    generateWithAI: 'Gợi ý nội dung bằng AI',
+    aiCategoryRequired: 'Vui lòng chọn loại sự kiện trước khi dùng AI',
+    aiGeneratedSuccess: 'AI đã tạo nội dung gợi ý cho sự kiện',
+    aiGeneratedFailed: 'Không thể tạo nội dung bằng AI',
   },
 
   // MyEvent - Bookmark

@@ -281,7 +281,12 @@ export const en = {
     chooseEventType: 'Choose event type',
     typeEventDescription: 'Type your event description...',
     updateEvent: 'UPDATE EVENT',
-
+    aiBriefLabel: 'AI brief',
+    aiBriefPlaceholder: 'Example: beginner-friendly workshop, modern tone, around 100 guests, include VIP and standard tickets',
+    generateWithAI: 'Generate Content With AI',
+    aiCategoryRequired: 'Please choose an event type before using AI',
+    aiGeneratedSuccess: 'AI generated event content successfully',
+    aiGeneratedFailed: 'Failed to generate event content with AI',
   },
 
   // MyEvent - Bookmark

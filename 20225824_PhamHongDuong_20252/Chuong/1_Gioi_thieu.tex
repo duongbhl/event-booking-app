@@ -1,0 +1,49 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+\section{Đặt vấn đề}
+\label{section:1.1}
+Sự phát triển mạnh của Internet di động và các nền tảng mạng xã hội đã làm thay đổi rõ rệt cách người dùng tiếp cận thông tin, tương tác cộng đồng và tham gia các hoạt động trực tuyến lẫn ngoại tuyến. Theo báo cáo Digital 2026 của DataReportal, số lượng danh tính người dùng mạng xã hội trên toàn cầu đã vượt mốc 5 tỷ, trong khi Việt Nam tiếp tục duy trì tỷ lệ người dùng Internet và mạng xã hội ở mức cao so với quy mô dân số \cite{kemp2025digitalglobal2026,kemp2025digitalvietnam2026}. Trong bối cảnh đó, nhu cầu tìm kiếm, theo dõi và tham gia các sự kiện như hội thảo, workshop, chương trình giải trí, hoạt động cộng đồng hay các buổi gặp gỡ chuyên môn ngày càng gia tăng. Sự kiện không còn được quảng bá qua một kênh đơn lẻ mà thường xuất hiện đồng thời trên mạng xã hội, các hội nhóm trực tuyến, ứng dụng di động và các trang chuyên biệt về tổ chức sự kiện.
+
+Tuy nhiên, chính sự phân tán thông tin này lại làm phát sinh một bài toán thực tiễn đáng chú ý. Người dùng thường gặp khó khăn khi phải theo dõi nhiều nguồn khác nhau để tìm sự kiện phù hợp với sở thích, vị trí, thời gian và ngân sách của mình. Sau khi tìm được sự kiện, quá trình đăng ký tham gia, thanh toán, lưu vé, nhận thông báo nhắc lịch và trao đổi với ban tổ chức nhiều khi vẫn diễn ra rời rạc trên các công cụ khác nhau. Đối với người tổ chức, việc quản lý thông tin sự kiện, thiết lập nhiều hạng vé, theo dõi số lượng người tham gia, gửi thông báo và kiểm soát check-in cũng đòi hỏi nhiều thao tác thủ công nếu chưa có một nền tảng tích hợp thống nhất. Thực tế này cho thấy bài toán đặt vé và quản lý sự kiện trên thiết bị di động không chỉ là bài toán giao diện hiển thị thông tin, mà còn là bài toán kết nối các quy trình nghiệp vụ liên quan đến khám phá sự kiện, giao tiếp, giao dịch và kiểm soát tham dự.
+
+Tầm quan trọng của bài toán này còn được thể hiện qua sự xuất hiện của nhiều nền tảng và nghiên cứu liên quan tới gợi ý, tổ chức và quản lý sự kiện xã hội. Meetup là một ví dụ tiêu biểu cho xu hướng kết nối cộng đồng thông qua các sự kiện theo nhóm, cho thấy nhu cầu tham gia các hoạt động dựa trên sở thích chung là rất lớn \cite{meetup2026about}. Trong nghiên cứu học thuật, nhiều công trình đã tiếp cận bài toán từ góc độ gợi ý sự kiện, tối ưu lựa chọn sự kiện hoặc lựa chọn địa điểm phù hợp cho nhóm người dùng \cite{cena2014event,liao2020acger,zhang2019gevr}. Dù vậy, các hướng tiếp cận này chủ yếu tập trung vào một số khía cạnh chuyên biệt như đề xuất sự kiện hoặc địa điểm, trong khi nhu cầu thực tế của người dùng cuối lại đòi hỏi một hệ thống có thể hỗ trợ trọn vẹn hơn từ khâu khám phá đến khâu tham gia sự kiện. Nếu giải quyết tốt bài toán này, hệ thống không chỉ mang lại lợi ích cho người tham dự trong việc tiết kiệm thời gian, tăng trải nghiệm và giảm rủi ro bỏ lỡ thông tin, mà còn hỗ trợ người tổ chức nâng cao hiệu quả vận hành và khả năng tiếp cận cộng đồng mục tiêu.
+
+\section{Mục tiêu và phạm vi đề tài}
+\label{section:1.2}
+Hiện nay, bài toán sự kiện số đang được giải quyết theo hai hướng chính. Hướng thứ nhất là các nền tảng ứng dụng thực tế, tiêu biểu như Meetup hoặc các hệ thống quản lý sự kiện trực tuyến, tập trung vào khả năng công bố sự kiện, kết nối cộng đồng và hỗ trợ người dùng đăng ký tham gia \cite{meetup2026about}. Hướng thứ hai là các nghiên cứu học thuật về gợi ý sự kiện, phân tích hành vi người dùng và tối ưu quyết định tham gia sự kiện hoặc lựa chọn địa điểm tổ chức phù hợp \cite{cena2014event,liao2020acger,zhang2019gevr}. Các công trình này cho thấy bài toán sự kiện có thể được tiếp cận dưới nhiều góc độ như khai thác dữ liệu xã hội, cá nhân hóa nội dung, hỗ trợ nhóm người dùng hoặc nâng cao hiệu quả ra quyết định.
+
+Mặc dù vậy, các nền tảng phổ biến trên thị trường thường chỉ mạnh ở một số chức năng riêng lẻ như quảng bá sự kiện, bán vé hoặc kết nối cộng đồng, trong khi nhiều nghiên cứu học thuật lại tập trung vào mô hình đề xuất mà chưa đi tới một sản phẩm tích hợp đầy đủ các luồng nghiệp vụ của bài toán. Từ góc nhìn người dùng cuối, những hạn chế thường gặp là thông tin sự kiện phân tán, việc quản lý vé và nhắc lịch chưa thật sự đồng bộ, tương tác giữa người tham gia và ban tổ chức còn rời rạc, và quy trình xác nhận tham dự tại sự kiện chưa được số hóa trọn vẹn. Từ góc nhìn người tổ chức, việc quản lý các hạng vé, số lượng người tham gia, kiểm soát check-in và gửi thông báo vẫn có thể gây tốn thời gian nếu thiếu một hệ thống tập trung.
+
+Trên cơ sở đó, mục tiêu của đề tài là xây dựng một ứng dụng đặt vé và quản lý sự kiện trên thiết bị di động, hướng tới việc hỗ trợ đầy đủ các nhu cầu cốt lõi của người tham dự và người tổ chức trong cùng một nền tảng. Cụ thể, hệ thống được định hướng phát triển các chức năng chính gồm đăng ký và xác thực người dùng, tìm kiếm và lọc sự kiện, xem chi tiết sự kiện, tạo và quản lý sự kiện, quản lý nhiều hạng vé, đặt vé và xác nhận thanh toán, sinh mã QR cho vé điện tử, check-in tại sự kiện, gửi thông báo, nhắc lịch, lưu sự kiện yêu thích và hỗ trợ trao đổi qua chat. Phạm vi của đề tài tập trung vào xây dựng phiên bản ứng dụng thử nghiệm có khả năng vận hành các luồng nghiệp vụ chính của bài toán, chưa đặt trọng tâm vào triển khai thương mại quy mô lớn hoặc tối ưu hạ tầng phục vụ lượng truy cập cực lớn.
+
+\section{Định hướng giải pháp}
+\label{section:1.3}
+Từ các mục tiêu nêu ở phần \ref{section:1.2}, đề tài lựa chọn định hướng phát triển hệ thống theo mô hình ứng dụng di động kết hợp dịch vụ backend tập trung. Theo định hướng này, phần mềm được xây dựng như một nền tảng mobile-first, trong đó ứng dụng di động đóng vai trò giao tiếp trực tiếp với người dùng, còn backend đảm nhiệm các nghiệp vụ xử lý dữ liệu, xác thực, quản lý sự kiện, quản lý vé, thông báo và trao đổi thời gian thực. Định hướng này được lựa chọn vì phù hợp với đặc trưng sử dụng thường xuyên trên điện thoại thông minh, đồng thời thuận lợi cho việc mở rộng tính năng, đồng bộ dữ liệu và tích hợp các dịch vụ hỗ trợ trong tương lai.
+
+Theo hướng tiếp cận đã chọn, giải pháp của đề tài là xây dựng một hệ thống gồm ứng dụng khách trên nền tảng React Native và một backend sử dụng Node.js, Express, TypeScript và MongoDB để quản lý dữ liệu tập trung. Hệ thống cho phép người dùng khám phá sự kiện theo danh mục và từ khóa, lưu sự kiện quan tâm, đặt vé theo hạng vé cụ thể, nhận vé điện tử có mã QR, nhận thông báo và nhắc lịch trước khi sự kiện diễn ra. Ở chiều ngược lại, người tổ chức có thể tạo sự kiện, cấu hình nhiều mức vé, theo dõi tình trạng tham gia và thực hiện kiểm soát check-in. Bên cạnh đó, hệ thống còn hỗ trợ giao tiếp qua chat và tích hợp chức năng gợi ý nội dung sự kiện bằng AI nhằm hỗ trợ người tổ chức khi tạo mới sự kiện.
+
+Đóng góp chính của đồ án là đề xuất và hiện thực hóa được một mô hình ứng dụng đặt vé sự kiện theo hướng tích hợp nhiều chức năng nghiệp vụ trên cùng một nền tảng di động, thay vì tách rời thành nhiều công cụ độc lập. Kết quả mong muốn của đề tài là xây dựng được một sản phẩm phần mềm thử nghiệm có khả năng đáp ứng các luồng nghiệp vụ cốt lõi của bài toán đặt vé và quản lý sự kiện, làm cơ sở cho việc đánh giá, cải tiến và mở rộng trong các giai đoạn phát triển tiếp theo.
+
+\section{Bố cục đồ án}
+\label{section:1.4}
+Phần còn lại của báo cáo đồ án tốt nghiệp này được tổ chức như sau. 
+
+Chương 2 trình bày về v.v. 
+
+Trong Chương 3, em/tôi giới thiệu về v.v.
+
+\textbf{Chú ý:} Sinh viên cần viết mô tả thành đoạn văn đầy đủ về nội dung chương. Tuyệt đối không viết ý hay gạch đầu dòng. Chương 1 không cần mô tả trong phần này. 
+
+Ví dụ tham khảo mô tả chương trong phần bố cục đồ án tốt nghiệp: Chương *** trình bày đóng góp chính của đồ án, đó là một nền tảng ABC cho phép khai phá và tích hợp nhiều nguồn dữ liệu, trong đó mỗi nguồn dữ liệu lại có định dạng đặc thù riêng. Nền tảng ABC được phát triển dựa trên khái niệm DEF, là các module ngữ nghĩa trợ giúp người dùng tìm kiếm, tích hợp và hiển thị trực quan dữ liệu theo mô hình cộng tác và mô hình phân tán.
+
+\textbf{Chú ý:} Trong phần nội dung chính, mỗi chương của đồ án nên có phần Tổng quan và Kết chương. Hai phần này đều có định dạng văn bản “Normal”, sinh viên không cần tạo định dạng riêng, ví dụ như không in đậm/in nghiêng, không đóng khung, v.v. 
+
+Trong phần Tổng quan của chương N, sinh viên nên có sự liên kết với chương N-1 rồi trình bày sơ qua lý do có mặt của chương N và sự cần thiết của chương này trong đồ án. Sau đó giới thiệu những vấn đề sẽ trình bày trong chương này là gì, trong các đề mục lớn nào.
+
+Ví dụ về phần Tổng quan: Chương 3 đã thảo luận về nguồn gốc ra đời, cơ sở lý thuyết và các nhiệm vụ chính của bài toán tích hợp dữ liệu. Chương 4 này sẽ trình bày chi tiết các công cụ tích hợp dữ liệu theo hướng tiếp cận “mashup”. Với mục đích và phạm vi của đề tài, sáu nhóm công cụ tích hợp dữ liệu chính được trình bày bao gồm: (i) nhóm công cụ ABC trong phần 4.1, (ii) nhóm công cụ DEF trong phần 4.2, nhóm công cụ GHK trong phần 4.3, v.v.
+
+Trong phần Kết chương, sinh viên đưa ra một số kết luận quan trọng của chương. Những vấn đề mở ra trong Tổng quan cần được tóm tắt lại nội dung và cách giải quyết/thực hiện như thế nào. Sinh viên lưu ý không viết Kết chương giống hệt Tổng quan. Sau khi đọc phần Kết chương, người đọc sẽ nắm được sơ bộ nội dung và giải pháp cho các vấn đề đã trình bày trong chương. Trong Kết chương, Sinh viên nên có thêm câu liên kết tới chương tiếp theo.
+
+Ví dụ về phần Kết chương: Chương này đã phân tích chi tiết sáu nhóm công cụ tích hợp dữ liệu. Nhóm công cụ ABC và DEF thích hợp với những bài toán tích hợp dữ liệu phạm vi nhỏ. Trong khi đó, nhóm công cụ GHK lại chứng tỏ thế mạnh của mình với những bài toán cần độ chính xác cao, v.v. Từ kết quả nghiên cứu và phân tích về sáu nhóm công cụ tích hợp dữ liệu này, tôi đã thực hiện phát triển phần mềm tự động bóc tách và tích hợp dữ liệu sử dụng nhóm công cụ GHK. Phần này được trình bày trong chương tiếp theo – Chương 5.
+
+\end{document}

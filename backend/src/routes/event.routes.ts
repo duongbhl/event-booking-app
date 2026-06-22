@@ -1,7 +1,7 @@
 import { Router } from "express";
 import express from 'express';
 import { protect, authorize } from '../middleware/auth.middleware';
-import { createEvent, deleteEvent, getEvent, getMyEvents, getOrganizerEvents, listEvents, updateEvent, getPendingEvents, approveEvent, rejectEvent, autoRejectExpiredEvents } from '../controllers/event.controller';
+import { createEvent, deleteEvent, getEvent, getMyEvents, getOrganizerEvents, listEvents, updateEvent, getPendingEvents, approveEvent, rejectEvent, autoRejectExpiredEvents, suggestEventContent } from '../controllers/event.controller';
 
 export const eventRoutes = express.Router()
 
@@ -19,6 +19,8 @@ eventRoutes.put('/admin/reject/:id', rejectEvent);
 eventRoutes.get('/me', protect, getMyEvents);
 
 eventRoutes.get('/organizer/:organizerId', getOrganizerEvents);
+
+eventRoutes.post('/generate-content', protect, authorize('user'), suggestEventContent);
 
 eventRoutes.get('/:id', getEvent);
 
