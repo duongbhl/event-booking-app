@@ -1,0 +1,98 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+Chương này tập trung khảo sát hiện trạng của bài toán đặt vé và quản lý sự kiện trên thiết bị di động, từ đó làm rõ các yêu cầu cần thiết cho hệ thống được phát triển trong đồ án. Trên cơ sở phân tích các nền tảng tương tự và đối chiếu với đặc điểm nghiệp vụ của bài toán, chương này xác định những chức năng cốt lõi và các ràng buộc phi chức năng mà hệ thống cần đáp ứng. 
+
+\section{Khảo sát hiện trạng}
+\label{section:2.1}
+Trong phạm vi đồ án này, khảo sát hiện trạng được thực hiện chủ yếu dựa trên hai nguồn chính là phân tích các ứng dụng tương tự đang tồn tại và đối chiếu với đặc điểm nghiệp vụ của hệ thống \textit{event-booking-app} đang được phát triển. Cách tiếp cận này phù hợp với bối cảnh của một đồ án ứng dụng, khi mục tiêu không chỉ là nhận diện nhu cầu của người dùng cuối mà còn là xác định rõ các khoảng trống chức năng mà hệ thống đề xuất cần giải quyết. Qua việc xem xét luồng nghiệp vụ hiện tại của hệ thống, có thể thấy sản phẩm hướng tới ba nhóm người dùng chính là người tham dự sự kiện, người tổ chức và quản trị viên. Do đó, hiện trạng cần được khảo sát không chỉ ở khía cạnh mua vé, mà còn ở khía cạnh khám phá sự kiện, quản lý thông tin, tương tác giữa các bên và kiểm soát việc tham dự.
+
+\subsection{Đặc thù của bài toán đặt vé và quản lý sự kiện}
+Đối với người tham dự, nhu cầu cơ bản không dừng lại ở việc tìm thấy một sự kiện phù hợp, mà còn bao gồm khả năng theo dõi sự kiện yêu thích, nhận thông báo đúng thời điểm, đặt vé nhanh chóng, lưu trữ vé điện tử thuận tiện và được hỗ trợ trong quá trình tham gia sự kiện. Đối với người tổ chức, bài toán lại mở rộng thêm các nhu cầu về tạo sự kiện, cấu hình nhiều hạng vé, quản lý số lượng người tham gia, gửi thông báo và xác nhận check-in tại chỗ. Nếu các khâu này bị tách rời trên nhiều nền tảng khác nhau, trải nghiệm tổng thể sẽ trở nên rời rạc, khó theo dõi và làm tăng chi phí thao tác cho cả người dùng lẫn người tổ chức.
+
+Từ góc nhìn đó, một hệ thống đặt vé sự kiện hiện đại cần thỏa mãn đồng thời ba nhóm chức năng. Nhóm thứ nhất là chức năng khám phá và theo dõi sự kiện, bao gồm tìm kiếm, lọc, xem chi tiết, lưu sự kiện và nhận nhắc lịch. Nhóm thứ hai là chức năng giao dịch và kiểm soát tham dự, bao gồm đặt vé, xác nhận thanh toán, tạo vé điện tử và check-in bằng mã số hoặc mã \gls{QR}. Nhóm thứ ba là chức năng tương tác và hỗ trợ cộng đồng, bao gồm thông báo, lời mời, nhắn tin và các cơ chế kết nối giữa người tham dự với người tổ chức. Đây cũng chính là cơ sở để đánh giá mức độ phù hợp của các ứng dụng tương tự trong phần tiếp theo.
+
+\subsection{Khảo sát một số ứng dụng tương tự}
+Trong số các nền tảng hiện có, Meetup và Ticketmaster là hai trường hợp tiêu biểu nhưng đại diện cho hai định hướng khác nhau của bài toán sự kiện. Meetup nhấn mạnh vào việc hình thành cộng đồng, tìm kiếm nhóm theo sở thích và tham gia các hoạt động địa phương hoặc trực tuyến \cite{meetup2026about}. Ngược lại, Ticketmaster tập trung mạnh vào khâu khám phá sự kiện quy mô lớn, mua vé điện tử, quản lý vé trên di động, chuyển vé và bán lại vé trong hệ sinh thái của mình. Việc khảo sát hai nền tảng này giúp nhận diện rõ sự khác biệt giữa hướng tiếp cận thiên về cộng đồng và hướng tiếp cận thiên về thương mại hóa vé điện tử.
+
+Bảng \ref{table:app-comparison} trình bày tóm tắt một số đặc điểm quan trọng của các ứng dụng tương tự so với mục tiêu của hệ thống trong đồ án.
+
+\begin{table}[H]
+\centering
+\caption{So sánh một số ứng dụng tương tự với định hướng của hệ thống đề xuất}
+\label{table:app-comparison}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{2.7cm}|p{3.5cm}|p{3.8cm}|p{3.8cm}|}
+\hline
+\textbf{Nền tảng} & \textbf{Điểm mạnh nổi bật} & \textbf{Hạn chế so với bài toán của đồ án} & \textbf{Giá trị tham khảo cho hệ thống} \\
+\hline
+Meetup \cite{meetup2026about} & Mạnh về khám phá cộng đồng, nhóm sở thích, sự kiện địa phương và kết nối giữa những người có cùng mối quan tâm. & Chức năng đặt vé, quản lý nhiều hạng vé, xác nhận thanh toán và kiểm soát check-in không phải trọng tâm chính; chưa nhấn mạnh mạnh vào quy trình vé điện tử khép kín. & Tham khảo cách tổ chức sự kiện theo cộng đồng, gợi mở nhu cầu kết hợp giữa sự kiện và tương tác xã hội trong ứng dụng. \\
+\hline
+Ticketmaster & Mạnh về tìm kiếm sự kiện, vé điện tử, quản lý vé trên điện thoại, chuyển vé, bán vé và hỗ trợ người dùng trong ngày diễn ra sự kiện. & Thiên về các sự kiện thương mại quy mô lớn; ít nhấn mạnh chiều tương tác cộng đồng, trò chuyện trực tiếp hoặc nhu cầu tổ chức sự kiện linh hoạt cho nhóm nhỏ. & Tham khảo luồng mua vé, quản lý vé điện tử, truy cập vé trên di động và cơ chế kiểm soát vé thuận tiện. \\
+\hline
+Hệ thống của đồ án & Hướng tới tích hợp khám phá sự kiện, tạo và quản lý sự kiện, nhiều hạng vé, vé điện tử, thông báo, lời mời, chat và check-in trong cùng một nền tảng di động. & Quy mô triển khai hiện tại còn ở mức thử nghiệm, chưa tối ưu cho lượng người dùng cực lớn hoặc hệ sinh thái phân phối vé quy mô thương mại. & Kết hợp ưu điểm của hướng cộng đồng và hướng quản lý vé điện tử, phù hợp với phạm vi ứng dụng thực tế cỡ vừa. \\
+\hline
+\end{tabular}
+\end{table}
+
+Từ bảng so sánh trên có thể thấy, Meetup có ưu thế rõ rệt ở khía cạnh xây dựng cộng đồng và tạo động lực tham gia sự kiện thông qua sở thích chung. Đây là đặc điểm quan trọng vì bài toán sự kiện trong thực tế không chỉ liên quan đến giao dịch mua vé mà còn liên quan tới trải nghiệm kết nối, tương tác và duy trì sự quan tâm của người dùng đối với các hoạt động trong tương lai. Tuy nhiên, nếu chỉ dựa vào hướng tiếp cận như Meetup, hệ thống sẽ thiếu đi những chức năng thiết yếu cho bài toán đặt vé như quản lý nhiều loại vé, xử lý trạng thái thanh toán hay hỗ trợ kiểm soát tham dự bằng vé điện tử.
+
+Ở chiều ngược lại, Ticketmaster thể hiện rõ ưu thế trong quy trình vé điện tử và quản lý việc tham dự trên di động. Việc cho phép người dùng lưu, truy cập, chuyển hoặc sử dụng vé điện tử trực tiếp trên điện thoại là một điểm tham khảo quan trọng đối với hệ thống của đồ án. Tuy nhiên, mô hình này thiên nhiều hơn về phân phối vé cho các sự kiện lớn, trong khi bài toán của đề tài cần linh hoạt hơn để phục vụ cả các hoạt động cộng đồng, workshop, sự kiện học thuật và các chương trình có quy mô vừa và nhỏ. Điều đó dẫn tới yêu cầu hệ thống không chỉ phải hỗ trợ đặt vé, mà còn phải duy trì khả năng kết nối giữa người dùng và ban tổ chức qua thông báo, lời mời và trao đổi trực tiếp.
+
+\subsection{Nhận xét và các chức năng cần ưu tiên phát triển}
+Từ khảo sát hiện trạng, có thể rút ra rằng không có một ứng dụng đơn lẻ nào trong số các nền tảng tham khảo đồng thời bao phủ cân bằng cả ba chiều: khám phá sự kiện, quản lý vé điện tử và tương tác cộng đồng theo phạm vi mà đề tài đặt ra. Vì vậy, hệ thống của đồ án cần được định hướng như một nền tảng tích hợp, vừa kế thừa khả năng tổ chức và kết nối cộng đồng, vừa hỗ trợ quy trình mua vé và tham dự sự kiện trên thiết bị di động. Trên cơ sở đó, các chức năng cần ưu tiên phát triển gồm quản lý tài khoản người dùng, tìm kiếm và lọc sự kiện, xem chi tiết sự kiện, lưu sự kiện yêu thích, tạo và quản lý sự kiện, quản lý nhiều hạng vé, đặt vé, xác nhận thanh toán, sinh vé điện tử, check-in, gửi thông báo, lời mời và hỗ trợ nhắn tin giữa các bên liên quan. Các chức năng này tạo thành nền tảng cho những phần tổng quan chức năng và đặc tả chức năng sẽ được trình bày ở giai đoạn tiếp theo của báo cáo.
+
+\section{Tổng quan chức năng}
+\label{section:2.2}
+Phần \ref{section:2.2} này có nhiệm vụ tóm tắt các chức năng của phần mềm. Trong phần này, sinh viên lưu ý chỉ mô tả chức năng mức cao (tổng quan) mà không đặc tả chi tiết cho từng chức năng. Đặc tả chi tiết được trình bày trong phần \ref{section:2.3}.
+
+\subsection{Biểu đồ use case tổng quát}
+\label{subsection:2.2.1}
+Sinh viên vẽ biểu đồ use case tổng quan và giải thích các tác nhân tham gia là gì, nêu vai trò của từng tác nhân, và mô tả ngắn gọn các use case chính.
+
+\subsection{Biểu đồ use case phân rã XYZ}
+\label{subsection:2.2.2}
+Với mỗi use case mức cao trong biểu đồ use case tổng quan, sinh viên tạo một mục riêng như mục \ref{subsection:2.2.2} và tiến hành phân rã use case đó. Lưu ý tên use case cần phân rã trong biểu đồ use case tổng quan phải khớp với tên đề mục.
+
+Trong mỗi mục như vậy, sinh viên vẽ và giải thích ngắn gọn các use case phân rã.
+
+\subsection{Quy trình nghiệp vụ}
+\label{subsection:2.2.3}
+Nếu sản phẩm/hệ thống cần xây dựng có quy trình nghiệp vụ quan trọng/đáng chú ý, sinh viên cần mô tả và vẽ biểu đồ hoạt động minh họa quy trình nghiệp vụ đó. Sinh viên lưu ý đây không phải là luồng sự kiện của từng use case, mà là luồng hoạt động kết hợp nhiều use case để thực hiện một nghiệp vụ nào đó.
+
+Ví dụ, một hệ thống quản lý thư viện có quy trình nghiệp vụ mượn trả với mô tả sơ bộ như sau: Sinh viên làm thẻ mượn, sau đó sinh viên đăng ký mượn sách, thủ thư cho mượn, và cuối cùng sinh viên trả lại sách cho thư viện. Một hệ thống có thể có một vài quy trình nghiệp vụ quan trọng như vậy.
+\section{Đặc tả chức năng}
+\label{section:2.3}
+Sinh viên lựa chọn từ 4 đến 7 use case quan trọng nhất của đồ án để đặc tả chi tiết. Mỗi đặc tả bao gồm ít nhất các thông tin sau: (i) Tên use case, (ii) Luồng sự kiện (chính và phát sinh), (iii) Tiền điều kiện, và (iv) Hậu điều kiện. Sinh viên chỉ vẽ bổ sung biểu đồ hoạt động khi đặc tả use case phức tạp.
+\subsection{Đặc tả use case A}
+\hfill
+\subsection{Đặc tả use case B}
+\hfill
+
+\section{Yêu cầu phi chức năng}
+\label{section:2.4}
+Ngoài các chức năng nghiệp vụ, hệ thống còn phải đáp ứng một số yêu cầu phi chức năng để bảo đảm khả năng vận hành ổn định, an toàn và thuận tiện cho người sử dụng. Các yêu cầu này được xác định dựa trên đặc điểm của ứng dụng di động có tích hợp backend, xử lý dữ liệu sự kiện, vé điện tử và tương tác gần thời gian thực.
+
+\subsection{Yêu cầu về hiệu năng}
+Hệ thống cần bảo đảm thời gian phản hồi hợp lý đối với các chức năng thường xuyên được sử dụng như đăng nhập, tải danh sách sự kiện, xem chi tiết sự kiện, gửi tin nhắn và truy xuất vé điện tử. Đối với người dùng di động, trải nghiệm bị ảnh hưởng mạnh nếu thời gian tải dữ liệu quá lâu hoặc thao tác xác nhận thanh toán, mở vé và check-in diễn ra chậm. Vì vậy, ứng dụng cần tổ chức API gọn nhẹ, hạn chế truy vấn dư thừa và tối ưu số lượng dữ liệu trả về ở các màn hình chính.
+
+\subsection{Yêu cầu về độ tin cậy và tính nhất quán dữ liệu}
+Do hệ thống xử lý nhiều thực thể liên quan như người dùng, sự kiện, vé, thanh toán và thông báo, dữ liệu cần được cập nhật nhất quán giữa ứng dụng khách và máy chủ. Trạng thái vé, số lượng vé đã bán, thông tin thanh toán và trạng thái check-in phải phản ánh đúng thực tế tại thời điểm sử dụng. Hệ thống cũng cần giảm thiểu lỗi phát sinh khi nhiều người dùng đồng thời thao tác trên cùng một sự kiện, đặc biệt trong các trường hợp đặt vé hoặc xác nhận tham dự.
+
+\subsection{Yêu cầu về bảo mật}
+Hệ thống cần bảo vệ thông tin tài khoản và dữ liệu nghiệp vụ thông qua cơ chế xác thực, phân quyền và kiểm soát truy cập phù hợp. Các API liên quan đến tài khoản, vé, thanh toán, tin nhắn và quản trị cần chỉ cho phép truy cập khi người dùng đã được xác thực hợp lệ. Ngoài ra, các dữ liệu nhạy cảm như mật khẩu, token và thông tin thao tác của người dùng phải được quản lý an toàn, tránh lộ lọt hoặc bị sử dụng trái phép.
+
+\subsection{Yêu cầu về khả năng sử dụng}
+Ứng dụng hướng tới người dùng cuối thao tác chủ yếu trên điện thoại, vì vậy giao diện cần rõ ràng, dễ hiểu và hạn chế các bước xử lý phức tạp. Các chức năng quan trọng như tìm sự kiện, đặt vé, xem vé đã mua, nhận thông báo và gửi tin nhắn cần được bố trí trực quan. Hệ thống cũng cần hỗ trợ trải nghiệm liên tục giữa các màn hình, giúp người dùng không bị đứt quãng khi chuyển từ khám phá sự kiện sang đặt vé hoặc từ thông báo sang xem chi tiết nội dung liên quan.
+
+\subsection{Yêu cầu về khả năng bảo trì và mở rộng}
+Do đây là hệ thống có nhiều nhóm chức năng, mã nguồn cần được tổ chức theo cấu trúc rõ ràng để thuận lợi cho việc bảo trì và mở rộng sau này. Các thành phần như xác thực, sự kiện, vé, thông báo, nhắn tin và nhắc lịch nên được tách thành các mô-đun tương đối độc lập, giúp dễ sửa lỗi, bổ sung tính năng và kiểm thử. Yêu cầu này đặc biệt quan trọng vì hệ thống có thể được mở rộng thêm các cổng thanh toán thực tế, công cụ quản trị nâng cao hoặc cơ chế gợi ý cá nhân hóa trong các phiên bản tiếp theo.
+
+\subsection{Yêu cầu kỹ thuật triển khai}
+Hệ thống cần có khả năng hoạt động trên môi trường di động phổ biến và kết nối được với backend thông qua mạng Internet thông thường. Về phía lưu trữ, cơ sở dữ liệu cần đủ linh hoạt để quản lý các thực thể thay đổi theo nghiệp vụ như sự kiện, hạng vé, thông báo và phòng chat. Về phía tích hợp, hệ thống cũng cần hỗ trợ các dịch vụ bổ sung như thông báo đẩy, sinh mã \gls{QR} và xử lý nội dung hỗ trợ bằng \gls{API}, từ đó tạo nền tảng kỹ thuật phù hợp cho việc hiện thực hóa sản phẩm.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Từ kết quả khảo sát trong chương này có thể thấy bài toán đặt vé và quản lý sự kiện trên thiết bị di động đòi hỏi một hệ thống tích hợp nhiều chức năng hơn so với các nền tảng chỉ thiên về cộng đồng hoặc chỉ thiên về bán vé. Việc phân tích các ứng dụng tương tự đã giúp xác định rõ những chức năng cốt lõi cần ưu tiên, đồng thời làm rõ các yêu cầu phi chức năng mà hệ thống phải đáp ứng để vận hành ổn định trong thực tế. Các nội dung này là cơ sở quan trọng cho những bước tiếp theo trong quá trình mô tả chức năng, thiết kế và triển khai hệ thống ở các chương sau.
+
+\end{document}
