@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  24 JUN 2026 01:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  24 JUN 2026 22:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1236,48 +1236,109 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Underfull \vbox (badness 4378) has occurred while \output is active []
 
  [6 <../Hinhve/BieuDoGoiChiTiet.png>]
+Overfull \hbox (14.98773pt too wide) in paragraph at lines 54--55
+\T5/pcr/m/n/13 tend/-con-stants/-col-ors.ts \T5/ptm/m/n/13 v  \T5/pcr/m/n/13 fron-tend/-con-stants/theme.ts\T5/ptm/m/n/13 . M u
+ []
+
+
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [7]
-LaTeX Font Info:    Calculating math sizes for size <13> on input line 66.
+ [7] [8]
+<../Hinhve/TaoSuKienWF.png, id=106, 856.19875pt x 1850.915pt>
+File: ../Hinhve/TaoSuKienWF.png Graphic file (type png)
+<use ../Hinhve/TaoSuKienWF.png>
+Package pdftex.def Info: ../Hinhve/TaoSuKienWF.png  used on input line 78.
+(pdftex.def)             Requested size: 138.67992pt x 299.79575pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9]
+<../Hinhve/DatVeWF.png, id=113, 866.23625pt x 1829.83624pt>
+File: ../Hinhve/DatVeWF.png Graphic file (type png)
+<use ../Hinhve/DatVeWF.png>
+Package pdftex.def Info: ../Hinhve/DatVeWF.png  used on input line 85.
+(pdftex.def)             Requested size: 141.91827pt x 299.78796pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [10 <../Hinhve/TaoSuKienWF.png (PNG copy)> <../Hinhve/DatVeWF.png (PNG copy)>]
+Overfull \hbox (15.27371pt too wide) in paragraph at lines 94--95
+\T5/pcr/m/n/13 ver-i-fied\T5/ptm/m/n/13 , \T5/pcr/m/n/13 no-ti-fi-ca-tion-sEn-abled\T5/ptm/m/n/13 , \T5/pcr/m/n/13 ex-po-Push-To-ken\T5/ptm/m/n/13 , \T5/pcr/m/n/13 pass-wor-dReset-
+ []
+
+<../Hinhve/TaoSuKienUCSeq.png, id=120, 902.37125pt x 532.99126pt>
+File: ../Hinhve/TaoSuKienUCSeq.png Graphic file (type png)
+<use ../Hinhve/TaoSuKienUCSeq.png>
+Package pdftex.def Info: ../Hinhve/TaoSuKienUCSeq.png  used on input line 104.
+(pdftex.def)             Requested size: 426.79951pt x 252.09181pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [11]
+Overfull \hbox (3.22266pt too wide) in paragraph at lines 113--114
+\T5/pcr/m/n/13 seat-Info\T5/ptm/m/n/13 , \T5/pcr/m/n/13 qr-Code\T5/ptm/m/n/13 , \T5/pcr/m/n/13 pay-mentSta-tus\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checked\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checke-dAt\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checkedBy
+ []
+
+<../Hinhve/DatVe&ThanhToanUCSeq.png, id=127, 1296.845pt x 1074.0125pt>
+File: ../Hinhve/DatVe&ThanhToanUCSeq.png Graphic file (type png)
+<use ../Hinhve/DatVe&ThanhToanUCSeq.png>
+Package pdftex.def Info: ../Hinhve/DatVe&ThanhToanUCSeq.png  used on input line 117.
+(pdftex.def)             Requested size: 426.79266pt x 353.45831pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [12 <../Hinhve/TaoSuKienUCSeq.png>]
+<../Hinhve/CheckInUCSeq.png, id=135, 1223.57124pt x 723.70375pt>
+File: ../Hinhve/CheckInUCSeq.png Graphic file (type png)
+<use ../Hinhve/CheckInUCSeq.png>
+Package pdftex.def Info: ../Hinhve/CheckInUCSeq.png  used on input line 124.
+(pdftex.def)             Requested size: 426.78142pt x 252.42772pt.
+ [13 <../Hinhve/DatVe&ThanhToanUCSeq.png> <../Hinhve/CheckInUCSeq.png>] [14] [15] [16]
+<../Hinhve/ERD.png, id=166, 1570.86874pt x 1057.9525pt>
+File: ../Hinhve/ERD.png Graphic file (type png)
+<use ../Hinhve/ERD.png>
+Package pdftex.def Info: ../Hinhve/ERD.png  used on input line 185.
+(pdftex.def)             Requested size: 426.77689pt x 287.42673pt.
+ [17 <../Hinhve/ERD.png>]
+LaTeX Font Info:    Calculating math sizes for size <13> on input line 196.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 66.
+(Font)              size <6> substituted on input line 196.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 66.
+(Font)              size <12> substituted on input line 196.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <6.5> not available
-(Font)              size <6> substituted on input line 66.
+(Font)              size <6> substituted on input line 196.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 66.
+(Font)              size <12> substituted on input line 196.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 66.
+(Font)              size <6> substituted on input line 196.
 
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 66.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 196.
 (/usr/share/texlive/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
 
 LaTeX Font Warning: Font shape `U/lasy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 66.
+(Font)              size <12> substituted on input line 196.
 
 
 LaTeX Font Warning: Font shape `U/lasy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 66.
+(Font)              size <6> substituted on input line 196.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 66.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 196.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 66.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 196.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
@@ -1286,7 +1347,7 @@ Package glossaries Warning: No \printnoidxglossary or \printnoidxglossaries
  found. (Remove \makenoidxglossaries if you don't want any glossaries.)
 This document will not have a glossary.
 
-[8] (./4_Ket_qua_thuc_nghiem.aux)
+[18] (./4_Ket_qua_thuc_nghiem.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1303,18 +1364,18 @@ Package logreq Info: Writing requests to '4_Ket_qua_thuc_nghiem.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29119 strings out of 474222
- 499457 string characters out of 5748733
+ 29214 strings out of 474222
+ 501683 string characters out of 5748733
  1937975 words of memory out of 5000000
- 50875 multiletter control sequences out of 15000+600000
+ 50937 multiletter control sequences out of 15000+600000
  574259 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,8n,124p,2498b,854s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/ucrr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb>
-Output written on 4_Ket_qua_thuc_nghiem.pdf (8 pages, 169350 bytes).
+Output written on 4_Ket_qua_thuc_nghiem.pdf (18 pages, 2055502 bytes).
 PDF statistics:
- 130 PDF objects out of 1000 (max. 8388607)
- 108 compressed objects within 2 object streams
- 26 named destinations out of 1000 (max. 500000)
- 123 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 211 PDF objects out of 1000 (max. 8388607)
+ 169 compressed objects within 2 object streams
+ 59 named destinations out of 1000 (max. 500000)
+ 153 words of extra memory for PDF output out of 10000 (max. 10000000)
 

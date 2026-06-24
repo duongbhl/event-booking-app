@@ -7,6 +7,12 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces Biểu đồ gói tổng quan của hệ thống event-booking-app}}{24}{figure.caption.11}%
 \contentsline {figure}{\numberline {4.2}{\ignorespaces Biểu đồ thiết kế gói cho nghiệp vụ đặt vé, thanh toán và tham dự sự kiện}}{26}{figure.caption.12}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Wireframe minh họa giao diện chức năng tạo sự kiện}}{30}{figure.caption.18}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Wireframe minh họa giao diện chức năng đặt vé}}{30}{figure.caption.19}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Biểu đồ trình tự cho use case Tạo sự kiện}}{32}{figure.caption.22}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Biểu đồ trình tự cho use case Đặt vé và xác nhận thanh toán}}{33}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Biểu đồ trình tự cho use case Check-in vé bằng mã QR}}{33}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Biểu đồ thực thể liên kết của hệ thống event-booking-app}}{37}{figure.caption.35}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsfinish 

@@ -49,13 +49,143 @@ Các quan hệ giữa các lớp trong biểu đồ gói thể hiện rõ cách 
 
 \section{Thiết kế chi tiết}
 \subsection{Thiết kế giao diện}
-Phần này có độ dài từ hai đến ba trang. Sinh viên đặc tả thông tin về màn hình mà ứng dụng của mình hướng tới, bao gồm độ phân giải màn hình, kích thước màn hình, số lượng màu sắc hỗ trợ, v.v. Tiếp đến, sinh viên đưa ra các thống nhất/chuẩn hóa của mình khi thiết kế giao diện như thiết kế nút, điều khiển, vị trí hiển thị thông điệp phản hồi, phối màu, v.v. Sau cùng sinh viên đưa ra một số hình ảnh minh họa thiết kế giao diện cho các chức năng quan trọng nhất. Lưu ý, sinh viên không nhầm lẫn giao diện thiết kế với giao diện của sản phẩm sau cùng.
-\subsection{Thiết kế lớp}
-Phần này có độ dài từ ba đến bốn trang. Sinh viên trình bày thiết kế chi tiết các thuộc tính và phương thức cho một số lớp chủ đạo/quan trọng nhất của ứng dụng (từ 2-4 lớp). Thiết kế chi tiết cho các lớp khác, nếu muốn trình bày, sinh viên đưa vào phần phụ lục.
+Hệ thống được định hướng là một ứng dụng mobile-first, do đó thiết kế giao diện tập trung chủ yếu vào môi trường điện thoại thông minh và các thiết bị di động cầm tay. Về mặt mục tiêu hiển thị, ứng dụng hướng tới các màn hình có độ phân giải phổ biến trên smartphone hiện nay, hỗ trợ tốt ở cả các thiết bị cỡ nhỏ, thiết bị kích thước trung bình và máy tính bảng. Trong mã nguồn hiện tại, nhiều màn hình như trang chủ, trang chi tiết sự kiện, màn hình chọn vé hay màn hình chat đều sử dụng cơ chế \texttt{useWindowDimensions} để điều chỉnh giao diện theo chiều rộng thực tế của thiết bị. Điều này cho thấy thiết kế giao diện của hệ thống không cố định ở một kích thước duy nhất, mà hướng tới khả năng thích nghi với nhiều khung hiển thị. Trên thiết bị nhỏ, khoảng cách lề, chiều cao ô nhập liệu, kích thước biểu tượng và cỡ chữ được thu gọn để bảo đảm không tràn bố cục; trong khi với máy tính bảng, các thành phần được mở rộng hợp lý để tận dụng không gian hiển thị.
 
-Để minh họa thiết kế lớp, sinh viên thiết kế luồng truyền thông điệp giữa các đối tượng tham gia cho 2 đến 3 use case quan trọng nào đó bằng biểu đồ trình tự (hoặc biểu đồ giao tiếp).
+Về số lượng màu sắc và định hướng hiển thị, hệ thống sử dụng môi trường giao diện đồ họa tiêu chuẩn của thiết bị di động với dải màu đầy đủ, hỗ trợ hiển thị văn bản, ảnh, icon, nền khối, gradient và phản hồi trạng thái bằng màu. Trong mã nguồn, bảng màu của ứng dụng được chuẩn hóa tập trung trong các tệp \texttt{frontend/constants/colors.ts} và \texttt{frontend/constants/theme.ts}. Màu chủ đạo của hệ thống là cam \texttt{\#F76B10}, được dùng để nhấn mạnh các thao tác chính như đặt vé, xác nhận hoặc điều hướng tới các chức năng nổi bật. Bên cạnh đó, hệ thống sử dụng thêm các màu phụ như xanh dương, vàng, xanh lá, trắng, xám và các màu trạng thái để biểu diễn thông tin khác nhau. Cách tổ chức này giúp giao diện có tính thống nhất cao và hỗ trợ việc thay đổi chủ đề hoặc mở rộng sang dark mode về sau.
+
+\paragraph{Nguyên tắc tổ chức giao diện}\mbox{}
+
+Thiết kế giao diện của hệ thống được xây dựng theo hướng ưu tiên khả năng thao tác nhanh, dễ hiểu và phù hợp với hành vi sử dụng trên điện thoại. Các màn hình nghiệp vụ chính đều tuân theo cấu trúc ba phần: vùng điều hướng phía trên, vùng nội dung trung tâm và vùng thao tác chính ở cuối màn hình hoặc tại những vị trí dễ chạm. Ví dụ, trang chủ gồm phần tiêu đề tài khoản và vị trí người dùng, thanh tìm kiếm, các nhóm danh mục và danh sách sự kiện; màn hình chi tiết sự kiện tổ chức nội dung theo trình tự banner -- thông tin sự kiện -- thao tác chính; còn màn hình mua vé và thanh toán được thiết kế theo luồng nhập liệu từng bước. Việc phân chia như vậy giúp người dùng nhanh chóng nhận biết phần nào dùng để xem thông tin, phần nào dùng để thao tác và phần nào là phản hồi của hệ thống.
+
+Các thành phần giao diện cũng được chuẩn hóa theo một số quy tắc nhất quán. Nút thao tác chính thường dùng nền đậm hoặc màu nhấn, bo góc lớn và chữ đậm để tạo sự nổi bật. Các ô nhập liệu sử dụng nền sáng, viền rõ ràng, khoảng đệm tương đối lớn để dễ nhập trên màn hình cảm ứng. Các danh sách, thẻ sự kiện và vùng thông tin dùng bo góc mềm để giữ tính nhất quán với tổng thể thiết kế hiện đại của ứng dụng. Với các chức năng có tính hệ quả trực tiếp như thanh toán, xóa hoặc từ chối sự kiện, giao diện luôn cố gắng cung cấp dấu hiệu nhận biết rõ ràng thông qua màu sắc, vị trí nút và thông báo phản hồi. Hệ thống cũng sử dụng icon phổ biến như menu, tìm kiếm, vị trí, tin nhắn, vé và các trạng thái tăng giảm số lượng để giảm khối lượng văn bản phải hiển thị trên màn hình.
+
+\paragraph{Chuẩn hóa vị trí thông điệp và phản hồi hệ thống}\mbox{}
+
+Một yêu cầu quan trọng của ứng dụng di động là thông điệp phản hồi phải xuất hiện đúng lúc và đủ rõ để người dùng không bị mất phương hướng khi thao tác. Trong thiết kế hiện tại, thông điệp phản hồi được tổ chức theo ba mức. Mức thứ nhất là phản hồi cục bộ ngay trong thành phần giao diện, ví dụ trạng thái nút bị mờ khi không thể bấm, số lượng vé không thể tăng vượt quota hoặc biểu tượng thay đổi theo trạng thái đã lưu. Mức thứ hai là phản hồi qua các hộp thoại cảnh báo hoặc thông báo ngắn khi thao tác thành công hay thất bại, chẳng hạn khi thêm thẻ, duyệt sự kiện hoặc gặp lỗi kết nối. Mức thứ ba là phản hồi ở mức hệ thống thông qua notification và push notification, áp dụng cho các tình huống như lời mời sự kiện, nhắc lịch, thanh toán thành công hoặc có tin nhắn mới. Việc phân tách phản hồi như vậy giúp cho người dùng luôn nhận được thông tin phù hợp với mức độ quan trọng của thao tác.
+
+\paragraph{Định hướng thiết kế cho các màn hình quan trọng}\mbox{}
+
+Đối với màn hình trang chủ, định hướng thiết kế là ưu tiên khám phá nhanh. Người dùng cần nhìn thấy ngay thông tin cá nhân tối thiểu, thanh tìm kiếm, danh mục sự kiện và các sự kiện nổi bật. Vì vậy, bố cục được tổ chức theo chiều dọc, dùng thẻ sự kiện và các thanh danh mục nằm ngang để giảm thao tác cuộn không cần thiết. Đối với màn hình chi tiết sự kiện, thiết kế hướng tới việc cung cấp thông tin đầy đủ nhưng không gây quá tải, nên banner hình ảnh được đặt ở đầu trang, sau đó là khối thông tin tóm tắt, mô tả, thông tin người tổ chức và các hành động như đặt vé, nhắn tin hoặc lưu sự kiện. Đối với màn hình mua vé, thiết kế cần làm nổi bật việc lựa chọn hạng vé, số lượng và tổng tiền để người dùng dễ ra quyết định. Còn đối với màn hình chat, thiết kế được tổ chức theo mẫu hội thoại quen thuộc với khung tin nhắn, thời gian gửi, ô nhập liệu và phản hồi đọc tin nhằm giảm thời gian làm quen của người sử dụng.
+
+\paragraph{Nhận xét chung về thiết kế giao diện}\mbox{}
+
+Thiết kế giao diện của hệ thống được xây dựng theo hướng thực dụng, ưu tiên tính dễ dùng và sự nhất quán hơn là những hiệu ứng trình diễn phức tạp. Điểm mạnh của thiết kế nằm ở việc chuẩn hóa tương đối rõ bảng màu, kiểu thẻ, vùng nhập liệu, biểu tượng và phản hồi hệ thống, đồng thời có xem xét tới khả năng thích nghi với nhiều kích thước màn hình khác nhau. Dù đây mới là một sản phẩm ở mức thử nghiệm, định hướng giao diện hiện tại đã đủ để làm nền tảng cho các luồng nghiệp vụ chính như khám phá sự kiện, đặt vé, thanh toán, quản lý vé và tương tác giữa các bên. Trong các bước tiếp theo, phần minh họa bằng ảnh giao diện thực tế có thể tiếp tục được bổ sung để làm rõ hơn cách những nguyên tắc thiết kế này được hiện thực hóa trên từng màn hình cụ thể.
+
+\paragraph{Hình ảnh Wireframe 1 số giao diện:}\mbox{}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.36\linewidth,height=0.41\textheight,keepaspectratio]{Hinhve/TaoSuKienWF.png}
+    \caption{Wireframe minh họa giao diện chức năng tạo sự kiện}
+    \label{fig:wf-create-event}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.36\linewidth,height=0.41\textheight,keepaspectratio]{Hinhve/DatVeWF.png}
+    \caption{Wireframe minh họa giao diện chức năng đặt vé}
+    \label{fig:wf-book-ticket}
+\end{figure}
+\subsection{Thiết kế lớp}
+Trong hệ thống đặt vé và quản lý sự kiện của đồ án, có nhiều lớp dữ liệu và lớp xử lý cùng phối hợp để thực hiện các nghiệp vụ. Tuy nhiên, nếu xét theo mức độ trung tâm đối với luồng nghiệp vụ chính, bốn lớp quan trọng nhất là \texttt{User}, \texttt{Event}, \texttt{Ticket} và \texttt{Payment}. Đây là các lớp phản ánh trực tiếp ba thực thể cốt lõi của hệ thống là người dùng, sự kiện và giao dịch đặt vé. Những lớp khác như \texttt{Notification}, \texttt{Bookmark}, \texttt{ChatRoom}, \texttt{Message} hay các lớp tiện ích hỗ trợ sẽ được xem là các lớp bổ trợ.
+
+\paragraph{Lớp User}\mbox{}
+
+Lớp \texttt{User} đại diện cho người sử dụng hệ thống, bao gồm cả người dùng thông thường lẫn quản trị viên. Về mặt thuộc tính, lớp này lưu trữ các thông tin định danh và hồ sơ như \texttt{name}, \texttt{email}, \texttt{password}, \texttt{avatar}, \texttt{country}, \texttt{interests}, \texttt{location}, \texttt{description}, cùng với các thông tin điều khiển nghiệp vụ như \texttt{role}, \texttt{verified}, \texttt{notificationsEnabled}, \texttt{expoPushToken}, \texttt{passwordResetCode} và \texttt{passwordResetExpires}. Các thuộc tính này cho phép hệ thống không chỉ xác thực người dùng mà còn cá nhân hóa hồ sơ, quản lý quyền truy cập và hỗ trợ các chức năng thông báo đẩy hoặc khôi phục mật khẩu.
+
+Về phương thức, lớp \texttt{User} có phương thức quan trọng \texttt{matchPassword()} để đối chiếu mật khẩu người dùng nhập vào với mật khẩu đã mã hóa trong cơ sở dữ liệu. Ngoài ra, lớp còn tham gia vào cơ chế tiền xử lý trước khi lưu thông qua thao tác mã hóa mật khẩu bằng \texttt{pre-save hook}. Về ý nghĩa thiết kế, \texttt{User} là lớp đầu mối cho hầu hết các use case của hệ thống vì mọi nghiệp vụ như đặt vé, tạo sự kiện, nhận thông báo hay nhắn tin đều gắn với một người dùng cụ thể.
+
+\paragraph{Lớp Event}\mbox{}
+
+Lớp \texttt{Event} đại diện cho một sự kiện được công bố trên hệ thống. Các thuộc tính chính của lớp bao gồm \texttt{title}, \texttt{description}, \texttt{category}, \texttt{price}, \texttt{date}, \texttt{time}, \texttt{location}, \texttt{coordinates}, \texttt{images}, \texttt{member}, \texttt{attendees}, \texttt{rating}, \texttt{status}, \texttt{approvalStatus}, \texttt{organizer} và \texttt{ticketTiers}. Trong đó, \texttt{organizer} liên kết sự kiện với người tạo sự kiện, còn \texttt{ticketTiers} cho phép một sự kiện có nhiều hạng vé khác nhau, mỗi hạng có tên, giá, quota và số lượng đã bán.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{Hinhve/TaoSuKienUCSeq.png}
+    \caption{Biểu đồ trình tự cho use case Tạo sự kiện}
+    \label{fig:seq-create-event}
+\end{figure}
+
+Về mặt phương thức, lớp \texttt{Event} không biểu diễn các phương thức nghiệp vụ riêng biệt theo kiểu lớp hướng đối tượng thuần túy, nhưng nó là đối tượng được thao tác xuyên suốt trong các controller như tạo sự kiện, cập nhật sự kiện, duyệt sự kiện, thống kê người tham gia và hiển thị chi tiết sự kiện. Ý nghĩa thiết kế của lớp này nằm ở chỗ nó là trung tâm của phần nghiệp vụ sự kiện: mọi thao tác từ tìm kiếm, đặt vé, thông báo cho tới kiểm soát check-in đều quy chiếu về một đối tượng sự kiện cụ thể.
+
+\paragraph{Lớp Ticket}\mbox{}
+
+Lớp \texttt{Ticket} đại diện cho vé điện tử của người dùng đối với một sự kiện cụ thể. Các thuộc tính của lớp gồm \texttt{user}, \texttt{event}, \texttt{price}, \texttt{ticketType}, \texttt{tierName}, \texttt{seatInfo}, \texttt{qrCode}, \texttt{paymentStatus}, \texttt{checked}, \texttt{checkedAt}, \texttt{checkedBy} và \texttt{bookedAt}. Nhờ những thuộc tính này, một vé không chỉ là minh chứng cho việc mua thành công, mà còn là thực thể phản ánh trạng thái thanh toán, dữ liệu \gls{QR} và trạng thái tham dự tại sự kiện.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{Hinhve/DatVe&ThanhToanUCSeq.png}
+    \caption{Biểu đồ trình tự cho use case Đặt vé và xác nhận thanh toán}
+    \label{fig:seq-booking-payment}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{Hinhve/CheckInUCSeq.png}
+    \caption{Biểu đồ trình tự cho use case Check-in vé bằng mã QR}
+    \label{fig:seq-checkin}
+\end{figure}
+
+Ở góc độ nghiệp vụ, lớp \texttt{Ticket} tham gia vào các thao tác như khởi tạo vé khi người dùng đặt chỗ, cập nhật trạng thái thanh toán khi giao dịch được xác nhận, lưu dữ liệu \gls{QR} để phục vụ việc check-in và cập nhật trạng thái đã sử dụng sau khi quét vé thành công. Đây là lớp có vai trò cầu nối giữa người dùng và sự kiện, bởi nó là thực thể cụ thể hóa mối quan hệ “người dùng tham dự một sự kiện nào đó thông qua một hạng vé xác định”.
+
+\paragraph{Lớp Payment}\mbox{}
+
+Lớp \texttt{Payment} biểu diễn giao dịch thanh toán gắn với một hoặc nhiều vé trong hệ thống. Các thuộc tính chính gồm \texttt{user}, \texttt{event}, \texttt{tickets}, \texttt{amount}, \texttt{method}, \texttt{status} và \texttt{transactionId}. Cấu trúc này cho phép hệ thống quản lý thanh toán như một thực thể tách biệt thay vì chỉ lưu trực tiếp trạng thái tiền trên từng vé. Điều đó giúp việc truy vết giao dịch, cập nhật trạng thái thanh toán, thống kê doanh thu hoặc tích hợp cổng thanh toán thực tế trong tương lai thuận lợi hơn.
+
+Về phương thức nghiệp vụ, lớp \texttt{Payment} được thao tác chủ yếu trong luồng đặt vé và xác nhận thanh toán. Khi người dùng chọn hạng vé và số lượng vé, hệ thống tạo một giao dịch ở trạng thái chờ xử lý. Sau khi xác nhận thành công, \texttt{Payment} được cập nhật sang trạng thái thành công, đồng thời kéo theo việc cập nhật trạng thái các vé liên quan và số lượng vé đã bán ở sự kiện tương ứng. Vì vậy, lớp này đóng vai trò như một lớp điều phối tài chính, bảo đảm sự nhất quán giữa vé, số lượng vé đã bán và trạng thái giao dịch.
+
+\paragraph{Nhận xét chung về thiết kế lớp}\mbox{}
+
+Bốn lớp trên phản ánh lõi nghiệp vụ của hệ thống theo một cấu trúc khá mạch lạc. \texttt{User} biểu diễn tác nhân sử dụng hệ thống, \texttt{Event} biểu diễn đối tượng trung tâm mà người dùng quan tâm, \texttt{Ticket} biểu diễn quyền tham dự của người dùng đối với sự kiện, còn \texttt{Payment} biểu diễn giao dịch tài chính đi kèm với việc phát hành vé. Mối liên hệ giữa các lớp này tạo nên phần lớn luồng nghiệp vụ chính trong hệ thống. Việc thiết kế lớp theo hướng tách biệt vai trò như vậy giúp mã nguồn dễ mở rộng hơn, chẳng hạn khi cần bổ sung thêm các chức năng như hủy vé, hoàn tiền, thống kê doanh thu hay xếp chỗ theo khu vực.
+
+
+
+
+
+
+
+
 \subsection{Thiết kế cơ sở dữ liệu}
-Phần này có độ dài từ hai đến bốn trang. Sinh viên thiết kế, vẽ và giải thích biểu đồ thực thể liên kết (E-R diagram). Từ đó, sinh viên thiết kế cơ sở dữ liệu tùy theo hệ quản trị cơ sở dữ liệu mà mình sử dụng (SQL, NoSQL, Firebase, v.v.)
+Hệ thống sử dụng MongoDB làm hệ quản trị cơ sở dữ liệu, vì vậy mô hình dữ liệu của đề tài được thiết kế theo hướng tài liệu (document-oriented) thay vì quan hệ thuần túy như trong các hệ quản trị SQL. Tuy nhiên, về bản chất nghiệp vụ, các collection trong MongoDB vẫn biểu diễn những thực thể và quan hệ tương tự một mô hình thực thể liên kết. Do đó, việc thiết kế cơ sở dữ liệu vẫn cần bắt đầu từ việc xác định các thực thể chính, các thuộc tính quan trọng và mối liên hệ giữa chúng. Trên cơ sở đó, hệ thống được tổ chức thành các collection trung tâm như \texttt{User}, \texttt{Event}, \texttt{Ticket}, \texttt{Payment}, \texttt{Notification}, \texttt{Bookmark}, \texttt{Reminder}, \texttt{Review}, \texttt{ChatRoom}, \texttt{Message} và \texttt{Card}.
+
+\paragraph{Thực thể User}\mbox{}
+
+Thực thể \texttt{User} lưu thông tin người dùng của hệ thống, bao gồm cả người dùng thông thường và quản trị viên. Các thuộc tính quan trọng của thực thể này gồm họ tên, email, mật khẩu đã mã hóa, avatar, quốc gia, sở thích, vị trí, mô tả hồ sơ, vai trò, trạng thái xác thực, tùy chọn nhận thông báo và token thiết bị phục vụ thông báo đẩy. Đây là thực thể trung tâm của hệ thống vì hầu hết các nghiệp vụ đều quy chiếu về người dùng, từ tạo sự kiện, đặt vé, gửi tin nhắn, nhận thông báo cho đến quản lý bookmark và lời nhắc.
+
+\paragraph{Thực thể Event}\mbox{}
+
+Thực thể \texttt{Event} mô tả một sự kiện được tạo trong hệ thống. Các thuộc tính chính gồm tiêu đề, mô tả, danh mục, giá mặc định, ngày, thời gian, địa điểm, tọa độ, hình ảnh, số lượng người tham gia, điểm đánh giá, trạng thái sự kiện và trạng thái duyệt. Mỗi sự kiện liên kết với một người tổ chức thông qua thuộc tính \texttt{organizer}. Ngoài ra, sự kiện còn chứa một cấu trúc lồng \texttt{ticketTiers} để mô tả các hạng vé, trong đó mỗi hạng vé có tên, giá, quota và số lượng vé đã bán. Việc đặt \texttt{ticketTiers} bên trong tài liệu sự kiện là một lựa chọn phù hợp với MongoDB vì các hạng vé luôn gắn chặt với một sự kiện cụ thể và thường được truy xuất cùng nhau.
+
+\paragraph{Thực thể Ticket và Payment}\mbox{}
+
+Thực thể \texttt{Ticket} biểu diễn vé điện tử mà người dùng nhận được khi đặt tham gia một sự kiện. Mỗi vé liên kết với một người dùng và một sự kiện, đồng thời lưu giá vé, loại vé, tên hạng vé, thông tin vị trí ghế nếu có, dữ liệu mã \gls{QR}, trạng thái thanh toán, trạng thái check-in và thời điểm đặt vé. Đây là thực thể cầu nối giữa người dùng với sự kiện, phản ánh trực tiếp việc một người dùng tham gia một sự kiện nào đó qua một hạng vé xác định.
+
+Thực thể \texttt{Payment} dùng để quản lý giao dịch thanh toán. Mỗi thanh toán liên kết với một người dùng, một sự kiện và một tập vé tương ứng. Các thuộc tính chính của nó gồm tổng số tiền, phương thức thanh toán, trạng thái giao dịch và mã giao dịch. Việc tách \texttt{Payment} thành một thực thể riêng giúp hệ thống dễ mở rộng sang các kịch bản thực tế hơn như hoàn tiền, theo dõi giao dịch, thống kê doanh thu hoặc tích hợp cổng thanh toán thật trong tương lai.
+
+\paragraph{Các thực thể hỗ trợ tương tác và theo dõi}\mbox{}
+
+Bên cạnh các thực thể cốt lõi, hệ thống còn có nhiều thực thể hỗ trợ cho trải nghiệm người dùng. Thực thể \texttt{Bookmark} lưu mối liên hệ giữa người dùng và sự kiện được lưu quan tâm, qua đó hỗ trợ tính năng theo dõi sự kiện. Thực thể \texttt{Reminder} lưu các lời nhắc gắn giữa người dùng và sự kiện, giúp hệ thống xác định thời điểm cần gửi nhắc lịch. Thực thể \texttt{Review} lưu đánh giá và bình luận của người dùng cho sự kiện, phục vụ tính năng phản hồi và cập nhật điểm đánh giá trung bình. Thực thể \texttt{Notification} lưu các thông báo nội bộ mà người dùng nhận được, bao gồm thông báo hệ thống, lời mời, nhắc lịch, thông báo thanh toán hoặc thông báo chat.
+
+Ngoài ra, nhóm chức năng giao tiếp thời gian thực được tổ chức thông qua hai thực thể \texttt{ChatRoom} và \texttt{Message}. \texttt{ChatRoom} lưu thông tin một phòng chat, có thể gắn với một sự kiện và một danh sách thành viên. \texttt{Message} lưu các tin nhắn phát sinh trong từng phòng, bao gồm người gửi, nội dung, loại tin nhắn, tệp đính kèm và danh sách người đã đọc. Cuối cùng, thực thể \texttt{Card} dùng để lưu thông tin thẻ thanh toán đã lưu của người dùng ở mức tối giản, bao gồm thương hiệu thẻ, bốn số cuối, tháng hết hạn, năm hết hạn và trạng thái thẻ mặc định.
+
+\paragraph{Mối quan hệ giữa các thực thể}\mbox{}
+
+Từ góc nhìn E-R, mối quan hệ giữa các thực thể trong hệ thống có thể mô tả như sau. Một \texttt{User} có thể tạo nhiều \texttt{Event}, trong khi mỗi \texttt{Event} chỉ có một người tổ chức chính. Một \texttt{User} có thể sở hữu nhiều \texttt{Ticket}, còn mỗi \texttt{Ticket} chỉ thuộc về một người dùng và một sự kiện. Một \texttt{Payment} có thể liên kết với nhiều \texttt{Ticket}, nhưng mỗi vé trong ngữ cảnh hệ thống hiện tại chỉ gắn với một giao dịch thanh toán tại một thời điểm. Một \texttt{User} có thể tạo nhiều \texttt{Bookmark}, \texttt{Reminder}, \texttt{Review}, \texttt{Notification}, \texttt{Card} và \texttt{Message}. Một \texttt{Event} có thể có nhiều \texttt{Ticket}, \texttt{Review}, \texttt{Notification}, \texttt{Reminder} và \texttt{Bookmark}. Đối với nhóm chat, một \texttt{ChatRoom} có thể chứa nhiều \texttt{Message} và nhiều thành viên là các \texttt{User}, còn mỗi \texttt{Message} thuộc về đúng một phòng chat và một người gửi.
+
+\paragraph{Đặc điểm thiết kế dữ liệu trong MongoDB}\mbox{}
+
+Do sử dụng MongoDB, các quan hệ trên không được hiện thực bằng khóa ngoại như trong hệ quản trị quan hệ, mà chủ yếu thông qua các trường tham chiếu \texttt{ObjectId} và các cấu trúc lồng. Cách làm này giúp hệ thống vừa giữ được tính linh hoạt khi mô hình dữ liệu thay đổi, vừa đủ rõ ràng để tổ chức các nghiệp vụ phức tạp. Những quan hệ cần truy xuất thường xuyên cùng nhau, chẳng hạn các hạng vé của một sự kiện, được nhúng trực tiếp trong tài liệu \texttt{Event}. Ngược lại, các thực thể có vòng đời riêng như \texttt{Ticket}, \texttt{Payment}, \texttt{Notification} hay \texttt{Message} được tách thành collection riêng để hỗ trợ cập nhật độc lập và mở rộng tốt hơn.
+
+\paragraph{Nhận xét chung về thiết kế cơ sở dữ liệu}\mbox{}
+
+Thiết kế cơ sở dữ liệu của hệ thống thể hiện rõ đặc điểm của một ứng dụng sự kiện có nhiều nghiệp vụ đan xen. Cấu trúc dữ liệu hiện tại đáp ứng được các chức năng cốt lõi như quản lý người dùng, quản lý sự kiện, đặt vé, thanh toán, thông báo, nhắc lịch, nhắn tin và đánh giá. Đồng thời, việc kết hợp giữa tài liệu lồng và tham chiếu đối tượng giúp mô hình dữ liệu vừa giữ được sự linh hoạt của NoSQL, vừa bảo đảm khả năng mở rộng khi hệ thống cần bổ sung thêm các chức năng như hoàn tiền, báo cáo thống kê, đề xuất sự kiện cá nhân hóa hoặc quản lý sơ đồ chỗ ngồi phức tạp hơn.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{Hinhve/ERD.png}
+    \caption{Biểu đồ thực thể liên kết của hệ thống event-booking-app}
+    \label{fig:erd-overview}
+\end{figure}
 
 \section{Xây dựng ứng dụng}
 \subsection{Thư viện và công cụ sử dụng}

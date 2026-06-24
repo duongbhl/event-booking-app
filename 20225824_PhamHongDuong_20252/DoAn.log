@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  24 JUN 2026 01:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  24 JUN 2026 22:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1254,14 +1254,11 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 \tf@toc=\write6
 \openout6 = `DoAn.toc'.
 
- [3] [4
-
-
-] (./DoAn.lof)
+ [3] (./DoAn.lof)
 \tf@lof=\write7
 \openout7 = `DoAn.lof'.
 
- [5
+ [4
 
 ] (./DoAn.lot)
 \tf@lot=\write8
@@ -1272,9 +1269,9 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Package glossaries Warning: Empty glossary for \printnoidxglossary[type={main}]. Rerun may be required (or you may have forgotten to use commands like \gls) on input line 244.
 
 Using TeX to sort glossary entries---this may take a while
-[6
+[5
 
-] [7
+] [6
 
 
 ]
@@ -1480,7 +1477,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
 [7]
-<Hinhve/UseCaseTongQuat.png, id=460, 402.50375pt x 1193.45876pt>
+<Hinhve/UseCaseTongQuat.png, id=468, 402.50375pt x 1193.45876pt>
 File: Hinhve/UseCaseTongQuat.png Graphic file (type png)
 <use Hinhve/UseCaseTongQuat.png>
 Package pdftex.def Info: Hinhve/UseCaseTongQuat.png  used on input line 51.
@@ -1494,7 +1491,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
 [8 <./Hinhve/UseCaseTongQuat.png>]
-<Hinhve/UseCasePhanRa.png, id=467, 1446.40375pt x 1547.7825pt>
+<Hinhve/UseCasePhanRa.png, id=475, 1446.40375pt x 1547.7825pt>
 File: Hinhve/UseCasePhanRa.png Graphic file (type png)
 <use Hinhve/UseCasePhanRa.png>
 Package pdftex.def Info: Hinhve/UseCasePhanRa.png  used on input line 66.
@@ -1511,7 +1508,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
 [9]
-<Hinhve/QuyTrinhNghiepVu.png, id=474, 1073.00874pt x 1634.105pt>
+<Hinhve/QuyTrinhNghiepVu.png, id=481, 1073.00874pt x 1634.105pt>
 File: Hinhve/QuyTrinhNghiepVu.png Graphic file (type png)
 <use Hinhve/QuyTrinhNghiepVu.png>
 Package pdftex.def Info: Hinhve/QuyTrinhNghiepVu.png  used on input line 76.
@@ -1652,7 +1649,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
 [22]
-<Hinhve/BieuDoGoiTongQuan.png, id=537, 1197.47375pt x 1253.68375pt>
+<Hinhve/BieuDoGoiTongQuan.png, id=545, 1197.47375pt x 1253.68375pt>
 File: Hinhve/BieuDoGoiTongQuan.png Graphic file (type png)
 <use Hinhve/BieuDoGoiTongQuan.png>
 Package pdftex.def Info: Hinhve/BieuDoGoiTongQuan.png  used on input line 27.
@@ -1677,7 +1674,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
 [24 <./Hinhve/BieuDoGoiTongQuan.png>]
-<Hinhve/BieuDoGoiChiTiet.png, id=547, 1238.6275pt x 926.46124pt>
+<Hinhve/BieuDoGoiChiTiet.png, id=555, 1238.6275pt x 926.46124pt>
 File: Hinhve/BieuDoGoiChiTiet.png Graphic file (type png)
 <use Hinhve/BieuDoGoiChiTiet.png>
 Package pdftex.def Info: Hinhve/BieuDoGoiChiTiet.png  used on input line 41.
@@ -1705,6 +1702,11 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
 [26 <./Hinhve/BieuDoGoiChiTiet.png>]
+Overfull \hbox (14.98773pt too wide) in paragraph at lines 54--55
+\T5/pcr/m/n/13 tend/-con-stants/-col-ors.ts \T5/ptm/m/n/13 v  \T5/pcr/m/n/13 fron-tend/-con-stants/theme.ts\T5/ptm/m/n/13 . M u
+ []
+
+
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
@@ -1715,7 +1717,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
-[27])
+[27]
 
 Package fancyhdr Warning: \headheight is too small (10.0pt): 
 (fancyhdr)                Make it at least 34.6375pt, for example:
@@ -1724,6 +1726,142 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
 [28]
+<Hinhve/TaoSuKienWF.png, id=577, 856.19875pt x 1850.915pt>
+File: Hinhve/TaoSuKienWF.png Graphic file (type png)
+<use Hinhve/TaoSuKienWF.png>
+Package pdftex.def Info: Hinhve/TaoSuKienWF.png  used on input line 78.
+(pdftex.def)             Requested size: 138.67992pt x 299.79575pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[29]
+<Hinhve/DatVeWF.png, id=584, 866.23625pt x 1829.83624pt>
+File: Hinhve/DatVeWF.png Graphic file (type png)
+<use Hinhve/DatVeWF.png>
+Package pdftex.def Info: Hinhve/DatVeWF.png  used on input line 85.
+(pdftex.def)             Requested size: 141.91827pt x 299.78796pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[30 <./Hinhve/TaoSuKienWF.png (PNG copy)> <./Hinhve/DatVeWF.png (PNG copy)>]
+Overfull \hbox (15.27371pt too wide) in paragraph at lines 94--95
+\T5/pcr/m/n/13 ver-i-fied\T5/ptm/m/n/13 , \T5/pcr/m/n/13 no-ti-fi-ca-tion-sEn-abled\T5/ptm/m/n/13 , \T5/pcr/m/n/13 ex-po-Push-To-ken\T5/ptm/m/n/13 , \T5/pcr/m/n/13 pass-wor-dReset-
+ []
+
+<Hinhve/TaoSuKienUCSeq.png, id=589, 902.37125pt x 532.99126pt>
+File: Hinhve/TaoSuKienUCSeq.png Graphic file (type png)
+<use Hinhve/TaoSuKienUCSeq.png>
+Package pdftex.def Info: Hinhve/TaoSuKienUCSeq.png  used on input line 104.
+(pdftex.def)             Requested size: 426.79951pt x 252.09181pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[31]
+Overfull \hbox (3.22266pt too wide) in paragraph at lines 113--114
+\T5/pcr/m/n/13 seat-Info\T5/ptm/m/n/13 , \T5/pcr/m/n/13 qr-Code\T5/ptm/m/n/13 , \T5/pcr/m/n/13 pay-mentSta-tus\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checked\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checke-dAt\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checkedBy
+ []
+
+<Hinhve/DatVe&ThanhToanUCSeq.png, id=596, 1296.845pt x 1074.0125pt>
+File: Hinhve/DatVe&ThanhToanUCSeq.png Graphic file (type png)
+<use Hinhve/DatVe&ThanhToanUCSeq.png>
+Package pdftex.def Info: Hinhve/DatVe&ThanhToanUCSeq.png  used on input line 117.
+(pdftex.def)             Requested size: 426.79266pt x 353.45831pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[32 <./Hinhve/TaoSuKienUCSeq.png>]
+<Hinhve/CheckInUCSeq.png, id=603, 1223.57124pt x 723.70375pt>
+File: Hinhve/CheckInUCSeq.png Graphic file (type png)
+<use Hinhve/CheckInUCSeq.png>
+Package pdftex.def Info: Hinhve/CheckInUCSeq.png  used on input line 124.
+(pdftex.def)             Requested size: 426.78142pt x 252.42772pt.
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[33 <./Hinhve/DatVe&ThanhToanUCSeq.png> <./Hinhve/CheckInUCSeq.png>]
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[34]
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[35]
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[36]
+<Hinhve/ERD.png, id=632, 1570.86874pt x 1057.9525pt>
+File: Hinhve/ERD.png Graphic file (type png)
+<use Hinhve/ERD.png>
+Package pdftex.def Info: Hinhve/ERD.png  used on input line 185.
+(pdftex.def)             Requested size: 426.77689pt x 287.42673pt.
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[37 <./Hinhve/ERD.png>])
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[38]
 Ch\uhorn \ohorn ng 5.
 (./Chuong/5_Giai_phap_dong_gop.tex
 LaTeX Font Info:    Calculating math sizes for size <10.83347> on input line 4.
@@ -1760,14 +1898,14 @@ LaTeX Font Warning: Font shape `U/lasy/m/n' in size <7.58339> not available
 LaTeX Font Warning: Font shape `U/lasy/m/n' in size <5.41673> not available
 (Font)              size <5> substituted on input line 4.
 
-) [29
+) [39
 
 ]
 Ch\uhorn \ohorn ng 6.
 (./Chuong/6_Ket_luan.tex
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [30
+ [40
 
 ])
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1780,7 +1918,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
-[31]
+[41]
 
 Package fancyhdr Warning: \headheight is too small (10.0pt): 
 (fancyhdr)                Make it at least 17.97902pt, for example:
@@ -1788,7 +1926,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
-[32]
+[42]
 Overfull \hbox (35.72372pt too wide) in paragraph at lines 309--309
 \T5/pcr/m/n/13 / / datareportal . com / reports / digital -[] 2026 -[] global -[] overview -[]
  []
@@ -1808,7 +1946,9 @@ Overfull \hbox (11.64441pt too wide) in paragraph at lines 309--309
 \T5/ptm/m/it/13 om-men-da-tion sys-tem in so-cial net-works\T5/ptm/m/n/13 , 2020. arXiv: []$\T5/pcr/m/n/13 2006 . 08893$ [cs.SI][]\T5/ptm/m/n/13 .
  []
 
-[33
+[43
+
+] [44
 
 ] (./DoAn.aux)
  ***********
@@ -1824,7 +1964,7 @@ LaTeX Font Warning: Size substitutions with differences
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `DoAn.out' has not changed.
-(rerunfilecheck)             Checksum: D6CFA9DE4BCD50BD1BE3C5F0B868A9E9;12745.
+(rerunfilecheck)             Checksum: ED7DFAD3BB31CC9C9BE55F8682A23BD1;12745.
 
 Package biblatex Warning: Please (re)run BibTeX on the file(s):
 (biblatex)                DoAn
@@ -1835,18 +1975,18 @@ Package logreq Info: Writing requests to 'DoAn.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29683 strings out of 474222
- 509946 string characters out of 5748733
+ 29774 strings out of 474222
+ 511819 string characters out of 5748733
  1938975 words of memory out of 5000000
- 51292 multiletter control sequences out of 15000+600000
- 601926 words of font info for 91 fonts, out of 8000000 for 9000
+ 51344 multiletter control sequences out of 15000+600000
+ 606453 words of font info for 93 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  108i,12n,107p,2434b,1313s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/ucrr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb>
-Output written on DoAn.pdf (43 pages, 404851 bytes).
+Output written on DoAn.pdf (53 pages, 2289823 bytes).
 PDF statistics:
- 666 PDF objects out of 1000 (max. 8388607)
- 540 compressed objects within 6 object streams
- 121 named destinations out of 1000 (max. 500000)
- 482 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 753 PDF objects out of 1000 (max. 8388607)
+ 606 compressed objects within 7 object streams
+ 154 named destinations out of 1000 (max. 500000)
+ 512 words of extra memory for PDF output out of 10000 (max. 10000000)
 

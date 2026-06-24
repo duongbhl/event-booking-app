@@ -1,0 +1,152 @@
+@startuml
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+
+entity User {
+  * _id : ObjectId
+  --
+  name : String
+  email : String
+  password : String
+  avatar : String
+  country : String
+  interests : String[]
+  location : String
+  phone : String
+  description : String
+  role : String
+  verified : Boolean
+  notificationsEnabled : Boolean
+  expoPushToken : String
+}
+
+entity Event {
+  * _id : ObjectId
+  --
+  title : String
+  description : String
+  category : String
+  price : Number
+  date : Date
+  time : String
+  location : String
+  images : String
+  member : Number
+  rating : Number
+  status : String
+  approvalStatus : String
+}
+
+entity TicketTier {
+  * name : String
+  --
+  price : Number
+  quota : Number
+  sold : Number
+}
+
+entity Ticket {
+  * _id : ObjectId
+  --
+  price : Number
+  ticketType : String
+  tierName : String
+  seatInfo : String
+  qrCode : String
+  paymentStatus : String
+  checked : Boolean
+  checkedAt : Date
+  bookedAt : Date
+}
+
+entity Payment {
+  * _id : ObjectId
+  --
+  amount : Number
+  method : String
+  status : String
+  transactionId : String
+}
+
+entity Bookmark {
+  * _id : ObjectId
+}
+
+entity Reminder {
+  * _id : ObjectId
+  --
+  remindAt : Date
+  sent : Boolean
+}
+
+entity Review {
+  * _id : ObjectId
+  --
+  rating : Number
+  comment : String
+}
+
+entity Notification {
+  * _id : ObjectId
+  --
+  title : String
+  message : String
+  type : String
+  isRead : Boolean
+}
+
+entity ChatRoom {
+  * _id : ObjectId
+  --
+  isGroup : Boolean
+}
+
+entity Message {
+  * _id : ObjectId
+  --
+  content : String
+  type : String
+  attachments : String[]
+}
+
+entity Card {
+  * _id : ObjectId
+  --
+  brand : String
+  last4 : String
+  expMonth : Number
+  expYear : Number
+  isPrimary : Boolean
+}
+
+User ||--o{ Event : creates
+Event ||--o{ TicketTier : contains
+User ||--o{ Ticket : owns
+Event ||--o{ Ticket : issues
+Payment ||--o{ Ticket : pays_for
+User ||--o{ Payment : makes
+Event ||--o{ Payment : belongs_to
+
+User ||--o{ Bookmark : saves
+Event ||--o{ Bookmark : bookmarked_in
+
+User ||--o{ Reminder : sets
+Event ||--o{ Reminder : reminds_for
+
+User ||--o{ Review : writes
+Event ||--o{ Review : receives
+
+User ||--o{ Notification : receives
+User ||--o{ Notification : sends
+Event ||--o{ Notification : relates_to
+
+User }o--o{ ChatRoom : participates
+Event ||--o{ ChatRoom : relates_to
+ChatRoom ||--o{ Message : contains
+User ||--o{ Message : sends
+
+User ||--o{ Card : stores
+User ||--o{ Ticket : checks_in_by
+
+@enduml
