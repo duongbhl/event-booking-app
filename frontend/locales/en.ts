@@ -245,6 +245,7 @@ export const en = {
     noEventsAvailable: 'Ups! There is no events available',
     ticket: 'ticket',
     tickets: 'tickets',
+    title: 'Calendar',
   },
 
   // Location
