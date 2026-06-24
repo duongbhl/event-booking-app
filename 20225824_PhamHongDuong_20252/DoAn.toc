@@ -74,9 +74,15 @@
 \contentsline {subsection}{\numberline {4.3.3}Minh họa các chức năng chính}{38}{subsection.4.3.3}%
 \contentsline {section}{\numberline {4.4}Kiểm thử}{38}{section.4.4}%
 \contentsline {section}{\numberline {4.5}Triển khai}{38}{section.4.5}%
-\contentsline {chapter}{\numberline {5}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{39}{chapter.5}%
-\contentsline {chapter}{\numberline {6}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{40}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Kết luận}{40}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Hướng phát triển}{41}{section.6.2}%
-\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{43}{section*.38}%
+\contentsline {paragraph}{Mô hình triển khai thử nghiệm}{39}{paragraph*.37}%
+\contentsline {paragraph}{Cơ sở dữ liệu và kết nối dữ liệu}{39}{paragraph*.38}%
+\contentsline {paragraph}{Triển khai frontend phục vụ thử nghiệm}{39}{paragraph*.39}%
+\contentsline {paragraph}{Liên kết giữa frontend và backend}{40}{paragraph*.40}%
+\contentsline {paragraph}{Thiết bị và cấu hình thử nghiệm}{40}{paragraph*.41}%
+\contentsline {paragraph}{Đánh giá mô hình triển khai}{41}{paragraph*.42}%
+\contentsline {chapter}{\numberline {5}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{42}{chapter.5}%
+\contentsline {chapter}{\numberline {6}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{43}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Kết luận}{43}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Hướng phát triển}{44}{section.6.2}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{46}{section*.44}%
 \contentsfinish 

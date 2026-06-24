@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  24 JUN 2026 22:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  25 JUN 2026 02:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1843,7 +1843,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 <Hinhve/ERD.png, id=632, 1570.86874pt x 1057.9525pt>
 File: Hinhve/ERD.png Graphic file (type png)
 <use Hinhve/ERD.png>
-Package pdftex.def Info: Hinhve/ERD.png  used on input line 185.
+Package pdftex.def Info: Hinhve/ERD.png  used on input line 178.
 (pdftex.def)             Requested size: 426.77689pt x 287.42673pt.
 
 
@@ -1853,7 +1853,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
-[37 <./Hinhve/ERD.png>])
+[37 <./Hinhve/ERD.png>]
 
 Package fancyhdr Warning: \headheight is too small (10.0pt): 
 (fancyhdr)                Make it at least 34.6375pt, for example:
@@ -1862,6 +1862,34 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
 
 [38]
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[39]
+Overfull \hbox (41.0917pt too wide) in paragraph at lines 227--228
+\T5/pcr/m/n/13 native-maps\T5/ptm/m/n/13 , cán tr¶n web h» thèng sû döng t»p ri¶ng \T5/pcr/m/n/13 Se-lect-Lo-ca-tion.web.tsx
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[40])
+
+Package fancyhdr Warning: \headheight is too small (10.0pt): 
+(fancyhdr)                Make it at least 34.6375pt, for example:
+(fancyhdr)                \setlength{\headheight}{34.6375pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-24.6375pt}.
+
+[41]
 Ch\uhorn \ohorn ng 5.
 (./Chuong/5_Giai_phap_dong_gop.tex
 LaTeX Font Info:    Calculating math sizes for size <10.83347> on input line 4.
@@ -1898,14 +1926,14 @@ LaTeX Font Warning: Font shape `U/lasy/m/n' in size <7.58339> not available
 LaTeX Font Warning: Font shape `U/lasy/m/n' in size <5.41673> not available
 (Font)              size <5> substituted on input line 4.
 
-) [39
+) [42
 
 ]
 Ch\uhorn \ohorn ng 6.
 (./Chuong/6_Ket_luan.tex
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [40
+ [43
 
 ])
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1918,7 +1946,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
-[41]
+[44]
 
 Package fancyhdr Warning: \headheight is too small (10.0pt): 
 (fancyhdr)                Make it at least 17.97902pt, for example:
@@ -1926,7 +1954,7 @@ Package fancyhdr Warning: \headheight is too small (10.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-7.97902pt}.
 
-[42]
+[45]
 Overfull \hbox (35.72372pt too wide) in paragraph at lines 309--309
 \T5/pcr/m/n/13 / / datareportal . com / reports / digital -[] 2026 -[] global -[] overview -[]
  []
@@ -1946,9 +1974,9 @@ Overfull \hbox (11.64441pt too wide) in paragraph at lines 309--309
 \T5/ptm/m/it/13 om-men-da-tion sys-tem in so-cial net-works\T5/ptm/m/n/13 , 2020. arXiv: []$\T5/pcr/m/n/13 2006 . 08893$ [cs.SI][]\T5/ptm/m/n/13 .
  []
 
-[43
+[46
 
-] [44
+] [47
 
 ] (./DoAn.aux)
  ***********
@@ -1964,7 +1992,7 @@ LaTeX Font Warning: Size substitutions with differences
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `DoAn.out' has not changed.
-(rerunfilecheck)             Checksum: ED7DFAD3BB31CC9C9BE55F8682A23BD1;12745.
+(rerunfilecheck)             Checksum: 4C49F775B361D4DE70F3FA8B53903FAB;12745.
 
 Package biblatex Warning: Please (re)run BibTeX on the file(s):
 (biblatex)                DoAn
@@ -1975,18 +2003,18 @@ Package logreq Info: Writing requests to 'DoAn.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29774 strings out of 474222
- 511819 string characters out of 5748733
+ 29783 strings out of 474222
+ 511918 string characters out of 5748733
  1938975 words of memory out of 5000000
  51344 multiletter control sequences out of 15000+600000
  606453 words of font info for 93 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  108i,12n,107p,2434b,1313s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/ucrr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb>
-Output written on DoAn.pdf (53 pages, 2289823 bytes).
+Output written on DoAn.pdf (56 pages, 2299205 bytes).
 PDF statistics:
- 753 PDF objects out of 1000 (max. 8388607)
- 606 compressed objects within 7 object streams
- 154 named destinations out of 1000 (max. 500000)
+ 774 PDF objects out of 1000 (max. 8388607)
+ 624 compressed objects within 7 object streams
+ 163 named destinations out of 1000 (max. 500000)
  512 words of extra memory for PDF output out of 10000 (max. 10000000)
 

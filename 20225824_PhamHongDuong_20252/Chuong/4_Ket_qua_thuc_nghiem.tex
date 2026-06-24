@@ -138,13 +138,6 @@ Về phương thức nghiệp vụ, lớp \texttt{Payment} được thao tác ch
 
 Bốn lớp trên phản ánh lõi nghiệp vụ của hệ thống theo một cấu trúc khá mạch lạc. \texttt{User} biểu diễn tác nhân sử dụng hệ thống, \texttt{Event} biểu diễn đối tượng trung tâm mà người dùng quan tâm, \texttt{Ticket} biểu diễn quyền tham dự của người dùng đối với sự kiện, còn \texttt{Payment} biểu diễn giao dịch tài chính đi kèm với việc phát hành vé. Mối liên hệ giữa các lớp này tạo nên phần lớn luồng nghiệp vụ chính trong hệ thống. Việc thiết kế lớp theo hướng tách biệt vai trò như vậy giúp mã nguồn dễ mở rộng hơn, chẳng hạn khi cần bổ sung thêm các chức năng như hủy vé, hoàn tiền, thống kê doanh thu hay xếp chỗ theo khu vực.
 
-
-
-
-
-
-
-
 \subsection{Thiết kế cơ sở dữ liệu}
 Hệ thống sử dụng MongoDB làm hệ quản trị cơ sở dữ liệu, vì vậy mô hình dữ liệu của đề tài được thiết kế theo hướng tài liệu (document-oriented) thay vì quan hệ thuần túy như trong các hệ quản trị SQL. Tuy nhiên, về bản chất nghiệp vụ, các collection trong MongoDB vẫn biểu diễn những thực thể và quan hệ tương tự một mô hình thực thể liên kết. Do đó, việc thiết kế cơ sở dữ liệu vẫn cần bắt đầu từ việc xác định các thực thể chính, các thuộc tính quan trọng và mối liên hệ giữa chúng. Trên cơ sở đó, hệ thống được tổ chức thành các collection trung tâm như \texttt{User}, \texttt{Event}, \texttt{Ticket}, \texttt{Payment}, \texttt{Notification}, \texttt{Bookmark}, \texttt{Reminder}, \texttt{Review}, \texttt{ChatRoom}, \texttt{Message} và \texttt{Card}.
 
@@ -215,6 +208,34 @@ Sinh viên lựa chọn và đưa ra màn hình cho các chức năng chính, qu
 Phần này có độ dài từ hai đến ba trang. Sinh viên thiết kế các trường hợp kiểm thử cho hai đến ba chức năng quan trọng nhất. Sinh viên cần chỉ rõ các kỹ thuật kiểm thử đã sử dụng. Chi tiết các trường hợp kiểm thử khác, nếu muốn trình bày, sinh viên đưa vào phần phụ lục.
 Sinh viên sau cùng tổng kết về số lượng các trường hợp kiểm thử và kết quả kiểm thử. Sinh viên cần phân tích lý do nếu kết quả kiểm thử không đạt.
 \section{Triển khai}
-Sinh viên trình bày mô hình và/hoặc cách thức triển khai thử nghiệm/thực tế. Ứng dụng của sinh viên được triển khai trên server/thiết bị gì, cấu hình như thế nào. Kết quả triển khai thử nghiệm nếu có (số lượng người dùng, số lượng truy cập, thời gian phản hồi, phản hồi người dùng, khả năng chịu tải, các thống kê, v.v.)
+Trong phạm vi đồ án, hệ thống được triển khai theo mô hình client-server trên môi trường Internet, trong đó frontend đóng vai trò client và backend cung cấp các dịch vụ xử lý nghiệp vụ cũng như truy cập dữ liệu. Mô hình này phù hợp với định hướng mobile-first của hệ thống, bởi các thao tác như đăng nhập, tìm kiếm sự kiện, đặt vé, nhận thông báo, chat và check-in đều được thực hiện ở phía người dùng, sau đó gửi yêu cầu tới máy chủ backend để xử lý. Ở giai đoạn triển khai thử nghiệm, hệ thống được tổ chức thành bốn thành phần chính: frontend Expo/React Native, backend Node.js/Express, cơ sở dữ liệu MongoDB và hạ tầng triển khai trực tuyến cho phép truy cập qua Internet.
+
+\paragraph{Mô hình triển khai thử nghiệm}\mbox{}
+
+Trong quá trình triển khai thực tế, backend được đưa lên dịch vụ Render dưới dạng một \textit{Node Web Service}. Mã nguồn backend được đặt trong thư mục \texttt{backend}, được biên dịch từ TypeScript sang JavaScript thông qua lệnh \texttt{npm run build}, sau đó khởi động bằng lệnh \texttt{npm start}. Tệp cấu hình \texttt{backend/render.yaml} được sử dụng để mô tả cấu hình triển khai, bao gồm thư mục gốc, lệnh build, lệnh start và đường dẫn health check là \texttt{/api/health}. Việc bổ sung endpoint health check cho phép kiểm tra nhanh trạng thái hoạt động của dịch vụ sau mỗi lần triển khai và hỗ trợ nền tảng Render giám sát tình trạng khởi động của server.
+
+Backend hiện được truy cập qua địa chỉ \texttt{https://event-booking-app-3.onrender.com}. Tại phía máy chủ này, ứng dụng Node.js/Express khởi tạo từ tệp \texttt{backend/src/server.ts}, thực hiện các bước kết nối cơ sở dữ liệu, khởi động bộ lập lịch nhắc sự kiện và khởi tạo Socket.IO cho chức năng chat thời gian thực trước khi mở cổng phục vụ yêu cầu. Cổng mặc định của backend là \texttt{5000}, tuy nhiên trong môi trường triển khai giá trị cổng được cấp động thông qua biến môi trường \texttt{PORT}. Các biến môi trường khác như \texttt{DB\_URI}, \texttt{SECRET}, \texttt{JWT\_EXPIRES\_IN}, \texttt{CORS}, \texttt{EMAIL\_USER}, \texttt{EMAIL\_PASSWORD} hay các biến liên quan đến AI được cấu hình trong môi trường của Render thay vì ghi cứng trong mã nguồn. Cách làm này giúp hệ thống an toàn hơn và thuận tiện khi thay đổi môi trường chạy.
+
+\paragraph{Cơ sở dữ liệu và kết nối dữ liệu}\mbox{}
+
+Ở phía dữ liệu, hệ thống sử dụng MongoDB Atlas và kết nối tới backend thông qua biến môi trường \texttt{DB\_URI}. Việc đặt cơ sở dữ liệu trên một dịch vụ cloud tách biệt với backend giúp tách riêng lớp lưu trữ ra khỏi lớp xử lý nghiệp vụ, nhờ đó việc thay đổi máy chủ ứng dụng không làm ảnh hưởng trực tiếp đến dữ liệu. Với mô hình hiện tại, dữ liệu người dùng, sự kiện, vé, thanh toán, thông báo, lời nhắc, bookmark, chatroom và message được lưu dưới dạng các collection riêng biệt. Đây là một lựa chọn phù hợp với MongoDB vì hệ thống có nhiều thực thể nghiệp vụ liên kết với nhau nhưng vẫn đòi hỏi sự linh hoạt khi mở rộng cấu trúc dữ liệu trong các giai đoạn phát triển tiếp theo.
+
+\paragraph{Triển khai frontend phục vụ thử nghiệm}\mbox{}
+
+Ở phía client, hệ thống ban đầu được xây dựng như một ứng dụng di động bằng React Native và Expo. Tuy nhiên, trong quá trình thử nghiệm thực tế, việc phân phối ứng dụng lên iOS gặp ràng buộc về tài khoản Apple Developer. Vì vậy, để thuận tiện cho việc trình diễn và kiểm thử trên nhiều thiết bị, đồ án sử dụng thêm một phương án triển khai web từ chính mã nguồn Expo. Cụ thể, frontend được export ra dạng website tĩnh bằng lệnh \texttt{expo export -p web}, sinh ra thư mục \texttt{frontend/dist}. Thư mục này sau đó được triển khai lên Netlify theo hình thức static hosting và truy cập qua tên miền thử nghiệm \texttt{https://scintillating-chimera-1542b0.netlify.app}. Nhờ đó, người dùng có thể mở hệ thống trên iPhone hoặc máy tính bằng trình duyệt thông qua đường link hoặc mã \gls{QR} mà không cần cài trực tiếp ứng dụng native.
+
+Trong quá trình chuyển frontend sang môi trường web, một số màn hình phụ thuộc thành phần native đã được điều chỉnh để tương thích. Điển hình là màn hình chọn vị trí \texttt{SelectLocation}: trên mobile, màn hình này dùng \texttt{react-native-maps}, còn trên web hệ thống sử dụng tệp riêng \texttt{SelectLocation.web.tsx} với thư viện Leaflet và bản đồ OpenStreetMap để vẫn bảo đảm người dùng có thể tìm kiếm địa chỉ, xem bản đồ và chọn vị trí tương tự như trên điện thoại. Điều này cho thấy hệ thống không chỉ được triển khai về mặt hạ tầng mà còn được thích nghi ở mức giao diện để phù hợp với môi trường vận hành thực tế.
+
+\paragraph{Liên kết giữa frontend và backend}\mbox{}
+
+Sau khi backend đã được triển khai trên Render, frontend được cấu hình sử dụng địa chỉ \gls{API} công khai \texttt{https://event-booking-app-3.onrender.com} trong lớp service giao tiếp. Ở phía backend, biến môi trường \texttt{CORS} được đặt theo tên miền frontend trên Netlify để chỉ cho phép client hợp lệ gửi yêu cầu đến server. Nhờ đó, quá trình đăng nhập, lấy danh sách sự kiện, đọc dữ liệu người dùng và các luồng nghiệp vụ chính có thể được kiểm thử trong môi trường thực tế qua Internet, thay vì chỉ chạy trong mạng nội bộ. Việc kiểm tra backend được thực hiện thông qua endpoint \texttt{/api/health}, còn frontend được kiểm tra bằng cách export lại website sau mỗi lần thay đổi cấu hình và triển khai lại thư mục \texttt{dist} lên Netlify.
+
+\paragraph{Thiết bị và cấu hình thử nghiệm}\mbox{}
+
+Về phía thiết bị người dùng, hệ thống được thử nghiệm trên điện thoại thông minh Android, điện thoại iPhone và trình duyệt web trên máy tính cá nhân có kết nối Internet ổn định. Với Android, ứng dụng có thể chạy qua Expo Go hoặc tiếp tục đóng gói thành bản \texttt{APK} để cài đặt thủ công. Với iOS, phương án trình diễn chính trong đồ án là truy cập bản web triển khai trên Netlify bằng Safari thông qua đường link hoặc mã \gls{QR}. Về mặt máy chủ, hệ thống không sử dụng một máy vật lý cài đặt thủ công mà tận dụng mô hình \textit{Platform as a Service}: backend chạy trên Render, frontend tĩnh chạy trên Netlify và dữ liệu được lưu trên MongoDB Atlas. Đây là cách triển khai phù hợp với quy mô đồ án vì đơn giản, ít tốn công quản trị hạ tầng nhưng vẫn đủ để tái hiện quá trình vận hành của một hệ thống thực tế có nhiều thành phần phân tán.
+
+\paragraph{Đánh giá mô hình triển khai}\mbox{}
+
+Ở mức thử nghiệm, mô hình triển khai hiện tại đã đủ để kiểm tra các luồng nghiệp vụ chính của hệ thống trong môi trường thực tế có kết nối mạng, bao gồm đăng nhập, đọc dữ liệu từ server, tương tác với bản đồ web, quản lý sự kiện và trao đổi dữ liệu qua \gls{API}. Mô hình này cũng cho phép nhóm phát triển dễ dàng cập nhật backend và frontend một cách độc lập. Tuy nhiên, nếu triển khai ở quy mô lớn hơn trong tương lai, hệ thống vẫn cần được bổ sung thêm các cơ chế như giám sát tài nguyên, lưu log tập trung, tối ưu hiệu năng truy vấn, cấu hình database theo chế độ tin cậy cao, triển khai CDN cho tài nguyên tĩnh và tăng cường bảo mật đối với khóa bí mật, email, token và dữ liệu người dùng.
 
 \end{document}
