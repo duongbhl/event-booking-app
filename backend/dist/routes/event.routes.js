@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.eventRoutes = void 0;
+const express_1 = __importDefault(require("express"));
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const event_controller_1 = require("../controllers/event.controller");
+exports.eventRoutes = express_1.default.Router();
+exports.eventRoutes.get('/', event_controller_1.listEvents);
+exports.eventRoutes.get('/admin/pending', event_controller_1.getPendingEvents);
+exports.eventRoutes.post('/admin/auto-reject-expired', event_controller_1.autoRejectExpiredEvents);
+exports.eventRoutes.put('/admin/approve/:id', event_controller_1.approveEvent);
+exports.eventRoutes.put('/admin/reject/:id', event_controller_1.rejectEvent);
+exports.eventRoutes.get('/me', auth_middleware_1.protect, event_controller_1.getMyEvents);
+exports.eventRoutes.get('/organizer/:organizerId', event_controller_1.getOrganizerEvents);
+exports.eventRoutes.post('/generate-content', auth_middleware_1.protect, (0, auth_middleware_1.authorize)('user'), event_controller_1.suggestEventContent);
+exports.eventRoutes.get('/:id', event_controller_1.getEvent);
+exports.eventRoutes.post('/', auth_middleware_1.protect, (0, auth_middleware_1.authorize)('user'), event_controller_1.createEvent);
+exports.eventRoutes.put('/:id', auth_middleware_1.protect, (0, auth_middleware_1.authorize)('user'), event_controller_1.updateEvent);
+exports.eventRoutes.delete('/:id', auth_middleware_1.protect, (0, auth_middleware_1.authorize)('user'), event_controller_1.deleteEvent);
+exports.default = exports.eventRoutes;

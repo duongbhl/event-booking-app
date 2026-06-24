@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ticketRoutes = void 0;
+const express_1 = require("express");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const ticket_controller_1 = require("../controllers/ticket.controller");
+exports.ticketRoutes = (0, express_1.Router)();
+exports.ticketRoutes.post('/book', auth_middleware_1.protect, ticket_controller_1.bookTicket);
+exports.ticketRoutes.post('/confirm', auth_middleware_1.protect, ticket_controller_1.confirmPayment);
+exports.ticketRoutes.get('/me', auth_middleware_1.protect, ticket_controller_1.myTickets);
+exports.ticketRoutes.post('/checkin', auth_middleware_1.protect, ticket_controller_1.checkInTicket);

@@ -18,11 +18,33 @@ import { cardRoutes } from "./routes/card.routes";
 
 export const app = express()
 
+const allowedOrigins = (process.env.CORS || "*")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(cors({origin:process.env.CORS}));
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+  })
+);
 app.use(helmet());
 app.use(express.json());
 app.use(morgan("dev"));
+
+app.get("/api/health", (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    service: "backend",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 
 //callAPI
