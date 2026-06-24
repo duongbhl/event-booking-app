@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.chatRoutes = void 0;
+const express_1 = require("express");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const chat_controller_1 = require("../controllers/chat.controller");
+exports.chatRoutes = (0, express_1.Router)();
+exports.chatRoutes.get('/search', auth_middleware_1.protect, chat_controller_1.searchUsers);
+exports.chatRoutes.get('/rooms', auth_middleware_1.protect, chat_controller_1.myRooms);
+exports.chatRoutes.post('/rooms', auth_middleware_1.protect, chat_controller_1.createRoom);
+exports.chatRoutes.get('/rooms/:roomId/messages', auth_middleware_1.protect, chat_controller_1.getMessages);
+exports.chatRoutes.post('/rooms/:roomId/messages', auth_middleware_1.protect, chat_controller_1.sendMessage);
+exports.chatRoutes.post('/rooms/:roomId/read', auth_middleware_1.protect, chat_controller_1.markRoomAsRead);

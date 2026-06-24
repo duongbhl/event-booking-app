@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.notificationRoutes = void 0;
+const express_1 = require("express");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const notification_controller_1 = require("../controllers/notification.controller");
+exports.notificationRoutes = (0, express_1.Router)();
+exports.notificationRoutes.get('/me', auth_middleware_1.protect, notification_controller_1.listNotifications);
+exports.notificationRoutes.post('/read', auth_middleware_1.protect, notification_controller_1.markRead);
+exports.notificationRoutes.post('/read-selected', auth_middleware_1.protect, notification_controller_1.markSelectedRead);
+exports.notificationRoutes.post('/invite', auth_middleware_1.protect, notification_controller_1.sendInvitation);
+exports.notificationRoutes.delete('/:notificationId', auth_middleware_1.protect, notification_controller_1.deleteNotification);

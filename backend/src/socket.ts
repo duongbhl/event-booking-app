@@ -8,6 +8,10 @@ import { JWTPayload } from "./middleware/auth.middleware";
 dotenv.config();
 
 let chatIO: Server | null = null;
+const allowedOrigins = (process.env.CORS || "*")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 type AuthenticatedSocket = Socket & {
   data: {
@@ -20,7 +24,13 @@ type AuthenticatedSocket = Socket & {
 export const initializeChatSocket = (httpServer: HTTPServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CORS,
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+
+        return callback(new Error("Not allowed by CORS"));
+      },
       methods: ["GET", "POST"],
     },
   });
