@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -11,6 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useLocalization } from "../../context/LocalizationContext";
 import { checkInTicket } from "../../services/ticket.service";
 import { useAuth } from "../../context/AuthContext";
@@ -35,139 +38,408 @@ export default function CheckInWebScreen() {
   const route = useRoute<any>();
   const { token } = useAuth();
   const { width } = useWindowDimensions();
+
   const isSmallDevice = width < 375;
+  const isTablet = width >= 768;
+  const scanBoxSize = isTablet ? 320 : isSmallDevice ? 220 : 260;
+
   const { eventId, eventTitle } = route.params as {
     eventId: string;
     eventTitle: string;
   };
 
-  const [qrCode, setQrCode] = useState("");
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanning, setScanning] = useState(true);
+  const [lastScanned, setLastScanned] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CheckInResult | null>(null);
+  const [showResult, setShowResult] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualQrCode, setManualQrCode] = useState("");
 
-  const handleSubmit = async () => {
-    if (!token || !qrCode.trim() || loading) {
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!permission?.granted) {
+      requestPermission();
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [permission, requestPermission]);
+
+  const restartScanner = useCallback(() => {
+    setShowResult(false);
+    setScanning(true);
+    setLastScanned("");
+    setManualQrCode("");
+    setShowManualInput(false);
+  }, []);
+
+  const processQRCode = useCallback(
+    async (qrCode: string) => {
+      if (!token || loading) return;
+
+      try {
+        setLoading(true);
+        setScanning(false);
+
+        const response = await checkInTicket(
+          {
+            qrCode,
+            eventId,
+          },
+          token
+        );
+
+        setResult(response);
+        setShowResult(true);
+      } catch (error: any) {
+        setResult({
+          message:
+            error.response?.data?.message || "Failed to check in ticket",
+          status: error.response?.data?.status || "ERROR",
+        });
+        setShowResult(true);
+      } finally {
+        setLoading(false);
+
+        timeoutRef.current = setTimeout(() => {
+          restartScanner();
+        }, 3000);
+      }
+    },
+    [token, loading, eventId, restartScanner]
+  );
+
+  const handleBarCodeScanned = useCallback(
+    async (scannedData: string) => {
+      if (!scanning || loading) return;
+      if (lastScanned === scannedData) return;
+
+      setLastScanned(scannedData);
+      await processQRCode(scannedData);
+    },
+    [scanning, loading, lastScanned, processQRCode]
+  );
+
+  const handleManualSubmit = useCallback(async () => {
+    if (!manualQrCode.trim()) {
       return;
     }
 
-    try {
-      setLoading(true);
-      const response = await checkInTicket({ qrCode: qrCode.trim(), eventId }, token);
-      setResult(response);
-    } catch (error: any) {
-      setResult({
-        message: error.response?.data?.message || "Failed to check in ticket",
-        status: error.response?.data?.status || "ERROR",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    setShowManualInput(false);
+    await handleBarCodeScanned(manualQrCode.trim());
+  }, [handleBarCodeScanned, manualQrCode]);
 
-  const isSuccess = result?.status === "SUCCESS" && result.ticket;
+  if (!permission?.granted) {
+    return (
+      <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
+        <Ionicons name="camera" size={64} color="#FF7A00" />
 
-  return (
-    <SafeAreaView className="flex-1 bg-[#0F172A]">
-      <View className="flex-row items-center px-4 py-4">
-        <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={10}>
-          <Ionicons name="chevron-back" size={28} color="white" />
+        <Text
+          className="font-semibold mt-4 text-center text-gray-900"
+          style={{
+            fontSize: isSmallDevice ? 17 : 19,
+          }}
+        >
+          {t("checkIn.cameraPermissionRequired")}
+        </Text>
+
+        <Text className="text-gray-600 text-center mt-2">
+          {t("checkIn.needCameraAccess")}
+        </Text>
+
+        <Text className="text-gray-500 text-center mt-3 text-sm">
+          Camera tren web can quyen truy cap va thuong chi hoat dong tren ket noi HTTPS.
+        </Text>
+
+        <TouchableOpacity
+          className="bg-orange-500 px-6 py-3 rounded-xl mt-6"
+          activeOpacity={0.85}
+          onPress={requestPermission}
+        >
+          <Text className="text-white font-semibold">
+            {t("checkIn.grantPermission")}
+          </Text>
         </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
-        <View className="flex-1 ml-3">
-          <Text className="text-white font-semibold text-lg">
-            {t("checkIn.checkInTitle")}
-          </Text>
-          <Text className="text-slate-400 text-sm" numberOfLines={1}>
-            {eventTitle}
-          </Text>
-        </View>
-      </View>
+  const renderResult = () => {
+    if (!result) return null;
 
-      <ScrollView
-        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="rounded-[28px] bg-white p-6 border border-slate-200">
-          <View className="items-center">
-            <View className="h-16 w-16 rounded-full bg-orange-100 items-center justify-center">
-              <Ionicons name="qr-code-outline" size={34} color="#F97316" />
-            </View>
-            <Text
-              className="mt-4 text-center font-semibold text-slate-900"
-              style={{ fontSize: isSmallDevice ? 20 : 24 }}
-            >
-              {t("checkIn.manualInput")}
-            </Text>
-            <Text className="mt-2 text-center text-slate-500">
-              Ban web demo khong dung camera. Hay dan chuoi QR code vao o ben duoi de check-in.
-            </Text>
-          </View>
+    const isSuccess = result.status === "SUCCESS" && result.ticket;
+    const isAlreadyChecked = result.status === "ALREADY_CHECKED";
+    const isWrongEvent = result.status === "WRONG_EVENT";
 
-          <TextInput
-            value={qrCode}
-            onChangeText={setQrCode}
-            placeholder={t("checkIn.pasteQRData")}
-            multiline
-            textAlignVertical="top"
-            className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-slate-900"
-            style={{ minHeight: 140 }}
-          />
+    const color = isSuccess
+      ? "green"
+      : isAlreadyChecked
+      ? "yellow"
+      : "red";
 
-          <TouchableOpacity
-            onPress={handleSubmit}
-            disabled={loading || !qrCode.trim()}
-            className="mt-5 h-14 rounded-full bg-[#FF6B00] items-center justify-center"
-            style={{ opacity: loading || !qrCode.trim() ? 0.6 : 1 }}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white text-lg font-semibold">
-                {t("checkIn.submit")}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
+    const iconName = isSuccess
+      ? "checkmark"
+      : isAlreadyChecked
+      ? "warning"
+      : "close";
 
-        {result && (
+    const title = isSuccess
+      ? t("checkIn.checkInSuccess")
+      : isAlreadyChecked
+      ? t("checkIn.alreadyChecked")
+      : isWrongEvent
+      ? t("checkIn.wrongEvent")
+      : t("checkIn.error");
+
+    return (
+      <View className="flex-1 bg-gray-900 items-center justify-center p-4">
+        <ScrollView
+          className="w-full"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+          }}
+        >
           <View
-            className={`mt-5 rounded-[28px] p-5 border ${
-              isSuccess
-                ? "bg-green-50 border-green-200"
-                : "bg-red-50 border-red-200"
+            className={`p-5 rounded-2xl mx-2 border-2 ${
+              color === "green"
+                ? "bg-green-50 border-green-500"
+                : color === "yellow"
+                ? "bg-yellow-50 border-yellow-500"
+                : "bg-red-50 border-red-500"
             }`}
           >
-            <Text
-              className={`font-semibold text-lg ${
-                isSuccess ? "text-green-800" : "text-red-800"
-              }`}
-            >
-              {isSuccess ? t("checkIn.checkInSuccess") : t("checkIn.error")}
-            </Text>
+            <View className="items-center mb-4">
+              <View
+                className={`rounded-full items-center justify-center ${
+                  color === "green"
+                    ? "bg-green-500"
+                    : color === "yellow"
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
+                }`}
+                style={{
+                  width: isSmallDevice ? 58 : 64,
+                  height: isSmallDevice ? 58 : 64,
+                }}
+              >
+                <Ionicons name={iconName as any} size={38} color="white" />
+              </View>
+            </View>
 
             <Text
-              className={`mt-2 ${
-                isSuccess ? "text-green-900" : "text-red-900"
+              className={`text-center font-bold ${
+                color === "green"
+                  ? "text-green-700"
+                  : color === "yellow"
+                  ? "text-yellow-700"
+                  : "text-red-700"
               }`}
+              style={{
+                fontSize: isSmallDevice ? 20 : 24,
+              }}
             >
-              {result.message}
+              {title}
             </Text>
 
-            {isSuccess && result.ticket && (
-              <View className="mt-4 rounded-2xl bg-white p-4">
-                <InfoRow label={t("checkIn.passenger")} value={result.ticket.user.name} />
-                <InfoRow label={t("checkIn.event")} value={result.ticket.event.title} />
-                <InfoRow label={t("checkIn.ticketType")} value={result.ticket.tierName} />
+            {isSuccess && result.ticket ? (
+              <View className="bg-white p-4 rounded-xl mt-6">
+                <InfoRow
+                  label={t("checkIn.passenger")}
+                  value={result.ticket.user.name}
+                />
+                <InfoRow
+                  label={t("checkIn.event")}
+                  value={result.ticket.event.title}
+                />
+                <InfoRow
+                  label={t("checkIn.ticketType")}
+                  value={result.ticket.tierName}
+                />
                 <InfoRow
                   label={t("checkIn.seat")}
                   value={result.ticket.seatInfo || t("checkIn.noSeatAssignment")}
                   last
                 />
               </View>
+            ) : (
+              <View className="bg-white p-4 rounded-xl mt-6">
+                <Text className="text-gray-700 text-center">
+                  {isWrongEvent ? t("checkIn.wrongEventMessage") : result.message}
+                </Text>
+              </View>
+            )}
+
+            <Text className="text-center text-gray-600 text-sm mt-6">
+              {t("checkIn.restartingScanner")}
+            </Text>
+
+            {!isSuccess && (
+              <TouchableOpacity
+                className="bg-orange-500 px-6 py-3 rounded-xl mt-5"
+                activeOpacity={0.85}
+                onPress={restartScanner}
+              >
+                <Text className="text-white font-semibold text-center">
+                  {t("checkIn.tryAgain")}
+                </Text>
+              </TouchableOpacity>
             )}
           </View>
-        )}
-      </ScrollView>
+        </ScrollView>
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-gray-900">
+      <View className="flex-row items-center bg-gray-900 px-4 py-4">
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          hitSlop={10}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chevron-back" size={28} color="white" />
+        </TouchableOpacity>
+
+        <View className="flex-1 ml-3">
+          <Text className="text-white font-semibold">
+            {t("checkIn.checkInTitle")}
+          </Text>
+
+          <Text numberOfLines={1} className="text-gray-400 text-sm">
+            {eventTitle}
+          </Text>
+        </View>
+      </View>
+
+      {scanning && !showResult && (
+        <View className="flex-1 overflow-hidden">
+          <CameraView
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr"],
+            }}
+            onBarcodeScanned={({ data }) => handleBarCodeScanned(data)}
+            onMountError={(event) => {
+              console.log("Web camera mount error:", event?.message);
+            }}
+          />
+
+          <View className="absolute inset-0 items-center justify-center">
+            <View
+              style={{
+                width: scanBoxSize,
+                height: scanBoxSize,
+                borderWidth: 2,
+                borderColor: "#FF7A00",
+                borderRadius: 24,
+              }}
+            />
+
+            <Text className="absolute bottom-24 text-white text-center font-semibold px-6">
+              {t("checkIn.alignQRCode")}
+            </Text>
+          </View>
+
+          <View
+            className="absolute left-0 right-0 bg-black/70 px-4 py-4 flex-row items-center justify-between"
+            style={{
+              bottom: Platform.OS === "ios" ? 20 : 0,
+            }}
+          >
+            <TouchableOpacity
+              className="flex-row items-center px-3 py-2"
+              activeOpacity={0.75}
+              onPress={() => setShowManualInput(true)}
+            >
+              <Ionicons name="create" size={20} color="white" />
+              <Text className="text-white ml-2 font-semibold">
+                {t("checkIn.manualInput")}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-row items-center px-3 py-2"
+              activeOpacity={0.75}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="close" size={20} color="white" />
+              <Text className="text-white ml-2 font-semibold">
+                {t("checkIn.exit")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {showResult && renderResult()}
+
+      {showManualInput && (
+        <View className="absolute inset-0 bg-black/65 items-center justify-center px-5">
+          <View className="w-full max-w-xl rounded-3xl bg-white p-5">
+            <Text className="text-slate-900 text-xl font-semibold">
+              {t("checkIn.manualInput")}
+            </Text>
+            <Text className="text-slate-500 mt-2">
+              {t("checkIn.pasteQRData")}
+            </Text>
+
+            <TextInput
+              value={manualQrCode}
+              onChangeText={setManualQrCode}
+              multiline
+              textAlignVertical="top"
+              className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-slate-900"
+              style={{ minHeight: 140 }}
+              placeholder={t("checkIn.pasteQRData")}
+              placeholderTextColor="#94A3B8"
+            />
+
+            <View className="mt-5 flex-row justify-end">
+              <TouchableOpacity
+                className="px-4 py-3 rounded-xl mr-3"
+                onPress={() => {
+                  setShowManualInput(false);
+                  setManualQrCode("");
+                }}
+              >
+                <Text className="text-slate-600 font-medium">
+                  {t("checkIn.cancel")}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="bg-orange-500 px-5 py-3 rounded-xl"
+                onPress={handleManualSubmit}
+                disabled={!manualQrCode.trim() || loading}
+                style={{ opacity: !manualQrCode.trim() || loading ? 0.6 : 1 }}
+              >
+                <Text className="text-white font-semibold">
+                  {t("checkIn.submit")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {loading && (
+        <View className="absolute inset-0 bg-black/50 items-center justify-center">
+          <ActivityIndicator size="large" color="#FF7A00" />
+          <Text className="text-white mt-4 font-semibold">
+            {t("checkIn.processing")}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -182,9 +454,9 @@ function InfoRow({
   last?: boolean;
 }) {
   return (
-    <View className={last ? "" : "mb-4 pb-4 border-b border-slate-200"}>
-      <Text className="text-slate-500 text-sm">{label}</Text>
-      <Text className="text-slate-900 font-semibold text-base">{value}</Text>
+    <View className={`${last ? "" : "mb-4 pb-4 border-b border-gray-200"}`}>
+      <Text className="text-gray-600 text-sm">{label}</Text>
+      <Text className="text-gray-900 font-semibold text-base">{value}</Text>
     </View>
   );
 }

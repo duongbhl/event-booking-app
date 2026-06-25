@@ -5,15 +5,18 @@
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Biểu đồ hoạt động của quy trình nghiệp vụ tham gia sự kiện}}{11}{figure.caption.10}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Biểu đồ gói tổng quan của hệ thống event-booking-app}}{24}{figure.caption.11}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Biểu đồ thiết kế gói cho nghiệp vụ đặt vé, thanh toán và tham dự sự kiện}}{26}{figure.caption.12}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Wireframe minh họa giao diện chức năng tạo sự kiện}}{30}{figure.caption.18}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Wireframe minh họa giao diện chức năng đặt vé}}{30}{figure.caption.19}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Biểu đồ trình tự cho use case Tạo sự kiện}}{32}{figure.caption.22}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Biểu đồ trình tự cho use case Đặt vé và xác nhận thanh toán}}{33}{figure.caption.24}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Biểu đồ trình tự cho use case Check-in vé bằng mã QR}}{33}{figure.caption.25}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Biểu đồ thực thể liên kết của hệ thống event-booking-app}}{37}{figure.caption.35}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Mô hình triển khai thử nghiệm của hệ thống event-booking-app}}{46}{figure.caption.45}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Biểu đồ gói tổng quan của hệ thống event-booking-app}}{25}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Biểu đồ thiết kế gói cho nghiệp vụ đặt vé, thanh toán và tham dự sự kiện}}{27}{figure.caption.12}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Wireframe minh họa giao diện chức năng tạo sự kiện}}{31}{figure.caption.18}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Wireframe minh họa giao diện chức năng đặt vé}}{31}{figure.caption.19}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Biểu đồ trình tự cho use case Tạo sự kiện}}{33}{figure.caption.22}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Biểu đồ trình tự cho use case Đặt vé và xác nhận thanh toán}}{34}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Biểu đồ trình tự cho use case Check-in vé bằng mã QR}}{34}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Biểu đồ thực thể liên kết của hệ thống event-booking-app}}{38}{figure.caption.35}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Giao diện chức năng tạo sự kiện}}{44}{figure.caption.40}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Giao diện chức năng đặt vé}}{45}{figure.4.10}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Giao diện chức năng check-in vé}}{46}{figure.caption.41}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Mô hình triển khai thử nghiệm của hệ thống event-booking-app}}{53}{figure.caption.49}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsfinish 

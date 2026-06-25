@@ -26,24 +26,14 @@ Theo hướng tiếp cận đã chọn, giải pháp của đề tài là xây d
 
 \section{Bố cục đồ án}
 \label{section:1.4}
-Phần còn lại của báo cáo đồ án tốt nghiệp này được tổ chức như sau. 
+Phần còn lại của báo cáo đồ án tốt nghiệp này được tổ chức thành năm chương. Chương 2 trình bày nội dung khảo sát và phân tích yêu cầu của bài toán đặt vé, quản lý và tham dự sự kiện trên thiết bị di động. Trên cơ sở khảo sát một số ứng dụng và nền tảng tương tự, chương này làm rõ hiện trạng của bài toán, xây dựng biểu đồ use case tổng quát, use case phân rã, quy trình nghiệp vụ, đặc tả một số use case quan trọng và xác định các yêu cầu phi chức năng mà hệ thống cần đáp ứng.
 
-Chương 2 trình bày về v.v. 
+Chương 3 giới thiệu những nền tảng lý thuyết và công nghệ được sử dụng để phát triển hệ thống. Nội dung chương tập trung làm rõ cơ sở kỹ thuật của mô hình client-server theo hướng mobile-first, các công nghệ được lựa chọn cho frontend, backend, cơ sở dữ liệu, xác thực, giao tiếp thời gian thực, thông báo đẩy, mã \gls{QR} và hỗ trợ AI, từ đó tạo nền tảng cho các quyết định thiết kế và hiện thực ở các chương tiếp theo.
 
-Trong Chương 3, em/tôi giới thiệu về v.v.
+Chương 4 trình bày quá trình phân tích thiết kế, triển khai và đánh giá hệ thống event-booking-app. Trong chương này, đồ án mô tả kiến trúc phần mềm đã chọn, biểu đồ gói tổng quan và chi tiết, thiết kế giao diện, thiết kế lớp, thiết kế cơ sở dữ liệu, các công cụ và thư viện sử dụng, kết quả hiện thực, một số màn hình chức năng tiêu biểu, hoạt động kiểm thử và mô hình triển khai thử nghiệm của hệ thống trong môi trường thực tế.
 
-\textbf{Chú ý:} Sinh viên cần viết mô tả thành đoạn văn đầy đủ về nội dung chương. Tuyệt đối không viết ý hay gạch đầu dòng. Chương 1 không cần mô tả trong phần này. 
+Chương 5 tập trung vào các giải pháp và đóng góp nổi bật nhất của đồ án. Thay vì lặp lại phần mô tả thiết kế tổng quát, chương này đi sâu phân tích những vấn đề kỹ thuật quan trọng mà hệ thống đã giải quyết, bao gồm giải pháp thích ứng đa nền tảng giữa mobile và web, giải pháp bảo đảm tính nhất quán cho luồng đặt vé kết hợp thanh toán và check-in, cơ chế nhắc lịch và thông báo hợp nhất hạn chế gửi trùng, cùng với mô-đun AI hỗ trợ tạo nội dung sự kiện có cơ chế dự phòng nhiều tầng.
 
-Ví dụ tham khảo mô tả chương trong phần bố cục đồ án tốt nghiệp: Chương *** trình bày đóng góp chính của đồ án, đó là một nền tảng ABC cho phép khai phá và tích hợp nhiều nguồn dữ liệu, trong đó mỗi nguồn dữ liệu lại có định dạng đặc thù riêng. Nền tảng ABC được phát triển dựa trên khái niệm DEF, là các module ngữ nghĩa trợ giúp người dùng tìm kiếm, tích hợp và hiển thị trực quan dữ liệu theo mô hình cộng tác và mô hình phân tán.
-
-\textbf{Chú ý:} Trong phần nội dung chính, mỗi chương của đồ án nên có phần Tổng quan và Kết chương. Hai phần này đều có định dạng văn bản “Normal”, sinh viên không cần tạo định dạng riêng, ví dụ như không in đậm/in nghiêng, không đóng khung, v.v. 
-
-Trong phần Tổng quan của chương N, sinh viên nên có sự liên kết với chương N-1 rồi trình bày sơ qua lý do có mặt của chương N và sự cần thiết của chương này trong đồ án. Sau đó giới thiệu những vấn đề sẽ trình bày trong chương này là gì, trong các đề mục lớn nào.
-
-Ví dụ về phần Tổng quan: Chương 3 đã thảo luận về nguồn gốc ra đời, cơ sở lý thuyết và các nhiệm vụ chính của bài toán tích hợp dữ liệu. Chương 4 này sẽ trình bày chi tiết các công cụ tích hợp dữ liệu theo hướng tiếp cận “mashup”. Với mục đích và phạm vi của đề tài, sáu nhóm công cụ tích hợp dữ liệu chính được trình bày bao gồm: (i) nhóm công cụ ABC trong phần 4.1, (ii) nhóm công cụ DEF trong phần 4.2, nhóm công cụ GHK trong phần 4.3, v.v.
-
-Trong phần Kết chương, sinh viên đưa ra một số kết luận quan trọng của chương. Những vấn đề mở ra trong Tổng quan cần được tóm tắt lại nội dung và cách giải quyết/thực hiện như thế nào. Sinh viên lưu ý không viết Kết chương giống hệt Tổng quan. Sau khi đọc phần Kết chương, người đọc sẽ nắm được sơ bộ nội dung và giải pháp cho các vấn đề đã trình bày trong chương. Trong Kết chương, Sinh viên nên có thêm câu liên kết tới chương tiếp theo.
-
-Ví dụ về phần Kết chương: Chương này đã phân tích chi tiết sáu nhóm công cụ tích hợp dữ liệu. Nhóm công cụ ABC và DEF thích hợp với những bài toán tích hợp dữ liệu phạm vi nhỏ. Trong khi đó, nhóm công cụ GHK lại chứng tỏ thế mạnh của mình với những bài toán cần độ chính xác cao, v.v. Từ kết quả nghiên cứu và phân tích về sáu nhóm công cụ tích hợp dữ liệu này, tôi đã thực hiện phát triển phần mềm tự động bóc tách và tích hợp dữ liệu sử dụng nhóm công cụ GHK. Phần này được trình bày trong chương tiếp theo – Chương 5.
+Cuối cùng, Chương 6 đưa ra kết luận chung của đồ án và định hướng phát triển trong tương lai. Trên cơ sở những kết quả đã đạt được, chương này tổng hợp lại mức độ hoàn thành mục tiêu của đề tài, nêu các hạn chế còn tồn tại và đề xuất những hướng mở rộng tiếp theo nhằm tiếp tục hoàn thiện hệ thống cả về chức năng, trải nghiệm người dùng lẫn khả năng triển khai thực tế.
 
 \end{document}

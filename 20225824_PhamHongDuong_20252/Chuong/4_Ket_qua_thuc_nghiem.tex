@@ -11,9 +11,9 @@ Kiến trúc ba lớp được lựa chọn thay cho các hướng như microser
 
 Xét trên hệ thống cụ thể của đề tài, lớp giao diện và tương tác được hiện thực bằng ứng dụng di động React Native kết hợp Expo. Thành phần này bao gồm các màn hình chức năng trong thư mục \texttt{frontend/pages}, các thành phần giao diện dùng lại trong \texttt{frontend/components}, hệ điều hướng trong \texttt{frontend/navigators}, cùng các ngữ cảnh quản lý trạng thái như xác thực và bản địa hóa trong \texttt{frontend/context}. Nhiệm vụ của lớp này là tiếp nhận thao tác của người dùng, tổ chức luồng di chuyển giữa các màn hình, hiển thị dữ liệu và gửi yêu cầu đến backend thông qua các service như \texttt{auth.service}, \texttt{event.service}, \texttt{ticket.service}, \texttt{notification.service} hay \texttt{chat.service}. Nói cách khác, đây là phần gần nhất với người dùng cuối và chịu trách nhiệm thể hiện toàn bộ chức năng của hệ thống trên thiết bị di động.
 
-Lớp xử lý nghiệp vụ được tổ chức ở phía backend theo một dạng MVC điều chỉnh cho ứng dụng \gls{API} và dịch vụ thời gian thực. Trong hệ thống này, vai trò tương đương với phần Model được thể hiện bởi các schema và model Mongoose trong thư mục \texttt{backend/src/models}, nơi quản lý cấu trúc dữ liệu của người dùng, sự kiện, vé, thanh toán, thông báo, bookmark, chatroom và message. Vai trò tương đương với phần Controller là các controller trong \texttt{backend/src/controllers}, phụ trách xử lý từng luồng nghiệp vụ như đăng nhập, tạo sự kiện, đặt vé, xác nhận thanh toán, gửi lời mời, nhắn tin hay check-in. Bổ sung cho đó là các middleware và service trong \texttt{backend/src/middleware}, \texttt{backend/src/services} và \texttt{backend/src/utils}, dùng để giải quyết những nghiệp vụ dùng chung như xác thực JWT, gửi email, gửi thông báo đẩy, sinh mã \gls{QR}, gợi ý nội dung sự kiện bằng AI hoặc lập lịch nhắc sự kiện. Phần View trong mô hình MVC truyền thống không được đặt ở phía backend như các ứng dụng web server-rendered, mà được chuyển sang ứng dụng di động ở frontend. Đây là điểm điều chỉnh quan trọng để phù hợp với kiến trúc ứng dụng di động hiện đại.
+Lớp xử lý nghiệp vụ được tổ chức ở phía backend theo một dạng \gls{MVC} điều chỉnh cho ứng dụng \gls{API} và dịch vụ thời gian thực. Trong hệ thống này, vai trò tương đương với phần Model được thể hiện bởi các schema và model Mongoose trong thư mục \texttt{backend/src/models}, nơi quản lý cấu trúc dữ liệu của người dùng, sự kiện, vé, thanh toán, thông báo, bookmark, chatroom và message. Vai trò tương đương với phần Controller là các controller trong \texttt{backend/src/controllers}, phụ trách xử lý từng luồng nghiệp vụ như đăng nhập, tạo sự kiện, đặt vé, xác nhận thanh toán, gửi lời mời, nhắn tin hay check-in. Bổ sung cho đó là các middleware và service trong \texttt{backend/src/middleware}, \texttt{backend/src/services} và \texttt{backend/src/utils}, dùng để giải quyết những nghiệp vụ dùng chung như xác thực \gls{JWT}, gửi email, gửi thông báo đẩy, sinh mã \gls{QR}, gợi ý nội dung sự kiện bằng \gls{AI} hoặc lập lịch nhắc sự kiện. Phần View trong mô hình MVC truyền thống không được đặt ở phía backend như các ứng dụng web server-rendered, mà được chuyển sang ứng dụng di động ở frontend. Đây là điểm điều chỉnh quan trọng để phù hợp với kiến trúc ứng dụng di động hiện đại. Chi tiết hơn về ba hướng xử lý đáng chú ý là luồng đặt vé -- thanh toán -- check-in, cơ chế nhắc lịch thông báo hợp nhất và mô-đun AI có fallback sẽ được phân tích lần lượt tại các Mục \ref{sec:solution-booking-consistency}, \ref{sec:solution-reminder-notification} và \ref{sec:solution-ai-fallback} của Chương 5.
 
-Ở mức tổ chức truy cập, các route trong \texttt{backend/src/routes} đóng vai trò cổng vào của lớp dịch vụ. Mỗi nhóm route như \texttt{/api/auth}, \texttt{/api/users}, \texttt{/api/events}, \texttt{/api/tickets}, \texttt{/api/notifications} hay \texttt{/api/chat} tiếp nhận yêu cầu từ ứng dụng khách, sau đó chuyển tiếp cho controller tương ứng. Điều này tạo nên một chuỗi xử lý tương đối rõ ràng: người dùng thao tác trên giao diện di động, service ở frontend gửi yêu cầu HTTP hoặc sự kiện socket tới backend, route tiếp nhận yêu cầu, controller xử lý nghiệp vụ, model truy cập dữ liệu, sau đó kết quả được trả ngược về giao diện. Với các chức năng gần thời gian thực như chat, hệ thống mở rộng thêm một kênh giao tiếp bằng Socket.IO ở tệp \texttt{backend/src/socket.ts}. Đây có thể xem là một thành phần bổ sung cho lớp xử lý nghiệp vụ, giúp hệ thống vượt ra ngoài mô hình request-response thuần túy mà vẫn không phá vỡ cấu trúc tổng thể.
+Ở mức tổ chức truy cập, các route trong \texttt{backend/src/routes} đóng vai trò cổng vào của lớp dịch vụ. Mỗi nhóm route như \texttt{/api/auth}, \texttt{/api/users}, \texttt{/api/events}, \texttt{/api/tickets}, \texttt{/api/notifications} hay \texttt{/api/chat} tiếp nhận yêu cầu từ ứng dụng khách, sau đó chuyển tiếp cho controller tương ứng. Điều này tạo nên một chuỗi xử lý tương đối rõ ràng: người dùng thao tác trên giao diện di động, service ở frontend gửi yêu cầu \gls{HTTP} hoặc sự kiện socket tới backend, route tiếp nhận yêu cầu, controller xử lý nghiệp vụ, model truy cập dữ liệu, sau đó kết quả được trả ngược về giao diện. Với các chức năng gần thời gian thực như chat, hệ thống mở rộng thêm một kênh giao tiếp bằng Socket.IO ở tệp \texttt{backend/src/socket.ts}. Đây có thể xem là một thành phần bổ sung cho lớp xử lý nghiệp vụ, giúp hệ thống vượt ra ngoài mô hình request-response thuần túy mà vẫn không phá vỡ cấu trúc tổng thể.
 
 Lớp dữ liệu của hệ thống được xây dựng trên MongoDB và được truy cập thông qua Mongoose. Việc dùng cơ sở dữ liệu tài liệu giúp hệ thống linh hoạt trong việc biểu diễn các thực thể có cấu trúc thay đổi theo nghiệp vụ, chẳng hạn sự kiện có thể có nhiều hạng vé, trạng thái duyệt, thông tin tọa độ hoặc dữ liệu liên quan đến người tổ chức. Với bài toán của đề tài, dữ liệu không chỉ cần được lưu trữ mà còn phải phản ánh quan hệ giữa nhiều thực thể như người dùng -- sự kiện -- vé -- thanh toán -- thông báo. Bởi vậy, lớp dữ liệu không chỉ đóng vai trò lưu trữ mà còn là nền tảng để bảo đảm tính nhất quán cho các thao tác nghiệp vụ quan trọng như tăng số lượng vé đã bán, đánh dấu vé đã check-in hoặc ghi nhận lời mời đã gửi.
 
@@ -139,7 +139,7 @@ Về phương thức nghiệp vụ, lớp \texttt{Payment} được thao tác ch
 Bốn lớp trên phản ánh lõi nghiệp vụ của hệ thống theo một cấu trúc khá mạch lạc. \texttt{User} biểu diễn tác nhân sử dụng hệ thống, \texttt{Event} biểu diễn đối tượng trung tâm mà người dùng quan tâm, \texttt{Ticket} biểu diễn quyền tham dự của người dùng đối với sự kiện, còn \texttt{Payment} biểu diễn giao dịch tài chính đi kèm với việc phát hành vé. Mối liên hệ giữa các lớp này tạo nên phần lớn luồng nghiệp vụ chính trong hệ thống. Việc thiết kế lớp theo hướng tách biệt vai trò như vậy giúp mã nguồn dễ mở rộng hơn, chẳng hạn khi cần bổ sung thêm các chức năng như hủy vé, hoàn tiền, thống kê doanh thu hay xếp chỗ theo khu vực.
 
 \subsection{Thiết kế cơ sở dữ liệu}
-Hệ thống sử dụng MongoDB làm hệ quản trị cơ sở dữ liệu, vì vậy mô hình dữ liệu của đề tài được thiết kế theo hướng tài liệu (document-oriented) thay vì quan hệ thuần túy như trong các hệ quản trị SQL. Tuy nhiên, về bản chất nghiệp vụ, các collection trong MongoDB vẫn biểu diễn những thực thể và quan hệ tương tự một mô hình thực thể liên kết. Do đó, việc thiết kế cơ sở dữ liệu vẫn cần bắt đầu từ việc xác định các thực thể chính, các thuộc tính quan trọng và mối liên hệ giữa chúng. Trên cơ sở đó, hệ thống được tổ chức thành các collection trung tâm như \texttt{User}, \texttt{Event}, \texttt{Ticket}, \texttt{Payment}, \texttt{Notification}, \texttt{Bookmark}, \texttt{Reminder}, \texttt{Review}, \texttt{ChatRoom}, \texttt{Message} và \texttt{Card}.
+Hệ thống sử dụng MongoDB làm hệ quản trị cơ sở dữ liệu, vì vậy mô hình dữ liệu của đề tài được thiết kế theo hướng tài liệu (document-oriented) thay vì quan hệ thuần túy như trong các hệ quản trị \gls{SQL}. Tuy nhiên, về bản chất nghiệp vụ, các collection trong MongoDB vẫn biểu diễn những thực thể và quan hệ tương tự một \gls{ERD}. Do đó, việc thiết kế cơ sở dữ liệu vẫn cần bắt đầu từ việc xác định các thực thể chính, các thuộc tính quan trọng và mối liên hệ giữa chúng. Trên cơ sở đó, hệ thống được tổ chức thành các collection trung tâm như \texttt{User}, \texttt{Event}, \texttt{Ticket}, \texttt{Payment}, \texttt{Notification}, \texttt{Bookmark}, \texttt{Reminder}, \texttt{Review}, \texttt{ChatRoom}, \texttt{Message} và \texttt{Card}.
 
 \paragraph{Thực thể User}\mbox{}
 
@@ -171,7 +171,7 @@ Do sử dụng MongoDB, các quan hệ trên không được hiện thực bằn
 
 \paragraph{Nhận xét chung về thiết kế cơ sở dữ liệu}\mbox{}
 
-Thiết kế cơ sở dữ liệu của hệ thống thể hiện rõ đặc điểm của một ứng dụng sự kiện có nhiều nghiệp vụ đan xen. Cấu trúc dữ liệu hiện tại đáp ứng được các chức năng cốt lõi như quản lý người dùng, quản lý sự kiện, đặt vé, thanh toán, thông báo, nhắc lịch, nhắn tin và đánh giá. Đồng thời, việc kết hợp giữa tài liệu lồng và tham chiếu đối tượng giúp mô hình dữ liệu vừa giữ được sự linh hoạt của NoSQL, vừa bảo đảm khả năng mở rộng khi hệ thống cần bổ sung thêm các chức năng như hoàn tiền, báo cáo thống kê, đề xuất sự kiện cá nhân hóa hoặc quản lý sơ đồ chỗ ngồi phức tạp hơn.
+Thiết kế cơ sở dữ liệu của hệ thống thể hiện rõ đặc điểm của một ứng dụng sự kiện có nhiều nghiệp vụ đan xen. Cấu trúc dữ liệu hiện tại đáp ứng được các chức năng cốt lõi như quản lý người dùng, quản lý sự kiện, đặt vé, thanh toán, thông báo, nhắc lịch, nhắn tin và đánh giá. Đồng thời, việc kết hợp giữa tài liệu lồng và tham chiếu đối tượng giúp mô hình dữ liệu vừa giữ được sự linh hoạt của \gls{NoSQL}, vừa bảo đảm khả năng mở rộng khi hệ thống cần bổ sung thêm các chức năng như hoàn tiền, báo cáo thống kê, đề xuất sự kiện cá nhân hóa hoặc quản lý sơ đồ chỗ ngồi phức tạp hơn.
 
 \begin{figure}[H]
     \centering
@@ -236,12 +236,94 @@ Công cụ sinh dữ liệu mẫu & seed script & Tự xây dựng & Tạo dữ 
 \end{table}
 
 \subsection{Kết quả đạt được}
-Sinh viên trước tiên mô tả kết quả đạt được của mình là gì, ví dụ như các sản phẩm được đóng gói là gì, bao gồm những thành phần nào, ý nghĩa, vai trò?
+Kết quả đạt được của đồ án không chỉ dừng ở mức hoàn thiện mã nguồn, mà đã hình thành một hệ thống phần mềm tương đối hoàn chỉnh cho bài toán đặt vé và quản lý sự kiện trên thiết bị di động. Sản phẩm chính của đồ án gồm ba thành phần cốt lõi. Thành phần thứ nhất là ứng dụng khách được phát triển bằng React Native và Expo, chịu trách nhiệm cung cấp giao diện tương tác cho người dùng trên điện thoại và trên môi trường web phục vụ thử nghiệm. Thành phần thứ hai là máy chủ backend được xây dựng bằng Node.js, Express và TypeScript, đảm nhiệm xử lý các nghiệp vụ như xác thực người dùng, quản lý sự kiện, đặt vé, thanh toán, gửi thông báo, nhắc lịch và chat thời gian thực. Thành phần thứ ba là mô hình dữ liệu MongoDB cùng hệ thống schema Mongoose, tạo nền tảng lưu trữ và quản lý các thực thể như người dùng, sự kiện, vé, thanh toán, thông báo, bookmark, reminder, review và chat.
 
-Sinh viên cần thống kê các thông tin về ứng dụng của mình như: số dòng code, số lớp, số gói, dung lượng toàn bộ mã nguồn, dung lượng của từng sản phẩm đóng gói, v.v. Tương tự như phần liệt kê về công cụ sử dụng, sinh viên cũng nên dùng bảng để mô tả phần thông tin thống kê này.
+Ngoài ba thành phần cốt lõi trên, đồ án còn tạo ra một số sản phẩm hỗ trợ quan trọng. Một là bộ dữ liệu mẫu phục vụ thử nghiệm thủ công và trình diễn hệ thống thông qua script seed cho backend. Hai là bộ kiểm thử tự động ở mức controller cho các nhóm chức năng quan trọng như xác thực người dùng, tạo sự kiện và đặt vé. Ba là tập các tài liệu thiết kế và minh họa như biểu đồ use case, biểu đồ gói, biểu đồ trình tự, wireframe giao diện và biểu đồ E-R, giúp mô tả toàn bộ hệ thống từ góc nhìn phân tích, thiết kế đến triển khai. Nhờ đó, kết quả đạt được của đồ án không chỉ là một sản phẩm chạy được, mà còn là một bộ artefact kỹ thuật khá đầy đủ phục vụ cho việc bảo trì, mở rộng và đánh giá hệ thống.
+
+Về mặt ý nghĩa, các sản phẩm trên cho thấy hệ thống đã đáp ứng được các luồng nghiệp vụ quan trọng nhất của bài toán. Người dùng có thể đăng nhập, tìm kiếm sự kiện, xem chi tiết, lưu sự kiện, đặt vé, nhận vé điện tử và nhận thông báo. Người tổ chức có thể tạo sự kiện, quản lý hạng vé, mời người tham gia và thực hiện check-in bằng mã \gls{QR}. Quản trị viên có thể kiểm soát trạng thái duyệt sự kiện. Đồng thời, việc hệ thống đã có bản build cho backend, bản export web cho frontend và dữ liệu seed cho thấy sản phẩm không chỉ tồn tại ở mức mã nguồn mà đã có thể phục vụ trình diễn và kiểm thử trong môi trường gần với thực tế hơn.
+
+Do dự án được tổ chức chủ yếu theo module và hàm nghiệp vụ, thay vì hoàn toàn theo cấu trúc lớp thuần túy, phần thống kê dưới đây sử dụng số lượng mô-đun, thực thể dữ liệu và thành phần chính của hệ thống để phản ánh quy mô sản phẩm một cách sát thực hơn. Bảng \ref{table:result-products} tóm tắt các sản phẩm đầu ra chính của đồ án, còn Bảng \ref{table:result-stats} trình bày các số liệu thống kê nổi bật của ứng dụng.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.3cm}|p{4.1cm}|p{7.1cm}|}
+\hline
+\textbf{Sản phẩm} & \textbf{Thành phần} & \textbf{Ý nghĩa, vai trò} \\ \hline
+Ứng dụng khách & Mã nguồn frontend React Native/Expo, các màn hình, component, service và context & Cung cấp giao diện cho người dùng cuối, hiện thực các luồng khám phá sự kiện, đặt vé, quản lý vé, chat và thông báo. \\ \hline
+Máy chủ backend & Mã nguồn Express/TypeScript, route, controller, middleware, service, utility & Xử lý nghiệp vụ trung tâm của hệ thống, bảo vệ API, quản lý dữ liệu và điều phối các chức năng thời gian thực. \\ \hline
+Cơ sở dữ liệu & Các schema/model MongoDB-Mongoose cho User, Event, Ticket, Payment, Notification, Bookmark, Reminder, Review, ChatRoom, Message, Card & Lưu trữ dữ liệu nghiệp vụ và bảo đảm tính nhất quán cho các thao tác cốt lõi của hệ thống. \\ \hline
+Bản build triển khai & \texttt{backend/dist} và \texttt{frontend/dist} & Cho phép đóng gói và triển khai sản phẩm trên môi trường chạy thử và môi trường web. \\ \hline
+Dữ liệu thử nghiệm & Script sinh dữ liệu mẫu \texttt{backend/scripts/seed.js} & Hỗ trợ kiểm thử thủ công, trình diễn sản phẩm và đối chiếu dữ liệu khi phát triển. \\ \hline
+Bộ kiểm thử & Các ca kiểm thử trong \texttt{backend/tests} & Hỗ trợ kiểm tra tính đúng đắn của một số controller quan trọng và giảm rủi ro hồi quy khi sửa mã nguồn. \\ \hline
+Tài liệu thiết kế & Use case, package diagram, sequence diagram, wireframe, ERD & Hỗ trợ mô tả, đánh giá và mở rộng hệ thống ở các giai đoạn tiếp theo. \\ \hline
+\end{tabular}
+\caption{Các sản phẩm đầu ra chính đạt được trong quá trình thực hiện đồ án}
+\label{table:result-products}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{6.0cm}|p{3.2cm}|p{5.3cm}|}
+\hline
+\textbf{Chỉ số thống kê} & \textbf{Giá trị} & \textbf{Ghi chú} \\ \hline
+Tổng số dòng mã nguồn chính (không tính \texttt{node\_modules}, \texttt{dist}, \texttt{.expo}) & 20\,372 dòng & Tính trên các tệp \texttt{.ts}, \texttt{.tsx}, \texttt{.js} của backend và frontend. \\ \hline
+Số tệp mã nguồn phía backend (\texttt{backend/src}) & 46 tệp & Bao gồm cấu hình, controller, middleware, model, route, service và utility. \\ \hline
+Số tệp mã nguồn phía frontend & 87 tệp & Tính trên các tệp TypeScript/TSX của frontend, không tính thư viện cài đặt. \\ \hline
+Số màn hình nghiệp vụ frontend & 35 màn hình & Tính theo số tệp trong thư mục \texttt{frontend/pages}. \\ \hline
+Số component giao diện dùng lại & 23 component & Tính theo số tệp trong \texttt{frontend/components}. \\ \hline
+Số service phía frontend & 15 service & Phục vụ gọi API, chat, thông báo, thanh toán, upload, v.v. \\ \hline
+Số model/thực thể dữ liệu backend & 11 model & Gồm User, Event, Ticket, Payment, Notification, Bookmark, Reminder, Review, ChatRoom, Message, Card. \\ \hline
+Số controller backend & 11 controller & Mỗi controller xử lý một nhóm nghiệp vụ chính của hệ thống. \\ \hline
+Số route backend & 11 route module & Tổ chức endpoint theo từng nhóm chức năng. \\ \hline
+Số utility backend & 6 utility module & Bao gồm sinh token, QR, push notification, email, scheduler, v.v. \\ \hline
+Số tệp kiểm thử backend & 4 tệp & Gồm các ca kiểm thử và helper phục vụ kiểm thử. \\ \hline
+Dung lượng mã nguồn backend chính & 256 KB & Thư mục \texttt{backend/src}. \\ \hline
+Dung lượng kiểm thử và script seed & 52 KB & Gồm \texttt{backend/tests} và \texttt{backend/scripts}. \\ \hline
+Dung lượng phần giao diện frontend chính & 472 KB & Thư mục \texttt{frontend/pages}. \\ \hline
+Dung lượng component frontend & 140 KB & Thư mục \texttt{frontend/components}. \\ \hline
+Dung lượng service frontend & 72 KB & Thư mục \texttt{frontend/services}. \\ \hline
+Dung lượng tài nguyên frontend & 272 KB & Thư mục \texttt{frontend/assets}, chưa tính phụ thuộc ngoài. \\ \hline
+Dung lượng bản build backend & 260 KB & Thư mục \texttt{backend/dist}. \\ \hline
+Dung lượng bản export web frontend & 8.2 MB & Thư mục \texttt{frontend/dist}, phục vụ triển khai thử nghiệm trên web. \\ \hline
+\end{tabular}
+\caption{Một số thông tin thống kê về quy mô và kết quả hiện thực của hệ thống}
+\label{table:result-stats}
+\end{table}
 
 \subsection{Minh họa các chức năng chính}
-Sinh viên lựa chọn và đưa ra màn hình cho các chức năng chính, quan trọng, và thú vị nhất. Mỗi giao diện cần phải có lời giải thích ngắn gọn. Khi giải thích, sinh viên có thể kết hợp với các chú thích ở trong hình ảnh giao diện.
+Để minh họa rõ hơn kết quả hiện thực của hệ thống, đề tài lựa chọn ba chức năng tiêu biểu nhất để đưa ra hình ảnh giao diện sản phẩm, bao gồm tạo sự kiện, đặt vé và check-in vé. Đây là ba chức năng đại diện cho ba góc nhìn quan trọng của hệ thống: phía người tổ chức, phía người tham dự và phía kiểm soát việc tham gia sự kiện. Các hình minh họa dưới đây là giao diện thực tế của sản phẩm sau khi hiện thực, không phải wireframe hay giao diện khái niệm. Vì vậy, chúng phản ánh trực tiếp cách các yêu cầu nghiệp vụ đã được chuyển hóa thành các màn hình tương tác trong hệ thống.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.58\linewidth,height=0.82\textheight,keepaspectratio]{Hinhve/TaoEvent.png}
+    \caption{Giao diện chức năng tạo sự kiện}
+    \label{fig:ui-create-event}
+\end{figure}
+
+Hình~\ref{fig:ui-create-event} minh họa giao diện tạo sự kiện dành cho người tổ chức. Màn hình này cho phép nhập các thông tin chính của sự kiện như tiêu đề, mô tả, danh mục, thời gian, địa điểm và các hạng vé. Điểm đáng chú ý là giao diện được thiết kế theo luồng nhập liệu rõ ràng, giúp người tổ chức có thể tạo sự kiện từng bước mà không bị rối bởi quá nhiều thông tin trên cùng một màn hình. Ngoài ra, việc bố trí khu vực quản lý hạng vé ngay trong giao diện tạo sự kiện cho thấy hệ thống đã hỗ trợ khá tốt đặc thù nghiệp vụ của bài toán, thay vì chỉ dừng ở mức tạo một bản tin sự kiện đơn giản.
+
+\begin{samepage}
+\begin{center}
+    \includegraphics[width=0.54\linewidth,height=0.60\textheight,keepaspectratio]{Hinhve/DatVe.png}
+    \captionof{figure}{Giao diện chức năng đặt vé}
+    \label{fig:ui-book-ticket}
+\end{center}
+
+Hình~\ref{fig:ui-book-ticket} minh họa giao diện đặt vé dành cho người dùng. Tại màn hình này, người dùng có thể lựa chọn hạng vé, điều chỉnh số lượng vé và xem tổng tiền trước khi xác nhận thanh toán. Giao diện tập trung làm nổi bật các yếu tố quan trọng nhất đối với quyết định mua vé, bao gồm loại vé, đơn giá, số lượng còn lại và tổng giá trị giao dịch. Cách bố trí này giúp người dùng thao tác nhanh, đồng thời hạn chế sai sót khi lựa chọn vé cho sự kiện.
+\end{samepage}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.58\linewidth,height=0.82\textheight,keepaspectratio]{Hinhve/QuetVe.png}
+    \caption{Giao diện chức năng check-in vé}
+    \label{fig:ui-checkin-ticket}
+\end{figure}
+
+Hình~\ref{fig:ui-checkin-ticket} minh họa giao diện check-in vé bằng mã \gls{QR}. Đây là một trong những chức năng thú vị nhất của hệ thống vì nó kết nối trực tiếp giữa dữ liệu vé điện tử và thao tác tham dự ngoài thực tế. Màn hình được thiết kế để người tổ chức có thể quét mã, nhận phản hồi ngay về tính hợp lệ của vé và cập nhật trạng thái tham dự của người dùng. Chức năng này góp phần hoàn thiện vòng đời của một giao dịch đặt vé, từ lúc người dùng chọn mua vé cho tới khi được xác nhận tham dự sự kiện tại địa điểm tổ chức.
 
 \section{Kiểm thử}
 Kiểm thử là bước quan trọng để đánh giá xem hệ thống có hiện thực đúng các yêu cầu nghiệp vụ cốt lõi hay không, đồng thời giúp phát hiện sớm các lỗi xử lý dữ liệu, lỗi xác thực đầu vào và các sai lệch trong luồng nghiệp vụ giữa các thành phần của backend. Đối với hệ thống đặt vé và quản lý sự kiện trong đồ án này, không phải mọi chức năng đều có mức độ quan trọng như nhau. Những chức năng cần được ưu tiên kiểm thử trước là các chức năng trực tiếp ảnh hưởng tới trải nghiệm sử dụng và tính đúng đắn của dữ liệu, bao gồm: xác thực người dùng, tạo sự kiện, đặt vé và xác nhận thanh toán. Đây là các luồng nền tảng, bởi nếu các luồng này hoạt động sai thì hầu hết các chức năng khác như quản lý sự kiện, thông báo, nhắc lịch hay check-in cũng sẽ bị ảnh hưởng theo.
@@ -380,18 +462,18 @@ Backend hiện được truy cập qua địa chỉ \texttt{https://event-bookin
 
 Ở phía client, hệ thống ban đầu được xây dựng như một ứng dụng di động bằng React Native và Expo. Tuy nhiên, trong quá trình thử nghiệm thực tế, việc phân phối ứng dụng lên iOS gặp ràng buộc về tài khoản Apple Developer. Vì vậy, để thuận tiện cho việc trình diễn và kiểm thử trên nhiều thiết bị, đồ án sử dụng thêm một phương án triển khai web từ chính mã nguồn Expo. Cụ thể, frontend được export ra dạng website tĩnh bằng lệnh \texttt{expo export -p web}, sinh ra thư mục \texttt{frontend/dist}. Thư mục này sau đó được triển khai lên Netlify theo hình thức static hosting và truy cập qua tên miền thử nghiệm \texttt{https://scintillating-chimera-1542b0.netlify.app}. Nhờ đó, người dùng có thể mở hệ thống trên iPhone hoặc máy tính bằng trình duyệt thông qua đường link hoặc mã \gls{QR} mà không cần cài trực tiếp ứng dụng native.
 
-Trong quá trình chuyển frontend sang môi trường web, một số màn hình phụ thuộc thành phần native đã được điều chỉnh để tương thích. Điển hình là màn hình chọn vị trí \texttt{SelectLocation}: trên mobile, màn hình này dùng \texttt{react-native-maps}, còn trên web hệ thống sử dụng tệp riêng \texttt{SelectLocation.web.tsx} với thư viện Leaflet và bản đồ OpenStreetMap để vẫn bảo đảm người dùng có thể tìm kiếm địa chỉ, xem bản đồ và chọn vị trí tương tự như trên điện thoại. Điều này cho thấy hệ thống không chỉ được triển khai về mặt hạ tầng mà còn được thích nghi ở mức giao diện để phù hợp với môi trường vận hành thực tế.
+Trong quá trình chuyển frontend sang môi trường web, một số màn hình phụ thuộc thành phần native đã được điều chỉnh để tương thích. Điển hình là màn hình chọn vị trí \texttt{SelectLocation}: trên mobile, màn hình này dùng \texttt{react-native-maps}, còn trên web hệ thống sử dụng tệp riêng \texttt{SelectLocation.web.tsx} với thư viện Leaflet và bản đồ OpenStreetMap để vẫn bảo đảm người dùng có thể tìm kiếm địa chỉ, xem bản đồ và chọn vị trí tương tự như trên điện thoại. Điều này cho thấy hệ thống không chỉ được triển khai về mặt hạ tầng mà còn được thích nghi ở mức giao diện để phù hợp với môi trường vận hành thực tế. Phân tích chi tiết về cách tách lớp phụ thuộc nền tảng và giữ lõi nghiệp vụ dùng chung sẽ được trình bày ở Mục \ref{sec:solution-cross-platform} của Chương 5.
 
 \paragraph{Liên kết giữa frontend và backend}\mbox{}
 
-Sau khi backend đã được triển khai trên Render, frontend được cấu hình sử dụng địa chỉ \gls{API} công khai \texttt{https://event-booking-app-3.onrender.com} trong lớp service giao tiếp. Ở phía backend, biến môi trường \texttt{CORS} được đặt theo tên miền frontend trên Netlify để chỉ cho phép client hợp lệ gửi yêu cầu đến server. Nhờ đó, quá trình đăng nhập, lấy danh sách sự kiện, đọc dữ liệu người dùng và các luồng nghiệp vụ chính có thể được kiểm thử trong môi trường thực tế qua Internet, thay vì chỉ chạy trong mạng nội bộ. Việc kiểm tra backend được thực hiện thông qua endpoint \texttt{/api/health}, còn frontend được kiểm tra bằng cách export lại website sau mỗi lần thay đổi cấu hình và triển khai lại thư mục \texttt{dist} lên Netlify.
+Sau khi backend đã được triển khai trên Render, frontend được cấu hình sử dụng địa chỉ \gls{API} công khai \texttt{https://event-booking-app-3.onrender.com} trong lớp service giao tiếp. Ở phía backend, biến môi trường \gls{CORS} được đặt theo tên miền frontend trên Netlify để chỉ cho phép client hợp lệ gửi yêu cầu đến server. Nhờ đó, quá trình đăng nhập, lấy danh sách sự kiện, đọc dữ liệu người dùng và các luồng nghiệp vụ chính có thể được kiểm thử trong môi trường thực tế qua Internet, thay vì chỉ chạy trong mạng nội bộ. Việc kiểm tra backend được thực hiện thông qua endpoint \texttt{/api/health}, còn frontend được kiểm tra bằng cách export lại website sau mỗi lần thay đổi cấu hình và triển khai lại thư mục \texttt{dist} lên Netlify.
 
 \paragraph{Thiết bị và cấu hình thử nghiệm}\mbox{}
 
-Về phía thiết bị người dùng, hệ thống được thử nghiệm trên điện thoại thông minh Android, điện thoại iPhone và trình duyệt web trên máy tính cá nhân có kết nối Internet ổn định. Với Android, ứng dụng có thể chạy qua Expo Go hoặc tiếp tục đóng gói thành bản \texttt{APK} để cài đặt thủ công. Với iOS, phương án trình diễn chính trong đồ án là truy cập bản web triển khai trên Netlify bằng Safari thông qua đường link hoặc mã \gls{QR}. Về mặt máy chủ, hệ thống không sử dụng một máy vật lý cài đặt thủ công mà tận dụng mô hình \textit{Platform as a Service}: backend chạy trên Render, frontend tĩnh chạy trên Netlify và dữ liệu được lưu trên MongoDB Atlas. Đây là cách triển khai phù hợp với quy mô đồ án vì đơn giản, ít tốn công quản trị hạ tầng nhưng vẫn đủ để tái hiện quá trình vận hành của một hệ thống thực tế có nhiều thành phần phân tán.
+Về phía thiết bị người dùng, hệ thống được thử nghiệm trên điện thoại thông minh Android, điện thoại iPhone và trình duyệt web trên máy tính cá nhân có kết nối Internet ổn định. Với Android, ứng dụng có thể chạy qua Expo Go hoặc tiếp tục đóng gói thành bản \texttt{APK} để cài đặt thủ công. Với iOS, phương án trình diễn chính trong đồ án là truy cập bản web triển khai trên Netlify bằng Safari thông qua đường link hoặc mã \gls{QR}. Về mặt máy chủ, hệ thống không sử dụng một máy vật lý cài đặt thủ công mà tận dụng mô hình \gls{PaaS}: backend chạy trên Render, frontend tĩnh chạy trên Netlify và dữ liệu được lưu trên MongoDB Atlas. Đây là cách triển khai phù hợp với quy mô đồ án vì đơn giản, ít tốn công quản trị hạ tầng nhưng vẫn đủ để tái hiện quá trình vận hành của một hệ thống thực tế có nhiều thành phần phân tán.
 
 \paragraph{Đánh giá mô hình triển khai}\mbox{}
 
-Ở mức thử nghiệm, mô hình triển khai hiện tại đã đủ để kiểm tra các luồng nghiệp vụ chính của hệ thống trong môi trường thực tế có kết nối mạng, bao gồm đăng nhập, đọc dữ liệu từ server, tương tác với bản đồ web, quản lý sự kiện và trao đổi dữ liệu qua \gls{API}. Mô hình này cũng cho phép nhóm phát triển dễ dàng cập nhật backend và frontend một cách độc lập. Tuy nhiên, nếu triển khai ở quy mô lớn hơn trong tương lai, hệ thống vẫn cần được bổ sung thêm các cơ chế như giám sát tài nguyên, lưu log tập trung, tối ưu hiệu năng truy vấn, cấu hình database theo chế độ tin cậy cao, triển khai CDN cho tài nguyên tĩnh và tăng cường bảo mật đối với khóa bí mật, email, token và dữ liệu người dùng.
+Ở mức thử nghiệm, mô hình triển khai hiện tại đã đủ để kiểm tra các luồng nghiệp vụ chính của hệ thống trong môi trường thực tế có kết nối mạng, bao gồm đăng nhập, đọc dữ liệu từ server, tương tác với bản đồ web, quản lý sự kiện và trao đổi dữ liệu qua \gls{API}. Mô hình này cũng cho phép nhóm phát triển dễ dàng cập nhật backend và frontend một cách độc lập. Tuy nhiên, nếu triển khai ở quy mô lớn hơn trong tương lai, hệ thống vẫn cần được bổ sung thêm các cơ chế như giám sát tài nguyên, lưu log tập trung, tối ưu hiệu năng truy vấn, cấu hình database theo chế độ tin cậy cao, triển khai \gls{CDN} cho tài nguyên tĩnh và tăng cường bảo mật đối với khóa bí mật, email, token và dữ liệu người dùng.
 
 \end{document}

@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  25 JUN 2026 10:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  25 JUN 2026 11:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/4_Ket_qua_thuc_nghiem.tex
-(/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/4_Ket_qua_thuc_nghiem.tex
+**/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/0_4_Danh_muc_viet_tat.tex
+(/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/0_4_Danh_muc_viet_tat.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/subfiles/subfiles.cls
@@ -1079,8 +1079,8 @@ File: t5utm.fd 2005/08/24 Fontinst v1.929 font definitions for T5/ptm.
 LaTeX Warning: Unused global option(s):
     [13pt,3p].
 
-(./4_Ket_qua_thuc_nghiem.aux)
-\openout1 = `4_Ket_qua_thuc_nghiem.aux'.
+(./0_4_Danh_muc_viet_tat.aux)
+\openout1 = `0_4_Danh_muc_viet_tat.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
 LaTeX Font Info:    ... okay on input line 2.
@@ -1185,533 +1185,32 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Input encoding 'utf8' detected.
 Package biblatex Info: Data encoding 'utf8' specified.
 (biblatex)             No need to reencode data.
-\openout4 = `4_Ket_qua_thuc_nghiem-blx.bib'.
+\openout4 = `0_4_Danh_muc_viet_tat-blx.bib'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file '4_Ket_qua_thuc_nghiem.bbl' not found.
+Package biblatex Info: ... file '0_4_Danh_muc_viet_tat.bbl' not found.
 
-No file 4_Ket_qua_thuc_nghiem.bbl.
+No file 0_4_Danh_muc_viet_tat.bbl.
 Package biblatex Info: Reference section=0 on input line 2.
 Package biblatex Info: Reference segment=0 on input line 2.
 Package hyperref Info: Link coloring OFF on input line 2.
-(./4_Ket_qua_thuc_nghiem.out) (./4_Ket_qua_thuc_nghiem.out)
+(./0_4_Danh_muc_viet_tat.out) (./0_4_Danh_muc_viet_tat.out)
 \@outlinefile=\write5
-\openout5 = `4_Ket_qua_thuc_nghiem.out'.
+\openout5 = `0_4_Danh_muc_viet_tat.out'.
 
-LaTeX Font Info:    Trying to load font information for T5+pcr on input line 12.
- (/usr/share/texlive/texmf-dist/tex/latex/vntex/t5pcr.fd
-File: t5ucr.fd 2005/08/24 Fontinst v1.929 font definitions for T5/pcr.
-)
-Overfull \hbox (11.3347pt too wide) in paragraph at lines 12--13
-\T5/pcr/m/n/13 ticket.service\T5/ptm/m/n/13 , \T5/pcr/m/n/13 no-ti-fi-ca-tion.service \T5/ptm/m/n/13 hay \T5/pcr/m/n/13 chat.service\T5/ptm/m/n/13 . Nâi c¡ch
+
+Overfull \hbox (20.57744pt too wide) in alignment at lines 3--15
+ [] [] [] 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc}]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [2]
-<../Hinhve/BieuDoGoiTongQuan.png, id=88, 1197.47375pt x 1253.68375pt>
-File: ../Hinhve/BieuDoGoiTongQuan.png Graphic file (type png)
-<use ../Hinhve/BieuDoGoiTongQuan.png>
-Package pdftex.def Info: ../Hinhve/BieuDoGoiTongQuan.png  used on input line 27.
-(pdftex.def)             Requested size: 426.77805pt x 446.8112pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [3] [4 <../Hinhve/BieuDoGoiTongQuan.png>]
-<../Hinhve/BieuDoGoiChiTiet.png, id=99, 1238.6275pt x 926.46124pt>
-File: ../Hinhve/BieuDoGoiChiTiet.png Graphic file (type png)
-<use ../Hinhve/BieuDoGoiChiTiet.png>
-Package pdftex.def Info: ../Hinhve/BieuDoGoiChiTiet.png  used on input line 41.
-(pdftex.def)             Requested size: 426.79776pt x 319.23364pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5]
-Underfull \vbox (badness 4378) has occurred while \output is active []
-
- [6 <../Hinhve/BieuDoGoiChiTiet.png>]
-Overfull \hbox (14.98773pt too wide) in paragraph at lines 54--55
-\T5/pcr/m/n/13 tend/-con-stants/-col-ors.ts \T5/ptm/m/n/13 v  \T5/pcr/m/n/13 fron-tend/-con-stants/theme.ts\T5/ptm/m/n/13 . M u
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7] [8]
-<../Hinhve/TaoSuKienWF.png, id=122, 856.19875pt x 1850.915pt>
-File: ../Hinhve/TaoSuKienWF.png Graphic file (type png)
-<use ../Hinhve/TaoSuKienWF.png>
-Package pdftex.def Info: ../Hinhve/TaoSuKienWF.png  used on input line 78.
-(pdftex.def)             Requested size: 138.67992pt x 299.79575pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [9]
-<../Hinhve/DatVeWF.png, id=129, 866.23625pt x 1829.83624pt>
-File: ../Hinhve/DatVeWF.png Graphic file (type png)
-<use ../Hinhve/DatVeWF.png>
-Package pdftex.def Info: ../Hinhve/DatVeWF.png  used on input line 85.
-(pdftex.def)             Requested size: 141.91827pt x 299.78796pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [10 <../Hinhve/TaoSuKienWF.png (PNG copy)> <../Hinhve/DatVeWF.png (PNG copy)>]
-Overfull \hbox (15.27371pt too wide) in paragraph at lines 94--95
-\T5/pcr/m/n/13 ver-i-fied\T5/ptm/m/n/13 , \T5/pcr/m/n/13 no-ti-fi-ca-tion-sEn-abled\T5/ptm/m/n/13 , \T5/pcr/m/n/13 ex-po-Push-To-ken\T5/ptm/m/n/13 , \T5/pcr/m/n/13 pass-wor-dReset-
- []
-
-<../Hinhve/TaoSuKienUCSeq.png, id=136, 902.37125pt x 532.99126pt>
-File: ../Hinhve/TaoSuKienUCSeq.png Graphic file (type png)
-<use ../Hinhve/TaoSuKienUCSeq.png>
-Package pdftex.def Info: ../Hinhve/TaoSuKienUCSeq.png  used on input line 104.
-(pdftex.def)             Requested size: 426.79951pt x 252.09181pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [11]
-Overfull \hbox (3.22266pt too wide) in paragraph at lines 113--114
-\T5/pcr/m/n/13 seat-Info\T5/ptm/m/n/13 , \T5/pcr/m/n/13 qr-Code\T5/ptm/m/n/13 , \T5/pcr/m/n/13 pay-mentSta-tus\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checked\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checke-dAt\T5/ptm/m/n/13 , \T5/pcr/m/n/13 checkedBy
- []
-
-<../Hinhve/DatVe&ThanhToanUCSeq.png, id=143, 1296.845pt x 1074.0125pt>
-File: ../Hinhve/DatVe&ThanhToanUCSeq.png Graphic file (type png)
-<use ../Hinhve/DatVe&ThanhToanUCSeq.png>
-Package pdftex.def Info: ../Hinhve/DatVe&ThanhToanUCSeq.png  used on input line 117.
-(pdftex.def)             Requested size: 426.79266pt x 353.45831pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [12 <../Hinhve/TaoSuKienUCSeq.png>]
-<../Hinhve/CheckInUCSeq.png, id=151, 1223.57124pt x 723.70375pt>
-File: ../Hinhve/CheckInUCSeq.png Graphic file (type png)
-<use ../Hinhve/CheckInUCSeq.png>
-Package pdftex.def Info: ../Hinhve/CheckInUCSeq.png  used on input line 124.
-(pdftex.def)             Requested size: 426.78142pt x 252.42772pt.
- [13 <../Hinhve/DatVe&ThanhToanUCSeq.png> <../Hinhve/CheckInUCSeq.png>] [14] [15] [16]
-<../Hinhve/ERD.png, id=182, 1570.86874pt x 1057.9525pt>
-File: ../Hinhve/ERD.png Graphic file (type png)
-<use ../Hinhve/ERD.png>
-Package pdftex.def Info: ../Hinhve/ERD.png  used on input line 178.
-(pdftex.def)             Requested size: 426.77689pt x 287.42673pt.
- [17 <../Hinhve/ERD.png>]
-LaTeX Font Info:    Calculating math sizes for size <8.66673> on input line 191.
-
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4.33336> not available
-(Font)              size <5> substituted on input line 191.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <4.33336> not available
-(Font)              size <5> substituted on input line 191.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <4.33336> not available
-(Font)              size <5> substituted on input line 191.
-
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 191.
-(/usr/share/texlive/texmf-dist/tex/latex/base/ulasy.fd
-File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-)
-
-LaTeX Font Warning: Font shape `U/lasy/m/n' in size <4.33336> not available
-(Font)              size <5> substituted on input line 191.
-
-LaTeX Font Info:    Trying to load font information for U+msa on input line 191.
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 191.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Underfull \hbox (badness 10000) in paragraph at lines 196--196
-[]|\T5/ptm/m/n/8.66673 Framework giao
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 198--198
-[]|\T5/ptm/m/n/8.66673 ^^^i·u h÷îng ùng
- []
-
-
-Underfull \hbox (badness 5203) in paragraph at lines 199--199
-[]|\T5/ptm/m/n/8.66673 NativeWind + Tail-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 201--201
-[]|\T5/ptm/m/n/8.66673 0.32.16 /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 202--202
-[]|\T5/ptm/m/n/8.66673 react-native-maps
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 202--202
-\T5/ptm/m/n/8.66673 + expo-location +
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 202--202
-\T5/ptm/m/n/8.66673 Leaflet + react-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 203--203
-[]|\T5/ptm/m/n/8.66673 17.0.10 /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 205--205
-[]|\T5/ptm/m/n/8.66673 @react-native-async-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 206--206
-[]|\T5/ptm/m/n/8.66673 1.11.19 /
- []
-
-
-Overfull \hbox (7.32079pt too wide) in paragraph at lines 191--208
- [][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 220--220
-[]|\T5/ptm/m/n/8.66673 Mæi tr÷íng ch¤y
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 221--221
-[]|\T5/ptm/m/n/8.66673 Framework web
- []
-
-
-Underfull \hbox (badness 4132) in paragraph at lines 224--224
-[]|\T5/ptm/m/n/8.66673 JSON Web To-ken +
- []
-
-
-Overfull \hbox (7.3208pt too wide) in paragraph at lines 216--234
- [][] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [18]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [19]
-LaTeX Font Info:    Calculating math sizes for size <11.86258> on input line 251.
-
-Underfull \hbox (badness 10000) in paragraph at lines 254--254
-[]|\T5/ptm/m/n/11.86258 M¢ nguçn fron-tend
- []
-
-
-Underfull \hbox (badness 2608) in paragraph at lines 254--254
-\T5/ptm/m/n/11.86258 m n h¼nh, com-po-nent,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 255--255
-[]|\T5/ptm/m/n/11.86258 M¢ nguçn Ex-press/-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 255--255
-\T5/ptm/m/n/11.86258 Type-Script, route,
- []
-
-
-Underfull \hbox (badness 5504) in paragraph at lines 255--255
-\T5/ptm/m/n/11.86258 con-troller, mid-dle-ware,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
-[]|\T5/ptm/m/n/11.86258 C¡c schema/-model
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
-\T5/ptm/m/n/11.86258 MongoDB-Mongoose
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
-\T5/ptm/m/n/11.86258 Pay-ment, No-ti-fi-ca-tion,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
-\T5/ptm/m/n/11.86258 Book-mark, Re-minder,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
-\T5/ptm/m/n/11.86258 Re-view, Cha-t-Room,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 257--257
-[]|\T5/pcr/m/n/11.86258 backend/dist \T5/ptm/m/n/11.86258 v 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 258--258
-\T5/pcr/m/n/11.86258 back-end/script-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 260--260
-[]|\T5/ptm/m/n/11.86258 Use case, pack-age
- []
-
-
-Overfull \hbox (23.37401pt too wide) in paragraph at lines 251--262
- [][] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [20]
-Underfull \hbox (badness 2884) in paragraph at lines 273--273
-[]|\T5/ptm/m/n/11.86258 Têng sè dáng m¢ nguçn ch½nh
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 273--273
-\T5/ptm/m/n/11.86258 (khæng t½nh \T5/pcr/m/n/11.86258 node_modules\T5/ptm/m/n/11.86258 ,
- []
-
-
-Underfull \hbox (badness 2269) in paragraph at lines 274--274
-[]|\T5/ptm/m/n/11.86258 Sè t»p m¢ nguçn ph½a back-end
- []
-
-
-Underfull \hbox (badness 1052) in paragraph at lines 275--275
-[]|\T5/ptm/m/n/11.86258 T½nh tr¶n c¡c t»p Type-Scrip-
- []
-
-
-Underfull \hbox (badness 2662) in paragraph at lines 281--281
-[]|\T5/ptm/m/n/11.86258 Tê chùc end-point theo tøng
- []
-
-
-Underfull \hbox (badness 2173) in paragraph at lines 282--282
-\T5/ptm/m/n/11.86258 no-ti-fi-ca-tion, email, sched-uler,
- []
-
-
-Underfull \hbox (badness 2980) in paragraph at lines 284--284
-[]|\T5/ptm/m/n/11.86258 Dung l÷ñng m¢ nguçn back-end
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 285--285
-[]|\T5/ptm/m/n/11.86258 Gçm \T5/pcr/m/n/11.86258 back-end/tests \T5/ptm/m/n/11.86258 v 
- []
-
-
-Underfull \hbox (badness 7081) in paragraph at lines 288--288
-[]|\T5/ptm/m/n/11.86258 Th÷ möc \T5/pcr/m/n/11.86258 fron-tend/ser-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 289--289
-[]|\T5/ptm/m/n/11.86258 Th÷ möc \T5/pcr/m/n/11.86258 fron-tend/as-
- []
-
-
-Underfull \hbox (badness 3302) in paragraph at lines 289--289
-\T5/pcr/m/n/11.86258 sets\T5/ptm/m/n/11.86258 , ch÷a t½nh phö thuëc
- []
-
-
-Underfull \hbox (badness 2564) in paragraph at lines 291--291
-[]|\T5/ptm/m/n/11.86258 Th÷ möc \T5/pcr/m/n/11.86258 fron-tend/dist\T5/ptm/m/n/11.86258 ,
- []
-
-
-Overfull \hbox (23.37355pt too wide) in paragraph at lines 270--293
- [][] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [21]
-Overfull \vbox (13.14998pt too high) has occurred while \output is active []
-
- [22]
-<../Hinhve/TaoEvent.png, id=217, 462.72874pt x 652.4375pt>
-File: ../Hinhve/TaoEvent.png Graphic file (type png)
-<use ../Hinhve/TaoEvent.png>
-Package pdftex.def Info: ../Hinhve/TaoEvent.png  used on input line 302.
-(pdftex.def)             Requested size: 247.53978pt x 349.02573pt.
-<../Hinhve/DatVe.png, id=220, 462.72874pt x 652.4375pt>
-File: ../Hinhve/DatVe.png Graphic file (type png)
-<use ../Hinhve/DatVe.png>
-Package pdftex.def Info: ../Hinhve/DatVe.png  used on input line 311.
-(pdftex.def)             Requested size: 247.53978pt x 349.02573pt.
- [23 <../Hinhve/TaoEvent.png>] [24 <../Hinhve/DatVe.png>]
-<../Hinhve/QuetVe.png, id=234, 1293.83376pt x 2518.40875pt>
-File: ../Hinhve/QuetVe.png Graphic file (type png)
-<use ../Hinhve/QuetVe.png>
-Package pdftex.def Info: ../Hinhve/QuetVe.png  used on input line 320.
-(pdftex.def)             Requested size: 247.52881pt x 481.80743pt.
- [25 <../Hinhve/QuetVe.png>]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 334.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [26{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [27]
-LaTeX Font Info:    Calculating math sizes for size <10.83347> on input line 368.
-
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <7.58339> not available
-(Font)              size <8> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <5.41673> not available
-(Font)              size <5> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <7.58339> not available
-(Font)              size <8> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <5.41673> not available
-(Font)              size <5> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <7.58339> not available
-(Font)              size <8> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <5.41673> not available
-(Font)              size <5> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `U/lasy/m/n' in size <7.58339> not available
-(Font)              size <8> substituted on input line 368.
-
-
-LaTeX Font Warning: Font shape `U/lasy/m/n' in size <5.41673> not available
-(Font)              size <5> substituted on input line 368.
-
-
-Underfull \hbox (badness 1281) in paragraph at lines 370--370
-[]|\T5/ptm/b/n/10.83347 Dú li»u/^^_i·u ki»n ^^_¦u
- []
-
-
-Underfull \hbox (badness 2035) in paragraph at lines 372--372
-[]|\T5/ptm/m/n/10.83347 Tr£ v· m¢ léi 400 v 
- []
-
-
-Underfull \hbox (badness 1194) in paragraph at lines 373--373
-[]|\T5/ptm/m/n/10.83347 Tr£ v· thæng tin ng÷íi
- []
-
-
-Underfull \hbox (badness 5175) in paragraph at lines 374--374
-\T5/ptm/m/n/10.83347 khæng t¼m th§y ng÷íi
- []
-
-
-Underfull \hbox (badness 3884) in paragraph at lines 375--375
-[]|\T5/ptm/m/n/10.83347 Khði t¤o qu¶n mªt
- []
-
-
-Overfull \hbox (53.86354pt too wide) in paragraph at lines 368--377
- [][] 
- []
-
-
-Underfull \hbox (badness 1281) in paragraph at lines 393--393
-[]|\T5/ptm/b/n/10.83347 Dú li»u/^^_i·u ki»n ^^_¦u
- []
-
-
-Underfull \hbox (badness 1127) in paragraph at lines 394--394
-[]|\T5/ptm/m/n/10.83347 Tø chèi t¤o sü ki»n
- []
-
-
-Underfull \hbox (badness 1454) in paragraph at lines 394--394
-[]|\T5/ptm/m/n/10.83347 Câ ti¶u ^^_·, danh möc,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 394--394
-\T5/ptm/m/n/10.83347 khæng câ \T5/pcr/m/n/10.83347 tick-et-
- []
-
-
-Underfull \hbox (badness 2035) in paragraph at lines 394--394
-[]|\T5/ptm/m/n/10.83347 Tr£ v· m¢ léi 400 v 
- []
-
-
-Overfull \hbox (53.86354pt too wide) in paragraph at lines 391--397
- [][] 
- []
-
-[28]
-Underfull \hbox (badness 1281) in paragraph at lines 413--413
-[]|\T5/ptm/b/n/10.83347 Dú li»u/^^_i·u ki»n ^^_¦u
- []
-
-
-Overfull \hbox (53.86354pt too wide) in paragraph at lines 411--418
- [][] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [29] [30]
-<../Hinhve/MoHinhTrienKhai.png, id=271, 1484.54625pt x 579.16376pt>
-File: ../Hinhve/MoHinhTrienKhai.png Graphic file (type png)
-<use ../Hinhve/MoHinhTrienKhai.png>
-Package pdftex.def Info: ../Hinhve/MoHinhTrienKhai.png  used on input line 447.
-(pdftex.def)             Requested size: 426.79242pt x 166.50386pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [31] [32 <../Hinhve/MoHinhTrienKhai.png>]
-Overfull \hbox (41.0917pt too wide) in paragraph at lines 464--465
-\T5/pcr/m/n/13 native-maps\T5/ptm/m/n/13 , cán tr¶n web h» thèng sû döng t»p ri¶ng \T5/pcr/m/n/13 Se-lect-Lo-ca-tion.web.tsx
- []
-
-[33]
 
 Package glossaries Warning: No \printnoidxglossary or \printnoidxglossaries
  found. (Remove \makenoidxglossaries if you don't want any glossaries.)
 This document will not have a glossary.
 
-[34] (./4_Ket_qua_thuc_nghiem.aux)
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc}] (./0_4_Danh_muc_viet_tat.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1721,25 +1220,25 @@ L3 programming layer <2024-01-22>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-Package rerunfilecheck Info: File `4_Ket_qua_thuc_nghiem.out' has not changed.
-(rerunfilecheck)             Checksum: 4BA4F523F74719BD3DA987902E563D12;3463.
-Package logreq Info: Writing requests to '4_Ket_qua_thuc_nghiem.run.xml'.
-\openout1 = `4_Ket_qua_thuc_nghiem.run.xml'.
+Package rerunfilecheck Info: File `0_4_Danh_muc_viet_tat.out' has not changed.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+Package logreq Info: Writing requests to '0_4_Danh_muc_viet_tat.run.xml'.
+\openout1 = `0_4_Danh_muc_viet_tat.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29404 strings out of 474222
- 505129 string characters out of 5748733
- 1950975 words of memory out of 5000000
- 51073 multiletter control sequences out of 15000+600000
- 595317 words of font info for 99 fonts, out of 8000000 for 9000
+ 29226 strings out of 474222
+ 500482 string characters out of 5748733
+ 1932975 words of memory out of 5000000
+ 51034 multiletter control sequences out of 15000+600000
+ 563866 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,10n,124p,2498b,854s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/ucrr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb>
-Output written on 4_Ket_qua_thuc_nghiem.pdf (34 pages, 2799080 bytes).
+ 128i,5n,124p,2498b,854s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb>
+Output written on 0_4_Danh_muc_viet_tat.pdf (1 page, 41277 bytes).
 PDF statistics:
- 346 PDF objects out of 1000 (max. 8388607)
- 276 compressed objects within 3 object streams
- 98 named destinations out of 1000 (max. 500000)
- 205 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 25 PDF objects out of 1000 (max. 8388607)
+ 17 compressed objects within 1 object stream
+ 3 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
