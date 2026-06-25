@@ -3,7 +3,11 @@
 \contentsline {table}{\numberline {2.1}{\ignorespaces So sánh một số ứng dụng tương tự với định hướng của hệ thống đề xuất}}{6}{table.caption.7}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Danh sách thư viện và công cụ sử dụng}}{38}{table.caption.36}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Danh sách công cụ và thư viện sử dụng ở phía frontend của hệ thống}}{38}{table.caption.36}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Danh sách công cụ, thư viện và môi trường phát triển ở phía backend của hệ thống}}{39}{table.caption.37}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng xác thực người dùng}}{42}{table.caption.39}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng tạo sự kiện}}{43}{table.caption.41}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng đặt vé và xác nhận thanh toán}}{44}{table.caption.43}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsfinish 

@@ -430,6 +430,11 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+INPUT ../Hinhve/MoHinhTrienKhai.png
+INPUT ../Hinhve/MoHinhTrienKhai.png
+INPUT ../Hinhve/MoHinhTrienKhai.png
+INPUT ../Hinhve/MoHinhTrienKhai.png
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/utmri8v.tfm
 INPUT 4_Ket_qua_thuc_nghiem.aux
 INPUT ./4_Ket_qua_thuc_nghiem.out
 INPUT ./4_Ket_qua_thuc_nghiem.out
@@ -438,3 +443,4 @@ OUTPUT 4_Ket_qua_thuc_nghiem.run.xml
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/ucrr8v.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb

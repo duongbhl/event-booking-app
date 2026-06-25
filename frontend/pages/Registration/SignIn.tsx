@@ -92,9 +92,15 @@ export default function SignIn() {
     } catch (error: any) {
       console.log("LOGIN ERROR:", error?.response?.data);
 
+      const message =
+        error?.response?.data?.message ||
+        (error?.request
+          ? "Cannot connect to server. Please check the deployed backend URL or your Internet connection."
+          : "Invalid credentials");
+
       Alert.alert(
         "Login failed",
-        error?.response?.data?.message || "Invalid credentials"
+        message
       );
     } finally {
       setLoading(false);
