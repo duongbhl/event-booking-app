@@ -1,6 +1,6 @@
 # Fdb version 4
-["bibtex 4_Ket_qua_thuc_nghiem"] 0 "4_Ket_qua_thuc_nghiem.aux" "4_Ket_qua_thuc_nghiem.bbl" "4_Ket_qua_thuc_nghiem" 1782328610.47926 0
-  "./4_Ket_qua_thuc_nghiem-blx.bib" 1782328610.09085 343 27af2fa4d0370999ebe8f3266686c889 ""
+["bibtex 4_Ket_qua_thuc_nghiem"] 0 "4_Ket_qua_thuc_nghiem.aux" "4_Ket_qua_thuc_nghiem.bbl" "4_Ket_qua_thuc_nghiem" 1782330205.23648 0
+  "./4_Ket_qua_thuc_nghiem-blx.bib" 1782330204.88242 343 27af2fa4d0370999ebe8f3266686c889 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/biblatex/biblatex.bst" 1678141846 65484 b7949c47a88ed6dca66ebc7a04577312 ""
   "4_Ket_qua_thuc_nghiem.aux" 0 -1 0 "pdflatex"
   "Danh_sach_tai_lieu_tham_khao.bib" 0 -1 0 ""
@@ -8,7 +8,7 @@
   "4_Ket_qua_thuc_nghiem.bbl"
   "4_Ket_qua_thuc_nghiem.blg"
   (rewritten before read)
-["pdflatex"] 1782328608.60255 "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/4_Ket_qua_thuc_nghiem.tex" "4_Ket_qua_thuc_nghiem.pdf" "4_Ket_qua_thuc_nghiem" 1782328610.47953 0
+["pdflatex"] 1782330203.43404 "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/4_Ket_qua_thuc_nghiem.tex" "4_Ket_qua_thuc_nghiem.pdf" "4_Ket_qua_thuc_nghiem" 1782330205.23672 0
   "../DoAn.tex" 1782324706.79243 10572 d6100dc6fb79f20b69d233737ad6de65 ""
   "../Hinhve/BieuDoGoiChiTiet.png" 1782324706.7931 57696 39c1d3fcb932372f32e1e9736d63ddba ""
   "../Hinhve/BieuDoGoiTongQuan.png" 1782324706.79331 45831 b97d97844c95054548bcb1f87b2e8bf8 ""
@@ -16,11 +16,12 @@
   "../Hinhve/DatVe&ThanhToanUCSeq.png" 1782324706.79589 44963 a06f369c0666c2dfcb459d3fd0ec53a4 ""
   "../Hinhve/DatVeWF.png" 1782324706.79795 889207 442b079ca03690df7809378c9c6d103e ""
   "../Hinhve/ERD.png" 1782324706.79822 47013 dd524d0815378154df66516cd7d9c78e ""
+  "../Hinhve/MoHinhTrienKhai.png" 1782329966.61812 59743 23ccba5b098e0b284eeffe1c36c5ef48 ""
   "../Hinhve/TaoSuKienUCSeq.png" 1782324706.79854 18746 a7af68e45ad50510e388a300f8ee12b8 ""
   "../Hinhve/TaoSuKienWF.png" 1782324706.80042 909754 1bd1e38f365d2c78ce8ed46144c2fba1 ""
   "../Tu_viet_tat.tex" 1782129097.23519 1304 2be16b353a4b341a60497822a00cbe63 ""
   "/etc/texmf/web2c/texmf.cnf" 1782099521.03055 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/4_Ket_qua_thuc_nghiem.tex" 1782328606.39303 50624 1e06789bc3b456e94bc1d4b86bad29a6 ""
+  "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/4_Ket_qua_thuc_nghiem.tex" 1782330202.65423 53721 26051d3d010992345f165accef28d5f6 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc" 1136849721 7824 21ade6c3c7fd67cb4ace8dbc91c53118 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -45,10 +46,12 @@
   "/usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/ucrr8v.tfm" 1136768653 4892 8939be8a0c3a2ab9490df926bea8cf34 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/utmb8v.tfm" 1136768653 9152 6eaf55be4c040a59ad35102d0af7daf8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/utmr8v.tfm" 1136768653 9148 bc984b2d882e6063375e28b14a49fb54 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/utmri8v.tfm" 1136768653 9008 70b98210bab02ff42c73a48e822f618f ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/vntex/vnr/vnr12.tfm" 1647811568 3984 be7b630197255361b12d153ce5e1bc5b ""
   "/usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/ucrr8v.pfb" 1136849748 76747 7661890fb8ab67318f6d2b38f38e368f ""
   "/usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb" 1136849748 72608 f436cd73c67ea6e1877b6103639dad6d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb" 1136849748 74601 73db20eaadfe3da50ec5dfbb1e3ad83a ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb" 1136849748 74127 d98e71aac33d4d8c075e26f2f2eb0ddc ""
   "/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1461363279 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/share/texlive/texmf-dist/tex/generic/atbegshi/atbegshi.sty" 1575674566 24708 5584a51a7101caf7e6bbf1fc27d8f7b1 ""
   "/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty" 1576625341 40635 c40361e206be584d448876bba8a64a3b ""
@@ -210,11 +213,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1782099543.64855 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1782099590 8213051 237f56953a3025761b9929f139d052d2 ""
-  "4_Ket_qua_thuc_nghiem.aux" 1782328610.08685 8542 6d2224bfd1c4fc2e2dab65823c8492c4 "pdflatex"
+  "4_Ket_qua_thuc_nghiem.aux" 1782330204.87842 9900 5874b273b0664442247a787dfdfd50a6 "pdflatex"
   "4_Ket_qua_thuc_nghiem.bbl" 0 -1 0 "bibtex 4_Ket_qua_thuc_nghiem"
-  "4_Ket_qua_thuc_nghiem.out" 1782328610.08785 2389 ebd170b6d15bcfd8b0dd4d41e2b96115 "pdflatex"
-  "4_Ket_qua_thuc_nghiem.run.xml" 1782328610.09278 2790 90fab61a30cd2858b961cc1f12d45533 "pdflatex"
-  "4_Ket_qua_thuc_nghiem.tex" 1782328606.39303 50624 1e06789bc3b456e94bc1d4b86bad29a6 ""
+  "4_Ket_qua_thuc_nghiem.out" 1782330204.87942 2389 ebd170b6d15bcfd8b0dd4d41e2b96115 "pdflatex"
+  "4_Ket_qua_thuc_nghiem.run.xml" 1782330204.8843 2790 90fab61a30cd2858b961cc1f12d45533 "pdflatex"
+  "4_Ket_qua_thuc_nghiem.tex" 1782330202.65423 53721 26051d3d010992345f165accef28d5f6 ""
   (generated)
   "4_Ket_qua_thuc_nghiem-blx.bib"
   "4_Ket_qua_thuc_nghiem.aux"

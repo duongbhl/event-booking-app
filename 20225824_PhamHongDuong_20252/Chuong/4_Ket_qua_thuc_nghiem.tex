@@ -182,18 +182,57 @@ Thiết kế cơ sở dữ liệu của hệ thống thể hiện rõ đặc đi
 
 \section{Xây dựng ứng dụng}
 \subsection{Thư viện và công cụ sử dụng}
-Sinh viên liệt kê các công cụ, ngôn ngữ lập trình, API, thư viện, IDE, công cụ kiểm thử, v.v. mà mình sử dụng để phát triển ứng dụng. Mỗi công cụ phải được chỉ rõ phiên bản sử dụng. SV nên kẻ bảng mô tả tương tự như Bảng \ref{table:my_label}. Nếu có nhiều nội dung trình bày, sinh viên cần xoay ngang bảng.
+Trong quá trình phát triển hệ thống, đề tài sử dụng kết hợp nhiều công cụ, ngôn ngữ lập trình, thư viện và framework ở cả phía frontend lẫn backend. Việc lựa chọn các thành phần này dựa trên yêu cầu xây dựng ứng dụng di động đa nền tảng, backend xử lý nghiệp vụ tập trung, cơ sở dữ liệu linh hoạt và các chức năng bổ trợ như bản đồ, thông báo đẩy, chat thời gian thực, mã \gls{QR} và kiểm thử tự động. Do số lượng công cụ sử dụng tương đối nhiều, nội dung được chia thành hai bảng để thuận tiện theo dõi trong bố cục trang dọc.
 
 \begin{table}[H]
-\centering{}
-    \begin{tabular}{lll}
-        \hline
-        \textbf{Mục đích} & \textbf{Công cụ}       & \textbf{Địa chỉ URL}    \\ \hline
-        IDE lập trình     & Eclipse Oxygen a64 bit & http://www.eclipse.org/ \\ \hline
-        v.v.              & v.v.                   & v.v.                    \\ \hline
-        \end{tabular}
-    \caption{Danh sách thư viện và công cụ sử dụng}
-    \label{table:my_label}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{2.5cm}|p{2.7cm}|p{1.8cm}|p{6.5cm}|}
+\hline
+\textbf{Nhóm/Mục đích} & \textbf{Công cụ/Thư viện} & \textbf{Phiên bản} & \textbf{Vai trò sử dụng} \\ \hline
+Ngôn ngữ lập trình frontend & TypeScript & 5.9.2 & Phát triển ứng dụng khách với kiểu dữ liệu tĩnh, thuận tiện bảo trì và tổ chức service. \\ \hline
+Framework mobile & Expo & 54.0.33 & Cung cấp nền tảng phát triển mobile-first, hỗ trợ chạy thử nhanh trên Android, iOS và web. \\ \hline
+Framework giao diện mobile & React Native & 0.81.5 & Xây dựng giao diện đa nền tảng cho điện thoại và tablet. \\ \hline
+Thư viện giao diện lõi & React & 19.1.0 & Quản lý component, trạng thái và vòng đời hiển thị ở frontend. \\ \hline
+Điều hướng ứng dụng & React Navigation & 7.1.18 -- 7.8.5 & Tổ chức điều hướng giữa các màn hình đăng nhập, sự kiện, thanh toán, chat và quản trị. \\ \hline
+Giao diện và theme & NativeWind + Tailwind CSS + React Native Paper & 4.2.1 / 3.4.18 / 5.14.5 & Chuẩn hóa màu sắc, khoảng cách, kiểu component và theme cho toàn ứng dụng. \\ \hline
+Giao tiếp API & Axios & 1.13.2 & Gửi yêu cầu HTTP từ frontend tới backend. \\ \hline
+Thông báo đẩy & Expo Notifications + Expo Device & 0.32.16 / 8.0.10 & Gửi và nhận push notification cho thanh toán, lời mời, nhắc lịch và tin nhắn mới. \\ \hline
+Bản đồ và vị trí & react-native-maps + expo-location + Leaflet + react-native-web & 1.20.1 / 19.0.8 / 1.9.4 / 0.21.0 & Hỗ trợ chọn vị trí và triển khai bản đồ tương thích cho mobile và web. \\ \hline
+Camera và mã QR & expo-camera + react-native-qrcode-svg & 17.0.10 / 6.3.21 & Quét mã \gls{QR} và hiển thị vé điện tử ở phía người dùng. \\ \hline
+Hình ảnh và media & expo-image-picker & 17.0.10 & Chọn ảnh cho sự kiện hoặc hồ sơ người dùng. \\ \hline
+Lưu trữ cục bộ & @react-native-async-storage/async-storage & 2.2.0 & Lưu token và thông tin đăng nhập ở thiết bị người dùng. \\ \hline
+Thư viện tiện ích & dayjs + uuid & 1.11.19 / 11.1.0 & Định dạng thời gian và sinh định danh hỗ trợ cho các thao tác phụ trợ. \\ \hline
+\end{tabular}
+\caption{Danh sách công cụ và thư viện sử dụng ở phía frontend của hệ thống}
+\label{table:my_label}
+\end{table}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{2.5cm}|p{2.9cm}|p{1.8cm}|p{6.3cm}|}
+\hline
+\textbf{Nhóm/Mục đích} & \textbf{Công cụ/Thư viện} & \textbf{Phiên bản} & \textbf{Vai trò sử dụng} \\ \hline
+Ngôn ngữ lập trình backend & TypeScript & 5.9.3 & Xây dựng mã nguồn backend có kiểu dữ liệu tĩnh, dễ bảo trì và mở rộng. \\ \hline
+Môi trường chạy backend & Node.js LTS & v18+ & Chạy server Express, scheduler và Socket.IO cho hệ thống. \\ \hline
+Framework web backend & Express & 5.1.0 & Xây dựng các route và controller cho các \gls{API} nghiệp vụ. \\ \hline
+Kết nối dữ liệu & Mongoose & 8.19.1 & Kết nối MongoDB, định nghĩa schema và thao tác với dữ liệu nghiệp vụ. \\ \hline
+Hệ quản trị cơ sở dữ liệu & MongoDB & 8.x ecosystem & Lưu trữ người dùng, sự kiện, vé, thanh toán, thông báo, chatroom và message theo mô hình NoSQL. \\ \hline
+Xác thực và bảo mật & JSON Web Token + bcryptjs + helmet + cors + express-validator & 9.0.2 / 3.0.2 / 7.0.0 / 2.8.5 / 7.2.1 & Xác thực người dùng, mã hóa mật khẩu, bảo vệ header HTTP và kiểm tra dữ liệu đầu vào. \\ \hline
+Thời gian thực & Socket.IO & 4.8.3 & Hỗ trợ chat thời gian thực và cập nhật phòng trò chuyện giữa các bên tham gia. \\ \hline
+Email hệ thống & nodemailer & 7.0.9 & Gửi email khôi phục mật khẩu và các thông báo liên quan nếu cấu hình đầy đủ. \\ \hline
+Sinh mã QR & qrcode & 1.5.4 & Sinh dữ liệu và ảnh mã \gls{QR} cho vé điện tử ở phía backend. \\ \hline
+Gọi dịch vụ ngoài & Axios & 1.13.2 & Kết nối tới các dịch vụ ngoài như AI API hoặc các endpoint tích hợp. \\ \hline
+Công cụ phát triển backend & ts-node-dev & 2.0.0 & Chạy server TypeScript ở chế độ phát triển với khả năng reload khi sửa mã nguồn. \\ \hline
+Công cụ build frontend & babel-preset-expo & 54.0.10 & Hỗ trợ quá trình biên dịch và đóng gói ứng dụng Expo. \\ \hline
+Công cụ kiểm thử & Jest + ts-jest & 30.2.0 / 29.4.5 & Viết và chạy kiểm thử đơn vị cho controller, helper và nghiệp vụ backend. \\ \hline
+Công cụ sinh dữ liệu mẫu & seed script & Tự xây dựng & Tạo dữ liệu thử nghiệm cho MongoDB để phục vụ kiểm thử thủ công và trình diễn. \\ \hline
+\end{tabular}
+\caption{Danh sách công cụ, thư viện và môi trường phát triển ở phía backend của hệ thống}
+\label{table:my_label_backend}
 \end{table}
 
 \subsection{Kết quả đạt được}
@@ -205,12 +244,129 @@ Sinh viên cần thống kê các thông tin về ứng dụng của mình như:
 Sinh viên lựa chọn và đưa ra màn hình cho các chức năng chính, quan trọng, và thú vị nhất. Mỗi giao diện cần phải có lời giải thích ngắn gọn. Khi giải thích, sinh viên có thể kết hợp với các chú thích ở trong hình ảnh giao diện.
 
 \section{Kiểm thử}
-Phần này có độ dài từ hai đến ba trang. Sinh viên thiết kế các trường hợp kiểm thử cho hai đến ba chức năng quan trọng nhất. Sinh viên cần chỉ rõ các kỹ thuật kiểm thử đã sử dụng. Chi tiết các trường hợp kiểm thử khác, nếu muốn trình bày, sinh viên đưa vào phần phụ lục.
-Sinh viên sau cùng tổng kết về số lượng các trường hợp kiểm thử và kết quả kiểm thử. Sinh viên cần phân tích lý do nếu kết quả kiểm thử không đạt.
+Kiểm thử là bước quan trọng để đánh giá xem hệ thống có hiện thực đúng các yêu cầu nghiệp vụ cốt lõi hay không, đồng thời giúp phát hiện sớm các lỗi xử lý dữ liệu, lỗi xác thực đầu vào và các sai lệch trong luồng nghiệp vụ giữa các thành phần của backend. Đối với hệ thống đặt vé và quản lý sự kiện trong đồ án này, không phải mọi chức năng đều có mức độ quan trọng như nhau. Những chức năng cần được ưu tiên kiểm thử trước là các chức năng trực tiếp ảnh hưởng tới trải nghiệm sử dụng và tính đúng đắn của dữ liệu, bao gồm: xác thực người dùng, tạo sự kiện, đặt vé và xác nhận thanh toán. Đây là các luồng nền tảng, bởi nếu các luồng này hoạt động sai thì hầu hết các chức năng khác như quản lý sự kiện, thông báo, nhắc lịch hay check-in cũng sẽ bị ảnh hưởng theo.
+
+\subsection{Mục tiêu và phạm vi kiểm thử}
+Trong phạm vi chương này, đề tài tập trung trình bày kiểm thử cho ba nhóm chức năng quan trọng nhất của hệ thống:
+
+\begin{itemize}
+    \item Nhóm chức năng xác thực người dùng, bao gồm đăng ký tài khoản, đăng nhập và khởi tạo yêu cầu quên mật khẩu.
+    \item Nhóm chức năng tạo sự kiện, bao gồm kiểm tra dữ liệu đầu vào và khởi tạo các hạng vé của sự kiện.
+    \item Nhóm chức năng đặt vé và xác nhận thanh toán, bao gồm kiểm tra giá vé, tạo vé tạm thời, tạo giao dịch thanh toán, cập nhật trạng thái thanh toán và cập nhật số lượng vé đã bán.
+\end{itemize}
+
+Việc lựa chọn ba nhóm chức năng trên là hợp lý vì chúng phản ánh trọn vẹn chuỗi nghiệp vụ chính của hệ thống: người dùng đăng nhập vào hệ thống, người tổ chức tạo sự kiện, người tham dự chọn hạng vé và đặt vé, sau đó giao dịch được xác nhận để phát hành vé hợp lệ. Nếu ba nhóm chức năng này hoạt động ổn định thì có thể xem backend đã xử lý đúng phần nghiệp vụ cốt lõi nhất của đề tài.
+
+Kiểm thử trong phần này tập trung vào backend, cụ thể là các controller xử lý nghiệp vụ. Đây là nơi tổng hợp nhiều điều kiện ràng buộc nhất như xác thực dữ liệu, truy cập model, gọi các hàm hỗ trợ và trả kết quả cho frontend. Ngoài ra, để hỗ trợ quá trình thử nghiệm thủ công và đối chiếu dữ liệu thực tế, đề tài còn xây dựng script sinh dữ liệu mẫu cho MongoDB, bao gồm người dùng, sự kiện, vé, thanh toán và các dữ liệu liên quan. Tuy nhiên, các ca kiểm thử tự động được trình bày dưới đây chủ yếu là kiểm thử đơn vị, chạy độc lập và không phụ thuộc trực tiếp vào cơ sở dữ liệu thật.
+
+\subsection{Kỹ thuật kiểm thử và môi trường kiểm thử}
+Đề tài sử dụng kết hợp nhiều kỹ thuật kiểm thử nhằm vừa kiểm tra đúng đầu ra của chức năng, vừa cô lập được từng đơn vị xử lý để xác định nguyên nhân khi có lỗi. Trước hết, kỹ thuật chính được áp dụng là \textbf{kiểm thử đơn vị} (\textit{unit testing}) ở mức controller. Mỗi ca kiểm thử tập trung vào một hành vi cụ thể của hàm xử lý, chẳng hạn khi thiếu dữ liệu đầu vào thì phải trả lỗi gì, khi dữ liệu hợp lệ thì có tạo bản ghi đúng định dạng hay không, hoặc khi giao dịch thành công thì hệ thống có cập nhật đủ các trạng thái liên quan hay không.
+
+Về góc nhìn thiết kế ca kiểm thử, đề tài sử dụng đồng thời các kỹ thuật sau:
+
+\begin{itemize}
+    \item \textbf{Phân lớp tương đương} (\textit{equivalence partitioning}): chia dữ liệu đầu vào thành các nhóm hợp lệ và không hợp lệ, ví dụ email tồn tại và email không tồn tại, giá vé đúng và giá vé sai, hoặc có và không có hạng vé.
+    \item \textbf{Kiểm thử giá trị biên và kiểm tra điều kiện ràng buộc}: tập trung vào các điều kiện dễ gây lỗi như số lượng vé nhỏ hơn 1, thiếu danh sách \texttt{ticketTiers}, giá thanh toán không khớp với tổng giá dự kiến hoặc trạng thái giao dịch chuyển từ \texttt{pending} sang \texttt{success}.
+    \item \textbf{Kiểm thử hộp đen ở mức hành vi đầu ra}: xem controller như một đơn vị nhận request và trả response, từ đó kiểm tra mã trạng thái HTTP và dữ liệu JSON trả về.
+    \item \textbf{Kiểm thử hộp trắng ở mức luồng xử lý}: dùng mock để quan sát xem controller có gọi đúng model, đúng utility và đúng số lần cần thiết hay không, ví dụ có gọi tạo \texttt{Payment}, có cập nhật \texttt{Ticket}, có phát sinh mã \gls{QR} hay không.
+\end{itemize}
+
+Về công cụ, backend sử dụng \texttt{Jest} kết hợp \texttt{ts-jest} để chạy kiểm thử đối với mã nguồn TypeScript. Các đối tượng \texttt{req} và \texttt{res} của Express được mô phỏng bằng helper riêng để tách biệt controller khỏi môi trường chạy thật của server. Các model Mongoose như \texttt{User}, \texttt{Event}, \texttt{Ticket}, \texttt{Payment}, \texttt{Notification} và các utility như gửi email, tạo token, gửi push notification hay sinh mã \gls{QR} được mock lại. Cách tiếp cận này giúp kiểm thử tập trung vào logic nghiệp vụ của controller thay vì bị phụ thuộc vào mạng, cơ sở dữ liệu hoặc dịch vụ ngoài.
+
+Song song với kiểm thử đơn vị, đề tài chuẩn bị dữ liệu thử nghiệm bằng script seed MongoDB để hỗ trợ kiểm thử thủ công ở mức hệ thống. Dữ liệu mẫu bao gồm các tài khoản người dùng, quản trị viên, một số sự kiện với nhiều hạng vé khác nhau, vé đã đặt, đánh giá và bookmark. Dữ liệu seed giúp sinh viên có thể đăng nhập vào ứng dụng, thử tạo sự kiện, đặt vé và quan sát phản hồi trên giao diện trong môi trường gần với vận hành thực tế hơn.
+
+\subsection{Thiết kế các trường hợp kiểm thử chính}
+\paragraph{Nhóm chức năng xác thực người dùng}\mbox{}
+
+Nhóm chức năng này được xem là điểm vào của toàn bộ hệ thống. Nếu đăng ký, đăng nhập hoặc khởi tạo quên mật khẩu xử lý sai thì người dùng sẽ không thể tiếp cận các nghiệp vụ phía sau. Bảng \ref{tab:test-auth} trình bày các ca kiểm thử chính đã được thực hiện cho nhóm chức năng này.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{1.8cm}|p{3.4cm}|p{3.9cm}|p{3.9cm}|p{1.7cm}|}
+\hline
+\textbf{Mã ca} & \textbf{Mục tiêu} & \textbf{Dữ liệu/điều kiện đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Kết quả} \\ \hline
+AUTH-01 & Đăng ký tài khoản hợp lệ & Tên, email và mật khẩu hợp lệ; email chưa tồn tại & Tạo người dùng mới, trả về mã trạng thái 201 cùng token xác thực & Đạt \\ \hline
+AUTH-02 & Từ chối đăng ký trùng email & Email đã tồn tại trong hệ thống & Trả về mã lỗi 400 và thông báo email đã được sử dụng & Đạt \\ \hline
+AUTH-03 & Đăng nhập hợp lệ & Email tồn tại, mật khẩu đúng & Trả về thông tin người dùng và token đăng nhập & Đạt \\ \hline
+AUTH-04 & Từ chối đăng nhập sai tài khoản & Email không tồn tại hoặc không tìm thấy người dùng & Trả về lỗi thông tin đăng nhập không hợp lệ & Đạt \\ \hline
+AUTH-05 & Khởi tạo quên mật khẩu & Email hợp lệ đã tồn tại trong hệ thống & Lưu mã đặt lại mật khẩu, gửi email và trả về thông báo thành công & Đạt \\ \hline
+\end{tabular}
+\caption{Các trường hợp kiểm thử chính cho chức năng xác thực người dùng}
+\label{tab:test-auth}
+\end{table}
+
+Các ca kiểm thử của nhóm này chủ yếu áp dụng phân lớp tương đương và kiểm thử hộp đen. Với AUTH-01 và AUTH-03, dữ liệu đầu vào nằm trong lớp hợp lệ nên hệ thống phải trả kết quả thành công. Ngược lại, AUTH-02 và AUTH-04 đại diện cho lớp dữ liệu không hợp lệ hoặc không thỏa điều kiện nghiệp vụ, vì vậy hệ thống phải trả lỗi đúng mã trạng thái. Riêng AUTH-05 kiểm tra một luồng có thêm tác động phụ là gửi email, nên trong kiểm thử đơn vị phần gửi email được mock để xác minh controller có gọi đúng dịch vụ mà không phụ thuộc vào máy chủ thư thật.
+
+\paragraph{Nhóm chức năng tạo sự kiện}\mbox{}
+
+Tạo sự kiện là chức năng trung tâm của phía người tổ chức. Bên cạnh các thuộc tính cơ bản như tiêu đề, danh mục, thời gian và địa điểm, hệ thống còn yêu cầu phải có ít nhất một hạng vé hợp lệ. Điều này khiến chức năng tạo sự kiện trở thành nơi thích hợp để kiểm tra các ràng buộc đầu vào và cách backend chuẩn hóa dữ liệu trước khi lưu.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{1.8cm}|p{3.4cm}|p{3.9cm}|p{3.9cm}|p{1.7cm}|}
+\hline
+\textbf{Mã ca} & \textbf{Mục tiêu} & \textbf{Dữ liệu/điều kiện đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Kết quả} \\ \hline
+EVT-01 & Từ chối tạo sự kiện thiếu hạng vé & Có tiêu đề, danh mục, ngày và địa điểm nhưng không có \texttt{ticketTiers} & Trả về mã lỗi 400 và thông báo cần ít nhất một hạng vé & Đạt \\ \hline
+EVT-02 & Tạo sự kiện hợp lệ & Đầy đủ thông tin sự kiện và danh sách hạng vé hợp lệ & Tạo sự kiện thành công; mỗi hạng vé được chuẩn hóa thêm trường \texttt{sold = 0} & Đạt \\ \hline
+\end{tabular}
+\caption{Các trường hợp kiểm thử chính cho chức năng tạo sự kiện}
+\label{tab:test-event}
+\end{table}
+
+Ở nhóm kiểm thử này, kỹ thuật được sử dụng nổi bật là kiểm tra điều kiện ràng buộc và kiểm thử hộp trắng ở mức luồng xử lý. Cụ thể, ca EVT-01 đại diện cho lớp dữ liệu không hợp lệ, xác minh controller phát hiện đúng trường thông tin bắt buộc còn thiếu. Ca EVT-02 kiểm tra lớp dữ liệu hợp lệ và đồng thời quan sát lời gọi tới model \texttt{Event.create} để chắc chắn hệ thống không chỉ lưu dữ liệu đầu vào thô mà còn bổ sung trạng thái mặc định như \texttt{status = upcoming}, \texttt{approvalStatus = PENDING} và số vé đã bán ban đầu bằng 0 cho từng hạng vé.
+
+\paragraph{Nhóm chức năng đặt vé và xác nhận thanh toán}\mbox{}
+
+Đây là nhóm chức năng có nhiều bước xử lý liên tiếp nhất và ảnh hưởng trực tiếp đến tính đúng đắn của dữ liệu vé cũng như giao dịch. Khi người dùng đặt vé, hệ thống phải kiểm tra sự kiện có tồn tại không, hạng vé có hợp lệ không, số tiền có khớp với giá trị dự kiến không, sau đó mới được tạo vé tạm và tạo giao dịch thanh toán. Khi thanh toán thành công, hệ thống tiếp tục cập nhật trạng thái giao dịch, đánh dấu vé là đã thanh toán, tăng số lượng vé đã bán, cập nhật tổng số thành viên tham gia, phát sinh mã \gls{QR} và tạo thông báo.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{1.8cm}|p{3.4cm}|p{3.9cm}|p{3.9cm}|p{1.7cm}|}
+\hline
+\textbf{Mã ca} & \textbf{Mục tiêu} & \textbf{Dữ liệu/điều kiện đầu vào} & \textbf{Kết quả mong đợi} & \textbf{Kết quả} \\ \hline
+TKT-01 & Từ chối đặt vé với giá sai & Sự kiện và hạng vé tồn tại, nhưng tổng tiền gửi lên không khớp với đơn giá nhân số lượng & Trả về lỗi 400, không tạo vé và không tạo giao dịch & Đạt \\ \hline
+TKT-02 & Đặt vé hợp lệ & Hạng vé hợp lệ, số lượng hợp lệ, tổng tiền đúng & Tạo danh sách vé trạng thái \texttt{pending} và tạo một bản ghi thanh toán trạng thái \texttt{pending} & Đạt \\ \hline
+TKT-03 & Xác nhận thanh toán thành công & Giao dịch tồn tại, thuộc đúng người dùng, tham số \texttt{success = true} & Cập nhật trạng thái thanh toán, cập nhật vé, tăng số lượng vé đã bán, tạo mã \gls{QR} và thông báo & Đạt \\ \hline
+\end{tabular}
+\caption{Các trường hợp kiểm thử chính cho chức năng đặt vé và xác nhận thanh toán}
+\label{tab:test-ticket}
+\end{table}
+
+Nhóm này là nơi thể hiện rõ nhất việc kết hợp giữa kiểm thử hộp đen và hộp trắng. TKT-01 và TKT-02 chủ yếu kiểm tra hành vi đầu ra của controller dựa trên dữ liệu đầu vào thuộc lớp hợp lệ hoặc không hợp lệ. Trong khi đó, TKT-03 không chỉ cần kiểm tra phản hồi cuối cùng mà còn cần quan sát chuỗi thao tác nội bộ: \texttt{Payment} được cập nhật sang trạng thái thành công, \texttt{Ticket.updateMany} được gọi để đổi trạng thái vé sang \texttt{paid}, \texttt{Event.findByIdAndUpdate} được gọi để tăng số lượng vé đã bán và tiện ích sinh mã \gls{QR} được gọi cho từng vé đã thanh toán. Đây là ví dụ điển hình cho kiểm thử đơn vị theo hướng cô lập phụ thuộc nhưng vẫn bám sát luồng nghiệp vụ thực tế.
+
+\subsection{Tổng kết kết quả kiểm thử}
+Sau khi xây dựng và chạy bộ kiểm thử tự động bằng \texttt{Jest}, hệ thống backend hiện có tổng cộng \textbf{3 test suite} với \textbf{10 test case} đã được thực thi thành công. Trong đó:
+
+\begin{itemize}
+    \item 5 test case thuộc nhóm xác thực người dùng.
+    \item 2 test case thuộc nhóm tạo sự kiện.
+    \item 3 test case thuộc nhóm đặt vé và xác nhận thanh toán.
+\end{itemize}
+
+Kết quả chạy kiểm thử cho thấy \textbf{10/10 test case đều đạt}, tương ứng với \textbf{100\% số ca kiểm thử đã thiết kế trong phạm vi hiện tại đều pass}. Điều này cho thấy các controller cốt lõi của hệ thống đang xử lý đúng các tình huống nghiệp vụ quan trọng đã được lựa chọn, đặc biệt là các kiểm tra đầu vào, luồng tạo dữ liệu và các bước cập nhật trạng thái sau giao dịch.
+
+Việc toàn bộ test case đều đạt không có nghĩa là hệ thống đã hoàn toàn không còn lỗi. Thứ nhất, bộ kiểm thử hiện tại chủ yếu là kiểm thử đơn vị ở phía backend nên chưa bao quát đầy đủ kiểm thử tích hợp giữa frontend, backend và cơ sở dữ liệu thật. Thứ hai, các luồng như chat thời gian thực, thông báo đẩy thực tế, kiểm thử hiệu năng, kiểm thử bảo mật hay kiểm thử giao diện người dùng chưa được trình bày chi tiết trong phần này. Thứ ba, một số trường hợp biên sâu hơn như tranh chấp đồng thời khi nhiều người đặt cùng một hạng vé, lỗi mạng khi gửi email hoặc lỗi đồng bộ giữa các dịch vụ ngoài cũng cần được bổ sung trong các vòng kiểm thử sau.
+
+Trong quá trình thực hiện đồ án, nếu có trường hợp kiểm thử không đạt thì nguyên nhân thường sẽ đến từ một trong ba nhóm chính: điều kiện kiểm tra đầu vào chưa đầy đủ, luồng cập nhật dữ liệu liên quan chưa đồng bộ hoặc mock trong kiểm thử chưa phản ánh đúng hành vi thực tế của hệ thống. Tuy nhiên, ở phiên bản được trình bày trong báo cáo này, các ca kiểm thử đã được điều chỉnh lại cho phù hợp với logic hiện thực của mã nguồn và đều cho kết quả đạt yêu cầu. Các trường hợp kiểm thử phụ khác, nếu cần trình bày chi tiết hơn, có thể được đưa vào phần phụ lục để tránh làm phân tán trọng tâm của chương.
 \section{Triển khai}
 Trong phạm vi đồ án, hệ thống được triển khai theo mô hình client-server trên môi trường Internet, trong đó frontend đóng vai trò client và backend cung cấp các dịch vụ xử lý nghiệp vụ cũng như truy cập dữ liệu. Mô hình này phù hợp với định hướng mobile-first của hệ thống, bởi các thao tác như đăng nhập, tìm kiếm sự kiện, đặt vé, nhận thông báo, chat và check-in đều được thực hiện ở phía người dùng, sau đó gửi yêu cầu tới máy chủ backend để xử lý. Ở giai đoạn triển khai thử nghiệm, hệ thống được tổ chức thành bốn thành phần chính: frontend Expo/React Native, backend Node.js/Express, cơ sở dữ liệu MongoDB và hạ tầng triển khai trực tuyến cho phép truy cập qua Internet.
 
+
+
 \paragraph{Mô hình triển khai thử nghiệm}\mbox{}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{Hinhve/MoHinhTrienKhai.png}
+    \caption{Mô hình triển khai thử nghiệm của hệ thống event-booking-app}
+    \label{fig:deployment-model}
+\end{figure}
 
 Trong quá trình triển khai thực tế, backend được đưa lên dịch vụ Render dưới dạng một \textit{Node Web Service}. Mã nguồn backend được đặt trong thư mục \texttt{backend}, được biên dịch từ TypeScript sang JavaScript thông qua lệnh \texttt{npm run build}, sau đó khởi động bằng lệnh \texttt{npm start}. Tệp cấu hình \texttt{backend/render.yaml} được sử dụng để mô tả cấu hình triển khai, bao gồm thư mục gốc, lệnh build, lệnh start và đường dẫn health check là \texttt{/api/health}. Việc bổ sung endpoint health check cho phép kiểm tra nhanh trạng thái hoạt động của dịch vụ sau mỗi lần triển khai và hỗ trợ nền tảng Render giám sát tình trạng khởi động của server.
 

@@ -70,19 +70,26 @@
 \contentsline {paragraph}{Nhận xét chung về thiết kế cơ sở dữ liệu}{37}{paragraph*.34}%
 \contentsline {section}{\numberline {4.3}Xây dựng ứng dụng}{37}{section.4.3}%
 \contentsline {subsection}{\numberline {4.3.1}Thư viện và công cụ sử dụng}{37}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Kết quả đạt được}{38}{subsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.3.3}Minh họa các chức năng chính}{38}{subsection.4.3.3}%
-\contentsline {section}{\numberline {4.4}Kiểm thử}{38}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Triển khai}{38}{section.4.5}%
-\contentsline {paragraph}{Mô hình triển khai thử nghiệm}{39}{paragraph*.37}%
-\contentsline {paragraph}{Cơ sở dữ liệu và kết nối dữ liệu}{39}{paragraph*.38}%
-\contentsline {paragraph}{Triển khai frontend phục vụ thử nghiệm}{39}{paragraph*.39}%
-\contentsline {paragraph}{Liên kết giữa frontend và backend}{40}{paragraph*.40}%
-\contentsline {paragraph}{Thiết bị và cấu hình thử nghiệm}{40}{paragraph*.41}%
-\contentsline {paragraph}{Đánh giá mô hình triển khai}{41}{paragraph*.42}%
-\contentsline {chapter}{\numberline {5}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{42}{chapter.5}%
-\contentsline {chapter}{\numberline {6}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{43}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Kết luận}{43}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Hướng phát triển}{44}{section.6.2}%
-\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{46}{section*.44}%
+\contentsline {subsection}{\numberline {4.3.2}Kết quả đạt được}{39}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Minh họa các chức năng chính}{39}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}Kiểm thử}{39}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Mục tiêu và phạm vi kiểm thử}{40}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Kỹ thuật kiểm thử và môi trường kiểm thử}{40}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Thiết kế các trường hợp kiểm thử chính}{41}{subsection.4.4.3}%
+\contentsline {paragraph}{Nhóm chức năng xác thực người dùng}{41}{paragraph*.38}%
+\contentsline {paragraph}{Nhóm chức năng tạo sự kiện}{42}{paragraph*.40}%
+\contentsline {paragraph}{Nhóm chức năng đặt vé và xác nhận thanh toán}{43}{paragraph*.42}%
+\contentsline {subsection}{\numberline {4.4.4}Tổng kết kết quả kiểm thử}{44}{subsection.4.4.4}%
+\contentsline {section}{\numberline {4.5}Triển khai}{45}{section.4.5}%
+\contentsline {paragraph}{Mô hình triển khai thử nghiệm}{45}{paragraph*.44}%
+\contentsline {paragraph}{Cơ sở dữ liệu và kết nối dữ liệu}{46}{paragraph*.46}%
+\contentsline {paragraph}{Triển khai frontend phục vụ thử nghiệm}{47}{paragraph*.47}%
+\contentsline {paragraph}{Liên kết giữa frontend và backend}{47}{paragraph*.48}%
+\contentsline {paragraph}{Thiết bị và cấu hình thử nghiệm}{48}{paragraph*.49}%
+\contentsline {paragraph}{Đánh giá mô hình triển khai}{48}{paragraph*.50}%
+\contentsline {chapter}{\numberline {5}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{49}{chapter.5}%
+\contentsline {chapter}{\numberline {6}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{50}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Kết luận}{50}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Hướng phát triển}{51}{section.6.2}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{53}{section*.52}%
 \contentsfinish 
