@@ -405,6 +405,12 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
 INPUT /usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc
+INPUT ./Bia_lot.tex
+INPUT ./Bia_lot.tex
+INPUT Bia_lot.tex
+INPUT ./Bia_lot.tex
+INPUT ./Bia_lot.tex
+INPUT Bia_lot.tex
 INPUT ./Chuong/0_2_Loi_cam_on.tex
 INPUT Chuong/0_2_Loi_cam_on.tex
 INPUT ./Chuong/0_2_Loi_cam_on.tex
@@ -596,8 +602,6 @@ INPUT Chuong/6_Ket_luan.tex
 INPUT ./Chuong/6_Ket_luan.tex
 INPUT ./Chuong/6_Ket_luan.tex
 INPUT Chuong/6_Ket_luan.tex
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/utmr8v.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/vntex/urwvn/utmb8v.tfm
 INPUT DoAn.aux
 INPUT ./DoAn.out
 INPUT ./DoAn.out

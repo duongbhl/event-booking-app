@@ -1,6 +1,6 @@
 # Fdb version 4
-["bibtex 2_Khao_sat"] 0 "2_Khao_sat.aux" "2_Khao_sat.bbl" "2_Khao_sat" 1782233609.89514 0
-  "./2_Khao_sat-blx.bib" 1782233609.28935 343 27af2fa4d0370999ebe8f3266686c889 ""
+["bibtex 2_Khao_sat"] 0 "2_Khao_sat.aux" "2_Khao_sat.bbl" "2_Khao_sat" 1782521267.62227 0
+  "./2_Khao_sat-blx.bib" 1782521267.18715 343 27af2fa4d0370999ebe8f3266686c889 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/biblatex/biblatex.bst" 1678141846 65484 b7949c47a88ed6dca66ebc7a04577312 ""
   "2_Khao_sat.aux" 0 -1 0 "pdflatex"
   "Danh_sach_tai_lieu_tham_khao.bib" 0 -1 0 ""
@@ -8,14 +8,14 @@
   "2_Khao_sat.bbl"
   "2_Khao_sat.blg"
   (rewritten before read)
-["pdflatex"] 1782233606.65259 "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/2_Khao_sat.tex" "2_Khao_sat.pdf" "2_Khao_sat" 1782233609.89548 0
-  "../DoAn.tex" 1782129097.22747 10546 cfaeba4775fad508bd7293b2eed9c03a ""
-  "../Hinhve/QuyTrinhNghiepVu.png" 1782232825.48845 41289 33e09c74788d10b35da9e08dca3a3d24 ""
-  "../Hinhve/UseCasePhanRa.png" 1782232789.53724 72127 d437ac239a0d46329a96ded072642860 ""
-  "../Hinhve/UseCaseTongQuat.png" 1782232682.39105 35490 ba429b4ba916234ff4823dea204694e0 ""
-  "../Tu_viet_tat.tex" 1782129097.23519 1304 2be16b353a4b341a60497822a00cbe63 ""
+["pdflatex"] 1782521264.22524 "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/2_Khao_sat.tex" "2_Khao_sat.pdf" "2_Khao_sat" 1782521267.62255 0
+  "../DoAn.tex" 1782520221.86911 10609 a444889d2ef07bdccaf994567b1d69c0 ""
+  "../Hinhve/QuyTrinhNghiepVu.png" 1782324706.79843 41289 33e09c74788d10b35da9e08dca3a3d24 ""
+  "../Hinhve/UseCasePhanRa.png" 1782324706.8007 72127 d437ac239a0d46329a96ded072642860 ""
+  "../Hinhve/UseCaseTongQuat.png" 1782324706.80086 35490 ba429b4ba916234ff4823dea204694e0 ""
+  "../Tu_viet_tat.tex" 1782364153.49367 3439 debc8dda08424b1ef9f214f281edd801 ""
   "/etc/texmf/web2c/texmf.cnf" 1782099521.03055 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/2_Khao_sat.tex" 1782233602.86715 28838 e568f737e587363bc47a3a4b8dc2bb6f ""
+  "/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/2_Khao_sat.tex" 1782521259.1935 28851 9c7439a31ce8b36d72c919fc24084a5c ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc" 1136849721 7824 21ade6c3c7fd67cb4ace8dbc91c53118 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -204,11 +204,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1782099543.64855 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1782099590 8213051 237f56953a3025761b9929f139d052d2 ""
-  "2_Khao_sat.aux" 1782233609.28072 6735 1fe3703895c728b7f707d1ef07cbb31c "pdflatex"
+  "2_Khao_sat.aux" 1782521267.18115 6785 1da42ce33ef541e3e5463dab4114943c "pdflatex"
   "2_Khao_sat.bbl" 0 -1 0 "bibtex 2_Khao_sat"
-  "2_Khao_sat.out" 1782233609.28235 4972 ac4004870572f567e15b8c14b791a80e "pdflatex"
-  "2_Khao_sat.run.xml" 1782233609.29131 2691 06144c1c817c43c13df4f832183fae55 "pdflatex"
-  "2_Khao_sat.tex" 1782233602.86715 28838 e568f737e587363bc47a3a4b8dc2bb6f ""
+  "2_Khao_sat.out" 1782521267.18215 5096 cdb3d4fbca81f2316b901d3c98d3a0bb "pdflatex"
+  "2_Khao_sat.run.xml" 1782521267.18952 2691 06144c1c817c43c13df4f832183fae55 "pdflatex"
+  "2_Khao_sat.tex" 1782521259.1935 28851 9c7439a31ce8b36d72c919fc24084a5c ""
   (generated)
   "2_Khao_sat-blx.bib"
   "2_Khao_sat.aux"

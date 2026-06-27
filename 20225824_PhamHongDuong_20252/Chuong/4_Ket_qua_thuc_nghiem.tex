@@ -316,14 +316,15 @@ Hình~\ref{fig:ui-create-event} minh họa giao diện tạo sự kiện dành c
 Hình~\ref{fig:ui-book-ticket} minh họa giao diện đặt vé dành cho người dùng. Tại màn hình này, người dùng có thể lựa chọn hạng vé, điều chỉnh số lượng vé và xem tổng tiền trước khi xác nhận thanh toán. Giao diện tập trung làm nổi bật các yếu tố quan trọng nhất đối với quyết định mua vé, bao gồm loại vé, đơn giá, số lượng còn lại và tổng giá trị giao dịch. Cách bố trí này giúp người dùng thao tác nhanh, đồng thời hạn chế sai sót khi lựa chọn vé cho sự kiện.
 \end{samepage}
 
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=0.58\linewidth,height=0.82\textheight,keepaspectratio]{Hinhve/QuetVe.png}
-    \caption{Giao diện chức năng check-in vé}
+\begin{samepage}
+\begin{center}
+    \includegraphics[width=0.54\linewidth,height=0.52\textheight,keepaspectratio]{Hinhve/QuetVe.png}
+    \captionof{figure}{Giao diện chức năng check-in vé}
     \label{fig:ui-checkin-ticket}
-\end{figure}
+\end{center}
 
 Hình~\ref{fig:ui-checkin-ticket} minh họa giao diện check-in vé bằng mã \gls{QR}. Đây là một trong những chức năng thú vị nhất của hệ thống vì nó kết nối trực tiếp giữa dữ liệu vé điện tử và thao tác tham dự ngoài thực tế. Màn hình được thiết kế để người tổ chức có thể quét mã, nhận phản hồi ngay về tính hợp lệ của vé và cập nhật trạng thái tham dự của người dùng. Chức năng này góp phần hoàn thiện vòng đời của một giao dịch đặt vé, từ lúc người dùng chọn mua vé cho tới khi được xác nhận tham dự sự kiện tại địa điểm tổ chức.
+\end{samepage}
 
 \section{Kiểm thử}
 Kiểm thử là bước quan trọng để đánh giá xem hệ thống có hiện thực đúng các yêu cầu nghiệp vụ cốt lõi hay không, đồng thời giúp phát hiện sớm các lỗi xử lý dữ liệu, lỗi xác thực đầu vào và các sai lệch trong luồng nghiệp vụ giữa các thành phần của backend. Đối với hệ thống đặt vé và quản lý sự kiện trong đồ án này, không phải mọi chức năng đều có mức độ quan trọng như nhau. Những chức năng cần được ưu tiên kiểm thử trước là các chức năng trực tiếp ảnh hưởng tới trải nghiệm sử dụng và tính đúng đắn của dữ liệu, bao gồm: xác thực người dùng, tạo sự kiện, đặt vé và xác nhận thanh toán. Đây là các luồng nền tảng, bởi nếu các luồng này hoạt động sai thì hầu hết các chức năng khác như quản lý sự kiện, thông báo, nhắc lịch hay check-in cũng sẽ bị ảnh hưởng theo.

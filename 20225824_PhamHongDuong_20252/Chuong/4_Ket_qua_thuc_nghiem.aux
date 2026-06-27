@@ -15,8 +15,12 @@
 \@writefile{toc}{\contentsline {section}{\numberline {0.1}Thiết kế kiến trúc}{1}{section.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {0.1.1}Lựa chọn kiến trúc phần mềm}{1}{subsection.0.1.1}\protected@file@percent }
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{1}}
+\@gls@reference{acronym}{MVC}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{2}}
 \@gls@reference{acronym}{API}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{2}}
+\@gls@reference{acronym}{JWT}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{2}}
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{2}}
+\@gls@reference{acronym}{AI}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{2}}
+\@gls@reference{acronym}{HTTP}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{2}}
 \@gls@reference{acronym}{API}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{3}}
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {0.1.2}Thiết kế tổng quan}{3}{subsection.0.1.2}\protected@file@percent }
@@ -56,6 +60,8 @@
 \@writefile{toc}{\contentsline {paragraph}{Lớp Payment}{14}{paragraph*.16}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Nhận xét chung về thiết kế lớp}{14}{paragraph*.17}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {0.2.3}Thiết kế cơ sở dữ liệu}{14}{subsection.0.2.3}\protected@file@percent }
+\@gls@reference{acronym}{SQL}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{14}}
+\@gls@reference{acronym}{ERD}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{14}}
 \@writefile{toc}{\contentsline {paragraph}{Thực thể User}{15}{paragraph*.18}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Thực thể Event}{15}{paragraph*.19}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Thực thể Ticket và Payment}{15}{paragraph*.20}\protected@file@percent }
@@ -64,6 +70,7 @@
 \@writefile{toc}{\contentsline {paragraph}{Mối quan hệ giữa các thực thể}{16}{paragraph*.22}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Đặc điểm thiết kế dữ liệu trong MongoDB}{16}{paragraph*.23}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Nhận xét chung về thiết kế cơ sở dữ liệu}{17}{paragraph*.24}\protected@file@percent }
+\@gls@reference{acronym}{NoSQL}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{17}}
 \@writefile{lof}{\contentsline {figure}{\numberline {0.8}{\ignorespaces Biểu đồ thực thể liên kết của hệ thống event-booking-app}}{17}{figure.caption.25}\protected@file@percent }
 \newlabel{fig:erd-overview}{{0.8}{17}{Biểu đồ thực thể liên kết của hệ thống event-booking-app}{figure.caption.25}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {0.3}Xây dựng ứng dụng}{17}{section.0.3}\protected@file@percent }
@@ -85,43 +92,46 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {0.3.3}Minh họa các chức năng chính}{23}{subsection.0.3.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {0.9}{\ignorespaces Giao diện chức năng tạo sự kiện}}{23}{figure.caption.30}\protected@file@percent }
 \newlabel{fig:ui-create-event}{{0.9}{23}{Giao diện chức năng tạo sự kiện}{figure.caption.30}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {0.10}{\ignorespaces Giao diện chức năng đặt vé}}{24}{figure.caption.31}\protected@file@percent }
-\newlabel{fig:ui-book-ticket}{{0.10}{24}{Giao diện chức năng đặt vé}{figure.caption.31}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {0.11}{\ignorespaces Giao diện chức năng check-in vé}}{25}{figure.caption.32}\protected@file@percent }
-\newlabel{fig:ui-checkin-ticket}{{0.11}{25}{Giao diện chức năng check-in vé}{figure.caption.32}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {0.10}{\ignorespaces Giao diện chức năng đặt vé}}{24}{figure.0.10}\protected@file@percent }
+\newlabel{fig:ui-book-ticket}{{0.10}{24}{Giao diện chức năng đặt vé}{figure.0.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {0.11}{\ignorespaces Giao diện chức năng check-in vé}}{25}{figure.0.11}\protected@file@percent }
+\newlabel{fig:ui-checkin-ticket}{{0.11}{25}{Giao diện chức năng check-in vé}{figure.0.11}{}}
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{25}}
-\@writefile{toc}{\contentsline {section}{\numberline {0.4}Kiểm thử}{26}{section.0.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {0.4}Kiểm thử}{25}{section.0.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {0.4.1}Mục tiêu và phạm vi kiểm thử}{26}{subsection.0.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {0.4.2}Kỹ thuật kiểm thử và môi trường kiểm thử}{27}{subsection.0.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {0.4.2}Kỹ thuật kiểm thử và môi trường kiểm thử}{26}{subsection.0.4.2}\protected@file@percent }
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{27}}
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{27}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {0.4.3}Thiết kế các trường hợp kiểm thử chính}{28}{subsection.0.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Nhóm chức năng xác thực người dùng}{28}{paragraph*.33}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng xác thực người dùng}}{28}{table.caption.34}\protected@file@percent }
-\newlabel{tab:test-auth}{{5}{28}{Các trường hợp kiểm thử chính cho chức năng xác thực người dùng}{table.caption.34}{}}
-\@writefile{toc}{\contentsline {paragraph}{Nhóm chức năng tạo sự kiện}{28}{paragraph*.35}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng tạo sự kiện}}{29}{table.caption.36}\protected@file@percent }
-\newlabel{tab:test-event}{{6}{29}{Các trường hợp kiểm thử chính cho chức năng tạo sự kiện}{table.caption.36}{}}
-\@writefile{toc}{\contentsline {paragraph}{Nhóm chức năng đặt vé và xác nhận thanh toán}{29}{paragraph*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {0.4.3}Thiết kế các trường hợp kiểm thử chính}{27}{subsection.0.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Nhóm chức năng xác thực người dùng}{27}{paragraph*.31}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng xác thực người dùng}}{28}{table.caption.32}\protected@file@percent }
+\newlabel{tab:test-auth}{{5}{28}{Các trường hợp kiểm thử chính cho chức năng xác thực người dùng}{table.caption.32}{}}
+\@writefile{toc}{\contentsline {paragraph}{Nhóm chức năng tạo sự kiện}{28}{paragraph*.33}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng tạo sự kiện}}{29}{table.caption.34}\protected@file@percent }
+\newlabel{tab:test-event}{{6}{29}{Các trường hợp kiểm thử chính cho chức năng tạo sự kiện}{table.caption.34}{}}
+\@writefile{toc}{\contentsline {paragraph}{Nhóm chức năng đặt vé và xác nhận thanh toán}{29}{paragraph*.35}\protected@file@percent }
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{29}}
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{30}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng đặt vé và xác nhận thanh toán}}{30}{table.caption.38}\protected@file@percent }
-\newlabel{tab:test-ticket}{{7}{30}{Các trường hợp kiểm thử chính cho chức năng đặt vé và xác nhận thanh toán}{table.caption.38}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Các trường hợp kiểm thử chính cho chức năng đặt vé và xác nhận thanh toán}}{30}{table.caption.36}\protected@file@percent }
+\newlabel{tab:test-ticket}{{7}{30}{Các trường hợp kiểm thử chính cho chức năng đặt vé và xác nhận thanh toán}{table.caption.36}{}}
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{30}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {0.4.4}Tổng kết kết quả kiểm thử}{30}{subsection.0.4.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {0.5}Triển khai}{31}{section.0.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Mô hình triển khai thử nghiệm}{31}{paragraph*.39}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {0.12}{\ignorespaces Mô hình triển khai thử nghiệm của hệ thống event-booking-app}}{32}{figure.caption.40}\protected@file@percent }
-\newlabel{fig:deployment-model}{{0.12}{32}{Mô hình triển khai thử nghiệm của hệ thống event-booking-app}{figure.caption.40}{}}
-\@writefile{toc}{\contentsline {paragraph}{Cơ sở dữ liệu và kết nối dữ liệu}{32}{paragraph*.41}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Triển khai frontend phục vụ thử nghiệm}{33}{paragraph*.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Mô hình triển khai thử nghiệm}{31}{paragraph*.37}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {0.12}{\ignorespaces Mô hình triển khai thử nghiệm của hệ thống event-booking-app}}{32}{figure.caption.38}\protected@file@percent }
+\newlabel{fig:deployment-model}{{0.12}{32}{Mô hình triển khai thử nghiệm của hệ thống event-booking-app}{figure.caption.38}{}}
+\@writefile{toc}{\contentsline {paragraph}{Cơ sở dữ liệu và kết nối dữ liệu}{32}{paragraph*.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Triển khai frontend phục vụ thử nghiệm}{33}{paragraph*.40}\protected@file@percent }
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{33}}
-\@writefile{toc}{\contentsline {paragraph}{Liên kết giữa frontend và backend}{33}{paragraph*.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Liên kết giữa frontend và backend}{33}{paragraph*.41}\protected@file@percent }
 \@gls@reference{acronym}{API}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{33}}
-\@writefile{toc}{\contentsline {paragraph}{Thiết bị và cấu hình thử nghiệm}{34}{paragraph*.44}\protected@file@percent }
+\@gls@reference{acronym}{CORS}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{33}}
+\@writefile{toc}{\contentsline {paragraph}{Thiết bị và cấu hình thử nghiệm}{34}{paragraph*.42}\protected@file@percent }
 \@gls@reference{acronym}{QR}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{34}}
-\@writefile{toc}{\contentsline {paragraph}{Đánh giá mô hình triển khai}{34}{paragraph*.45}\protected@file@percent }
+\@gls@reference{acronym}{PaaS}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{34}}
+\@writefile{toc}{\contentsline {paragraph}{Đánh giá mô hình triển khai}{34}{paragraph*.43}\protected@file@percent }
 \@gls@reference{acronym}{API}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{34}}
+\@gls@reference{acronym}{CDN}{\glsnoidxdisplayloc{}{page}{glsnumberformat}{34}}
 \ttl@finishall
 \abx@aux@read@bbl@mdfivesum{nobblfile}
 \gdef \@abspage@last{34}

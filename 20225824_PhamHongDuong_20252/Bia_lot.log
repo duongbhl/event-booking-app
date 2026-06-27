@@ -1,18 +1,18 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  27 JUN 2026 07:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.22)  27 JUN 2026 07:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/2_Khao_sat.tex
-(/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Chuong/2_Khao_sat.tex
+**/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Bia_lot.tex
+(/home/oizoiui/Documents/Mobile/event-booking-app/20225824_PhamHongDuong_20252/Bia_lot.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/subfiles/subfiles.cls
 Document Class: subfiles 2020/11/14 v2.2 Multi-file projects (class)
-Preamble taken from file `../DoAn.tex'
+Preamble taken from file `DoAn.tex'
 (/usr/share/texlive/texmf-dist/tex/latex/import/import.sty
 Package: import 2020/04/01  v 6.2
-) (../DoAn.tex (/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
+) (./DoAn.tex (/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
 Document Class: report 2023/05/17 v1.4n Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
@@ -977,7 +977,7 @@ Package biblatex Info: ... and expl3
 Package: xparse 2023-10-10 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2023/03/05 v3.19 expl3 case changing code for biblatex
-)) (../Tu_viet_tat.tex) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+)) (./Tu_viet_tat.tex) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2024-01-20 v7.01h Hypertext links for LaTeX
  (/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
@@ -1071,7 +1071,7 @@ Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
 ))
 \@quotelevel=\count490
 \@quotereset=\count491
-LaTeX Font Info:    Trying to load font information for T5+ptm on input line 2.
+LaTeX Font Info:    Trying to load font information for T5+ptm on input line 5.
  (/usr/share/texlive/texmf-dist/tex/latex/vntex/t5ptm.fd
 File: t5utm.fd 2005/08/24 Fontinst v1.929 font definitions for T5/ptm.
 )
@@ -1079,29 +1079,29 @@ File: t5utm.fd 2005/08/24 Fontinst v1.929 font definitions for T5/ptm.
 LaTeX Warning: Unused global option(s):
     [13pt,3p].
 
-(./2_Khao_sat.aux)
-\openout1 = `2_Khao_sat.aux'.
+(./Bia_lot.aux)
+\openout1 = `Bia_lot.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 2.
-LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 5.
+LaTeX Font Info:    ... okay on input line 5.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1185,266 +1185,68 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Input encoding 'utf8' detected.
 Package biblatex Info: Data encoding 'utf8' specified.
 (biblatex)             No need to reencode data.
-\openout4 = `2_Khao_sat-blx.bib'.
+\openout4 = `Bia_lot-blx.bib'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file '2_Khao_sat.bbl' not found.
-
-No file 2_Khao_sat.bbl.
-Package biblatex Info: Reference section=0 on input line 2.
-Package biblatex Info: Reference segment=0 on input line 2.
-Package hyperref Info: Link coloring OFF on input line 2.
-(./2_Khao_sat.out) (./2_Khao_sat.out)
+Package biblatex Info: ... file 'Bia_lot.bbl' found.
+ (./Bia_lot.bbl)
+Package biblatex Info: Reference section=0 on input line 5.
+Package biblatex Info: Reference segment=0 on input line 5.
+Package hyperref Info: Link coloring OFF on input line 5.
+ (./Bia_lot.out) (./Bia_lot.out)
 \@outlinefile=\write5
-\openout5 = `2_Khao_sat.out'.
+\openout5 = `Bia_lot.out'.
 
-
-
-LaTeX Warning: Citation 'meetup2026about' on page 1 undefined on input line 15.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc}]
-LaTeX Font Info:    Calculating math sizes for size <13> on input line 20.
+LaTeX Font Info:    Calculating math sizes for size <13> on input line 34.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 20.
+(Font)              size <6> substituted on input line 34.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 20.
+(Font)              size <12> substituted on input line 34.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <6.5> not available
-(Font)              size <6> substituted on input line 20.
+(Font)              size <6> substituted on input line 34.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 20.
+(Font)              size <12> substituted on input line 34.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 20.
+(Font)              size <6> substituted on input line 34.
 
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 20.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 34.
 (/usr/share/texlive/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
 
 LaTeX Font Warning: Font shape `U/lasy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 20.
+(Font)              size <12> substituted on input line 34.
 
 
 LaTeX Font Warning: Font shape `U/lasy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 20.
+(Font)              size <6> substituted on input line 34.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 20.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 34.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 20.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 34.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Underfull \hbox (badness 4981) in paragraph at lines 22--22
-[]|\T5/ptm/b/n/13 ^^^iºm m¤nh nêi
- []
+) [1
 
-
-LaTeX Warning: Citation 'meetup2026about' on page 2 undefined on input line 24.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 24--24
-[]|\T5/ptm/m/n/13 Meetup
- []
-
-
-Overfull \hbox (22.12064pt too wide) in paragraph at lines 24--24
-[]| 
- []
-
-
-Underfull \hbox (badness 1205) in paragraph at lines 24--24
-\T5/ptm/m/n/13 cëng ^^_çng, nhâm
- []
-
-
-Underfull \hbox (badness 1721) in paragraph at lines 24--24
-\T5/ptm/m/n/13 sð th½ch, sü ki»n
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 24--24
-\T5/ptm/m/n/13 nèi giúa nhúng
- []
-
-
-Underfull \hbox (badness 1533) in paragraph at lines 24--24
-[]|\T5/ptm/m/n/13 Chùc n«ng ^^_°t v²,
- []
-
-
-Underfull \hbox (badness 2486) in paragraph at lines 24--24
-\T5/ptm/m/n/13 to¡n v  kiºm so¡t
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 24--24
-\T5/ptm/m/n/13 trång t¥m ch½nh;
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 24--24
-\T5/ptm/m/n/13 ch÷a nh§n m¤nh
- []
-
-
-Underfull \hbox (badness 2608) in paragraph at lines 24--25
-\T5/ptm/m/n/13 chùc sü ki»n theo
- []
-
-
-Underfull \hbox (badness 5696) in paragraph at lines 24--25
-\T5/ptm/m/n/13 sü ki»n v  t÷ìng
- []
-
-
-Underfull \hbox (badness 2828) in paragraph at lines 26--26
-\T5/ptm/m/n/13 tho¤i, chuyºn v²,
- []
-
-
-Underfull \hbox (badness 1609) in paragraph at lines 26--26
-\T5/ptm/m/n/13 ng÷íi dòng trong
- []
-
-
-Underfull \hbox (badness 4608) in paragraph at lines 26--26
-\T5/ptm/m/n/13 ng y di¹n ra sü
- []
-
-
-Underfull \hbox (badness 2343) in paragraph at lines 26--26
-\T5/ptm/m/n/13 lîn; ½t nh§n m¤nh
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 26--26
-\T5/ptm/m/n/13 ^^_çng, trá chuy»n
- []
-
-
-Underfull \hbox (badness 1424) in paragraph at lines 26--26
-\T5/ptm/m/n/13 trüc ti¸p ho°c nhu
- []
-
-
-Underfull \hbox (badness 7433) in paragraph at lines 26--27
-[]|\T5/ptm/m/n/13 Tham kh£o luçng
- []
-
-
-Underfull \hbox (badness 5147) in paragraph at lines 26--27
-\T5/ptm/m/n/13 ch¸ kiºm so¡t v²
- []
-
-
-Underfull \hbox (badness 1888) in paragraph at lines 28--28
-[]|\T5/ptm/m/n/13 Gi£i ph¡p ^^_·
- []
-
-
-Underfull \hbox (badness 3954) in paragraph at lines 28--28
-\T5/ptm/m/n/13 ki»n, nhi·u h¤ng
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 28--28
-\T5/ptm/m/n/13 v², v² ^^_i»n tû,
- []
-
-
-Underfull \hbox (badness 7133) in paragraph at lines 28--28
-\T5/ptm/m/n/13 chat v  check-in
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 28--28
-\T5/ptm/m/n/13 trong còng mët
- []
-
-
-Underfull \hbox (badness 1067) in paragraph at lines 28--28
-[]|\T5/ptm/m/n/13 Quy mæ triºn khai
- []
-
-
-Underfull \hbox (badness 1466) in paragraph at lines 28--28
-\T5/ptm/m/n/13 v² quy mæ th÷ìng
- []
-
-
-Underfull \hbox (badness 3417) in paragraph at lines 28--29
-\T5/ptm/m/n/13 h÷îng qu£n lþ v²
- []
-
-
-Underfull \hbox (badness 1281) in paragraph at lines 28--29
-\T5/ptm/m/n/13 ph¤m vi ùng döng
- []
-
-
-Overfull \hbox (15.85669pt too wide) in paragraph at lines 20--31
- [][] 
- []
-
-[2]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [3]
-<../Hinhve/UseCaseTongQuat.png, id=102, 402.50375pt x 1193.45876pt>
-File: ../Hinhve/UseCaseTongQuat.png Graphic file (type png)
-<use ../Hinhve/UseCaseTongQuat.png>
-Package pdftex.def Info: ../Hinhve/UseCaseTongQuat.png  used on input line 51.
-(pdftex.def)             Requested size: 192.35818pt x 570.35883pt.
- [4 <../Hinhve/UseCaseTongQuat.png>]
-<../Hinhve/UseCasePhanRa.png, id=110, 1446.40375pt x 1547.7825pt>
-File: ../Hinhve/UseCasePhanRa.png Graphic file (type png)
-<use ../Hinhve/UseCasePhanRa.png>
-Package pdftex.def Info: ../Hinhve/UseCasePhanRa.png  used on input line 66.
-(pdftex.def)             Requested size: 349.969pt x 374.4984pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5]
-<../Hinhve/QuyTrinhNghiepVu.png, id=117, 1073.00874pt x 1634.105pt>
-File: ../Hinhve/QuyTrinhNghiepVu.png Graphic file (type png)
-<use ../Hinhve/QuyTrinhNghiepVu.png>
-Package pdftex.def Info: ../Hinhve/QuyTrinhNghiepVu.png  used on input line 76.
-(pdftex.def)             Requested size: 320.08772pt x 487.46758pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [6 <../Hinhve/UseCasePhanRa.png>] [7 <../Hinhve/QuyTrinhNghiepVu.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [8]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [9]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [10]
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/vntex/t5.enc}]
 
 Package glossaries Warning: No \printnoidxglossary or \printnoidxglossaries
  found. (Remove \makenoidxglossaries if you don't want any glossaries.)
 This document will not have a glossary.
 
-[11] (./2_Khao_sat.aux)
+(./Bia_lot.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1454,33 +1256,25 @@ L3 programming layer <2024-01-22>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-
-LaTeX Warning: There were undefined references.
-
-Package rerunfilecheck Info: File `2_Khao_sat.out' has not changed.
-(rerunfilecheck)             Checksum: CDB3D4FBCA81F2316B901D3C98D3A0BB;5096.
-
-Package biblatex Warning: Please (re)run BibTeX on the file(s):
-(biblatex)                2_Khao_sat
-(biblatex)                and rerun LaTeX afterwards.
-
-Package logreq Info: Writing requests to '2_Khao_sat.run.xml'.
-\openout1 = `2_Khao_sat.run.xml'.
+Package rerunfilecheck Info: File `Bia_lot.out' has not changed.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+Package logreq Info: Writing requests to 'Bia_lot.run.xml'.
+\openout1 = `Bia_lot.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29573 strings out of 474222
- 507061 string characters out of 5748733
- 1936975 words of memory out of 5000000
- 51322 multiletter control sequences out of 15000+600000
- 575288 words of font info for 63 fonts, out of 8000000 for 9000
+ 29282 strings out of 474222
+ 501140 string characters out of 5748733
+ 1929975 words of memory out of 5000000
+ 51065 multiletter control sequences out of 15000+600000
+ 577588 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,11n,124p,2487b,1104s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb>
-Output written on 2_Khao_sat.pdf (11 pages, 213113 bytes).
+ 128i,10n,124p,2545b,854s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmb8v.pfb></usr/share/texlive/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pfb>
+Output written on Bia_lot.pdf (1 page, 45084 bytes).
 PDF statistics:
- 174 PDF objects out of 1000 (max. 8388607)
- 147 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 500000)
- 176 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 24 PDF objects out of 1000 (max. 8388607)
+ 16 compressed objects within 1 object stream
+ 2 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
